@@ -1,8 +1,9 @@
 package bot;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.google.api.client.http.HttpTransport;
@@ -21,46 +22,13 @@ public class GeekBot {
 	public static void main(String[] args) throws IOException {
 
 		ID = "UC5qTgnQwtojeVvOKncoNfRA";
+		
+		System.out.println("Java Properties: " + System.getProperties());
+		
+		String result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID()
+				+ "&key=" + getApiKey());
 
-		try {
-//			url1 = new URL(BASEURL + "/channel?part=snippet&channelId=" + getID() + "&key=" + getApiKey());
-			url1 = new URL(getBaseurl()
-					+ "/search?"
-					+ "part=snippet"
-					+ "&order=date"
-					+ "&channelId=" + getID()
-					+ "&key=" + getApiKey()
-					);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		HttpURLConnection con = null;
-		try {
-			con = (HttpURLConnection) url1.openConnection();
-			con.setRequestMethod("GET");
-			con.setDoOutput(true);
-
-			System.out.println("Connection Request Properties: " + con.getRequestProperties());
-			System.out.println("Connection Request Method: " + con.getRequestMethod());
-			System.out.println("Connection Output Stream: " + con.getOutputStream().toString());
-			System.out.println("Connection URL: " + con.getURL());
-			System.out.println("Connection Connection Type: " + con.getContentType());
-			System.out.println("Connection Response Code: " + con.getResponseCode());
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-//		try {
-//			transporter.createRequestFactory().buildGetRequest((GenericUrl) url1);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-//		YouTube YT = new YouTube(null, null, null);
+		System.out.println(result);
 
 //		while (NEVERENDINGVAR) {
 //			dispatcher.on(MessageCreateEvent.class).subscribe(event -> event.getMessage());
@@ -69,10 +37,51 @@ public class GeekBot {
 		System.out.println("End Of Program");
 	}
 
+	private static String get(String url) throws IOException {
+		// URL declaration
+		URL obj = new URL(url);
+		
+		// URL connection
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		
+		// Request Settings
+		con.setRequestMethod("GET");
+		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		
+		// check response code for an okay 
+		int responseCode = con.getResponseCode();
+		System.out.println("GET Response Code: " + responseCode);
+		if (responseCode == HttpURLConnection.HTTP_OK) { // success
+			// Read the Response from the site
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			// Generate a response to return
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			// Close Reader
+			in.close();
+
+			// print result
+			return response.toString();
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return if the loop should continue being loopy
+	 */
 	public static boolean isNeverendingvar() {
 		return NEVERENDINGVAR;
 	}
 
+	/**
+	 * 
+	 * @return the YouTube Data API's Base URL as a string
+	 */
 	public static String getBaseurl() {
 		return BASEURL;
 	}
