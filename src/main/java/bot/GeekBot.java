@@ -2,37 +2,61 @@ package bot;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
-import com.google.api.client.http.HttpTransport;
+import com.google.api.services.youtube.model.SearchResult;
+import com.google.gson.Gson;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
 
 public class GeekBot {
 	private static final boolean NEVERENDINGVAR = true;
 	private static final String BASEURL = "https://www.googleapis.com/youtube/v3";
-	private static final String API_KEY = "AIzaSyBtrqtJDl64_H-BJeG7jY2RTUggENPTqWk";
-	private static EventDispatcher dispatcher;
-	private static HttpTransport transporter;
+	private static String GOOGLE_API_KEY;
+	private static String DISCORD_TOKEN;
+	private static String DISCORD_ID;
+	private static String DISCORD_SECRET;
 	private static URL url1;
 	private static String ID;
+	private static SearchResult sr;
+	private static EventDispatcher dispatcher;
+	public static DiscordClient client;
 
 	public static void main(String[] args) throws IOException {
+		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
-		ID = "UC5qTgnQwtojeVvOKncoNfRA";
-		
+			Properties prop = new Properties();
+			if (input == null) {
+				System.out.println("unable to find Config.properties");
+				return;
+			}
+			prop.load(input);
+			GOOGLE_API_KEY = prop.getProperty("key.google");
+			DISCORD_ID = prop.getProperty("id.discord");
+			DISCORD_SECRET = prop.getProperty("secret.discord");
+			
+
+		}
+		client = new DiscordClientBuilder(args[0]).build();
+
+		GeekBot.ID = "UC5qTgnQwtojeVvOKncoNfRA";
+
 		System.out.println("Java Properties: " + System.getProperties());
-		
+
 		String result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID()
 				+ "&key=" + getApiKey());
 
-		System.out.println(result);
+		Gson gson = new Gson();
+		sr = gson.fromJson(result, SearchResult.class);
 
-//		while (NEVERENDINGVAR) {
-//			dispatcher.on(MessageCreateEvent.class).subscribe(event -> event.getMessage());
-//		}
+		System.out.println(result);
+		System.out.println(sr.getSnippet());
 
 		System.out.println("End Of Program");
 	}
@@ -40,15 +64,15 @@ public class GeekBot {
 	private static String get(String url) throws IOException {
 		// URL declaration
 		URL obj = new URL(url);
-		
+
 		// URL connection
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		
+
 		// Request Settings
 		con.setRequestMethod("GET");
 		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-		
-		// check response code for an okay 
+
+		// check response code for an okay
 		int responseCode = con.getResponseCode();
 		System.out.println("GET Response Code: " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
@@ -90,10 +114,6 @@ public class GeekBot {
 		return dispatcher;
 	}
 
-	public static HttpTransport getTransporter() {
-		return transporter;
-	}
-
 	public static URL getUrl1() {
 		return url1;
 	}
@@ -106,10 +126,6 @@ public class GeekBot {
 		GeekBot.dispatcher = dispatcher;
 	}
 
-	public static void setTransporter(HttpTransport transporter) {
-		GeekBot.transporter = transporter;
-	}
-
 	public static void setUrl1(URL url1) {
 		GeekBot.url1 = url1;
 	}
@@ -118,8 +134,28 @@ public class GeekBot {
 		ID = iD;
 	}
 
-	public static String getApiKey() {
-		return API_KEY;
+	public static String getGoogleApiKey() {
+		return GOOGLE_API_KEY;
+	}
+
+	public static DiscordClient getClient() {
+		return client;
+	}
+
+	public static String getGOOGLE_API_KEY() {
+		return GOOGLE_API_KEY;
+	}
+
+	public static String getDISCORD_TOKEN() {
+		return DISCORD_TOKEN;
+	}
+
+	public static String getDISCORD_ID() {
+		return DISCORD_ID;
+	}
+
+	public static String getDISCORD_SECRET() {
+		return DISCORD_SECRET;
 	}
 
 }
