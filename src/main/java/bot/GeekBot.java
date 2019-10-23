@@ -40,17 +40,18 @@ public class GeekBot {
 			GOOGLE_API_KEY = prop.getProperty("key.google");
 			DISCORD_ID = prop.getProperty("id.discord");
 			DISCORD_SECRET = prop.getProperty("secret.discord");
+			DISCORD_TOKEN = prop.getProperty("token.discord");
 			
 
 		}
-		client = new DiscordClientBuilder(args[0]).build();
+		client = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
 
 		GeekBot.ID = "UC5qTgnQwtojeVvOKncoNfRA";
 
 		System.out.println("Java Properties: " + System.getProperties());
 
 		String result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID()
-				+ "&key=" + getApiKey());
+				+ "&key=" + getYTApiKey());
 
 		Gson gson = new Gson();
 		sr = gson.fromJson(result, SearchResult.class);
@@ -134,27 +135,23 @@ public class GeekBot {
 		ID = iD;
 	}
 
-	public static String getGoogleApiKey() {
-		return GOOGLE_API_KEY;
-	}
-
 	public static DiscordClient getClient() {
 		return client;
 	}
 
-	public static String getGOOGLE_API_KEY() {
+	public static String getYTApiKey() {
 		return GOOGLE_API_KEY;
 	}
 
-	public static String getDISCORD_TOKEN() {
+	public static String getDiscordToken() {
 		return DISCORD_TOKEN;
 	}
 
-	public static String getDISCORD_ID() {
+	public static String getDiscordId() {
 		return DISCORD_ID;
 	}
 
-	public static String getDISCORD_SECRET() {
+	public static String getDisordSecret() {
 		return DISCORD_SECRET;
 	}
 
