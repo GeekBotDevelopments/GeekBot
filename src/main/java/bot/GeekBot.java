@@ -54,7 +54,7 @@ public class GeekBot {
 	private static String BotPrefix = "!gb";
 	private static final Map<String, Command> commands = new HashMap<>();
 	static {
-		commands.put("ping", event -> event.getMessage().getChannel().block().createMessage("Pong!").block());
+		commands.put("ping", event -> event.getMessage().getChannel().block().createMessage( event.getMember().get().getMention() + "Pong!").block());
 
 		commands.put("transsafezone", event -> event.getMessage().getChannel().block().createMessage(
 				"Come Join TransSafezone! A server that is free of trans hate, and accepting no matter who you are! invite: https://discord.gg/fD3cWyJ")
@@ -111,8 +111,9 @@ public class GeekBot {
 
 //		sr = gson.fromJson(result, SearchListResponse.class);
 		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
-//		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
-//				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
+		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
+				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
+		
 		DisClient.login().block();
 		System.out.println(result);
 //		System.out.println(sr.getItems());
@@ -120,7 +121,7 @@ public class GeekBot {
 		System.out.println("End Of Program");
 	}
 
-	private static String get(String url) throws IOException {
+	public static String get(String url) throws IOException {
 		// URL declaration
 		URL obj = new URL(url);
 
@@ -153,6 +154,8 @@ public class GeekBot {
 		return null;
 	}
 
+	// -----Utility-Methods----- //
+	
 	/**
 	 * 
 	 * @return if the loop should continue being loopy
@@ -180,17 +183,22 @@ public class GeekBot {
 		return;
 	}
 
-	// -----BOT-STUFF-----//
+	// -----BOT-STUFF----- //
 
 	public static void welcome(Snowflake guildId, Member member, MemberJoinEvent eventIn) {
 		eventIn.getGuild().block().getSystemChannel().block()
 				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!");
+		
 	}
 
 	public static void parseMessage(MessageCreateEvent eventIn) {
 		if (eventIn.getMessage().getContent().isPresent()) {
 			String Message1 = eventIn.getMessage().getContent().get().toString();
 
+			if(eventIn.getGuildId().get().asString().equals("542561748327202836")) {
+				return;
+			}
+			
 			System.out.println("message: [" + Message1 + "]");
 			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
 				// We will be using !gb as our "prefix" to any command in the system.
@@ -199,28 +207,21 @@ public class GeekBot {
 					break;
 				}
 			}
-
+			
 			eventIn.getMessage().getContent()
-					.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.toLowerCase().toString()));
-
-		}
+					.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.trim().toString()));
+		
+			}
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
-		if (!eventIn.getMember().get().equals(null)) {
-			if (!eventIn.getMember().get().isBot()) {
-				String name = "";
-				name = eventIn.getMember().get().getNickname().get().toString();
-				if (name.equals("Optional.empty")) {
-					name = eventIn.getMember().get().getUsername().toString();
-				}
-				return name;
+			if (eventIn.getMember().get().isBot()) {
+				return eventIn.getMember().get().getDisplayName() + "[BOT]";
 			}
-			return eventIn.getMember().get().getId().asString();
+			return eventIn.getMember().get().getDisplayName();
 		}
-		return "webhooks...";
-	}
-	// -----GETTERS-&-SETTERS-----//
+
+	// -----GETTERS-&-SETTERS----- //
 
 	/**
 	 * 
