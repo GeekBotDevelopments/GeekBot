@@ -63,8 +63,11 @@ public class GeekBot {
 		commands.put("invite-bot", event -> event.getMessage().getChannel().block().createMessage(
 				"https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=8&scope=bot")
 				.block());
-		
-		commands.put("help", event -> event.getMessage().getChannel().block().createMessage("until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ").block());
+
+		commands.put("help",
+				event -> event.getMessage().getChannel().block().createMessage(
+						"until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ")
+						.block());
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -180,39 +183,41 @@ public class GeekBot {
 	// -----BOT-STUFF-----//
 
 	public static void welcome(Snowflake guildId, Member member, MemberJoinEvent eventIn) {
-		eventIn.getGuild().block().getSystemChannel().block().createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!");
+		eventIn.getGuild().block().getSystemChannel().block()
+				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!");
 	}
 
 	public static void parseMessage(MessageCreateEvent eventIn) {
-		String Message1 = eventIn.getMessage().getContent().get().toString();
-		if (Message1.isEmpty() || Message1.equals(null)) {
-		System.out.println("message: [" + Message1 + "]");
-		for (final Map.Entry<String, Command> entry : commands.entrySet()) {
-			// We will be using !gb as our "prefix" to any command in the system.
-			if (Message1.startsWith("!gb " + entry.getKey())) {
-				entry.getValue().execute(eventIn);
-				break;
+		if (eventIn.getMessage().getContent().isPresent()) {
+			String Message1 = eventIn.getMessage().getContent().get().toString();
+
+			System.out.println("message: [" + Message1 + "]");
+			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
+				// We will be using !gb as our "prefix" to any command in the system.
+				if (Message1.startsWith("!gb " + entry.getKey())) {
+					entry.getValue().execute(eventIn);
+					break;
+				}
 			}
+
+			eventIn.getMessage().getContent()
+					.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.toLowerCase().toString()));
+
 		}
-
-		eventIn.getMessage().getContent()
-				.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.toLowerCase().toString()));
-
-	}
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
 		if (!eventIn.getMember().get().equals(null)) {
-		if (!eventIn.getMember().get().isBot()) {
-			String name = "";
-			name = eventIn.getMember().get().getNickname().get().toString();
-			if (name.equals("Optional.empty")) {
-				name = eventIn.getMember().get().getUsername().toString();
+			if (!eventIn.getMember().get().isBot()) {
+				String name = "";
+				name = eventIn.getMember().get().getNickname().get().toString();
+				if (name.equals("Optional.empty")) {
+					name = eventIn.getMember().get().getUsername().toString();
+				}
+				return name;
 			}
-			return name;
+			return eventIn.getMember().get().getId().asString();
 		}
-		return eventIn.getMember().get().getId().asString();
-	}
 		return "webhooks...";
 	}
 	// -----GETTERS-&-SETTERS-----//
