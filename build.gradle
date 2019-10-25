@@ -37,6 +37,7 @@ dependencies {
 	compile 'com.google.oauth-client:google-oauth-client-jetty:+'
 	compile 'com.google.apis:google-api-services-youtube:v3-rev212-1.25.0'
 	compile 'com.google.code.gson:gson:+'
+	compile 'com.google.http-client:google-http-client-gson:+'
     api 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.google.guava:guava:+'
     testImplementation 'junit:junit:4.12'

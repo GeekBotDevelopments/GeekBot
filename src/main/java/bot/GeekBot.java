@@ -6,29 +6,69 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.LowLevelHttpRequest;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.gson.Gson;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
+import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.util.Snowflake;
 
 public class GeekBot {
-	private static final boolean NEVERENDINGVAR = true;
+	private static boolean NeverEndingVariable = true;
 	private static final String BASEURL = "https://www.googleapis.com/youtube/v3";
 	private static String GOOGLE_API_KEY;
 	private static String DISCORD_TOKEN;
 	private static String DISCORD_ID;
 	private static String DISCORD_SECRET;
+	private static HttpTransport transport = new HttpTransport() {
+
+		@Override
+		protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 	private static URL url1;
+	private static GsonFactory factory;
 	private static String ID;
-	private static SearchResult sr;
+	private static SearchListResponse sr;
 	private static EventDispatcher dispatcher;
-	public static DiscordClient client;
+	public static DiscordClient DisClient;
+	public static YouTube YTClient;
+	private static String result;
+	private static String botname = "GeekBot";
+	private static String BotPrefix = "!gb";
+	private static final Map<String, Command> commands = new HashMap<>();
+	static {
+		commands.put("ping", event -> event.getMessage().getChannel().block().createMessage("Pong!").block());
+
+		commands.put("transsafezone", event -> event.getMessage().getChannel().block().createMessage(
+				"Come Join TransSafezone! A server that is free of trans hate, and accepting no matter who you are! invite: https://discord.gg/fD3cWyJ")
+				.block());
+
+		commands.put("invite-bot", event -> event.getMessage().getChannel().block().createMessage(
+				"https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=8&scope=bot")
+				.block());
+		
+		commands.put("help", event -> event.getMessage().getChannel().block().createMessage("until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ").block());
+	}
 
 	public static void main(String[] args) throws IOException {
+		Gson gson = new Gson();
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
 			Properties prop = new Properties();
@@ -41,23 +81,38 @@ public class GeekBot {
 			DISCORD_ID = prop.getProperty("id.discord");
 			DISCORD_SECRET = prop.getProperty("secret.discord");
 			DISCORD_TOKEN = prop.getProperty("token.discord");
-			
 
 		}
-		client = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
+
+		factory = new GsonFactory();
+		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
+		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
+
+			@Override
+			public void initialize(HttpRequest request) throws IOException {
+
+			}
+		}).setApplicationName(botname).build();
+		YouTube.Search.List request = YTClient.search().list("id,snippet");
 
 		GeekBot.ID = "UC5qTgnQwtojeVvOKncoNfRA";
 
+		request.setChannelId(getID());
+		request.buildHttpRequest();
+		System.out.println("request json content: " + request.getJsonContent());
+
 		System.out.println("Java Properties: " + System.getProperties());
 
-		String result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID()
-				+ "&key=" + getYTApiKey());
+//		result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID() + "&key="
+//				+ getYTApiKey());
 
-		Gson gson = new Gson();
-		sr = gson.fromJson(result, SearchResult.class);
-
+//		sr = gson.fromJson(result, SearchListResponse.class);
+		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
+//		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
+//				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
+		DisClient.login().block();
 		System.out.println(result);
-		System.out.println(sr.getSnippet());
+//		System.out.println(sr.getItems());
 
 		System.out.println("End Of Program");
 	}
@@ -100,8 +155,63 @@ public class GeekBot {
 	 * @return if the loop should continue being loopy
 	 */
 	public static boolean isNeverendingvar() {
-		return NEVERENDINGVAR;
+		return NeverEndingVariable;
 	}
+
+	/**
+	 * stops the bit
+	 *
+	 */
+	public static void stop() {
+		DisClient.logout().block();
+		return;
+	}
+
+	/**
+	 * restarts the bit
+	 *
+	 */
+	public static void restart() {
+		DisClient.logout().block();
+		DisClient.login().block();
+		return;
+	}
+
+	// -----BOT-STUFF-----//
+
+	public static void welcome(Snowflake guildId, Member member, MemberJoinEvent eventIn) {
+		eventIn.getGuild().block().getSystemChannel().block().createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!");
+	}
+
+	public static void parseMessage(MessageCreateEvent eventIn) {
+		String Message1 = eventIn.getMessage().getContent().get().toString();
+		System.out.println("message: [" + Message1 + "]");
+		for (final Map.Entry<String, Command> entry : commands.entrySet()) {
+			// We will be using !gb as our "prefix" to any command in the system.
+			if (Message1.startsWith("!gb " + entry.getKey())) {
+				entry.getValue().execute(eventIn);
+				break;
+			}
+		}
+
+		eventIn.getMessage().getContent()
+				.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.toLowerCase().toString()));
+
+	}
+
+	public static String getMemberName(MessageCreateEvent eventIn) {
+		if (!eventIn.getMember().get().isBot()) {
+			String name = "";
+			name = eventIn.getMember().get().getNickname().get().toString();
+			if (name.equals("Optional.empty")) {
+				name = eventIn.getMember().get().getUsername().toString();
+			}
+			return name;
+		}
+		return eventIn.getMember().get().getId().asString();
+	}
+
+	// -----GETTERS-&-SETTERS-----//
 
 	/**
 	 * 
@@ -136,7 +246,7 @@ public class GeekBot {
 	}
 
 	public static DiscordClient getClient() {
-		return client;
+		return DisClient;
 	}
 
 	public static String getYTApiKey() {
@@ -153,6 +263,10 @@ public class GeekBot {
 
 	public static String getDisordSecret() {
 		return DISCORD_SECRET;
+	}
+
+	public static String getBotPrefix() {
+		return BotPrefix;
 	}
 
 }
