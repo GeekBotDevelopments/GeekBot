@@ -200,7 +200,7 @@ public class GeekBot {
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
-		if (!eventIn.getMember().get().isBot()) {
+		if (!eventIn.getMember().get().isBot() && !eventIn.getMember().isPresent()) {
 			String name = "";
 			name = eventIn.getMember().get().getNickname().get().toString();
 			if (name.equals("Optional.empty")) {
