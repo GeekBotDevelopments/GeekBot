@@ -185,6 +185,7 @@ public class GeekBot {
 
 	public static void parseMessage(MessageCreateEvent eventIn) {
 		String Message1 = eventIn.getMessage().getContent().get().toString();
+		if (Message1.isEmpty() || Message1.equals(null)) {
 		System.out.println("message: [" + Message1 + "]");
 		for (final Map.Entry<String, Command> entry : commands.entrySet()) {
 			// We will be using !gb as our "prefix" to any command in the system.
@@ -197,6 +198,7 @@ public class GeekBot {
 		eventIn.getMessage().getContent()
 				.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.toLowerCase().toString()));
 
+	}
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
