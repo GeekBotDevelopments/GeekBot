@@ -200,7 +200,8 @@ public class GeekBot {
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
-		if (!eventIn.getMember().get().isBot() && !eventIn.getMessage().getAuthor().isPresent()) {
+		if (eventIn.getMember().get().getId().toString().isEmpty()) {
+		if (!eventIn.getMember().get().isBot()) {
 			String name = "";
 			name = eventIn.getMember().get().getNickname().get().toString();
 			if (name.equals("Optional.empty")) {
@@ -210,7 +211,8 @@ public class GeekBot {
 		}
 		return eventIn.getMember().get().getId().asString();
 	}
-
+		return "webhooks...";
+	}
 	// -----GETTERS-&-SETTERS-----//
 
 	/**
