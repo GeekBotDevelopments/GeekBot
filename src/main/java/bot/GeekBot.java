@@ -68,6 +68,10 @@ public class GeekBot {
 				event -> event.getMessage().getChannel().block().createMessage(
 						"until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ")
 						.block());
+		
+		commands.put("hug", event -> event.getMessage().getChannel().block()
+				.createMessage(event.getMember().get().getMention() + " *hugs*").block());
+		
 	}
 
 	public static void main(String[] args) throws IOException {
