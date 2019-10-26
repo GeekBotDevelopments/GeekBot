@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
+import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
@@ -53,8 +54,10 @@ public class GeekBot {
 	private static String botname = "GeekBot";
 	private static String BotPrefix = "!gb";
 	private static final Map<String, Command> commands = new HashMap<>();
+	private static long id;
 	static {
-		commands.put("ping", event -> event.getMessage().getChannel().block().createMessage( event.getMember().get().getMention() + "Pong!").block());
+		commands.put("ping", event -> event.getMessage().getChannel().block()
+				.createMessage(event.getMember().get().getMention() + " Pong!").block());
 
 		commands.put("transsafezone", event -> event.getMessage().getChannel().block().createMessage(
 				"Come Join TransSafezone! A server that is free of trans hate, and accepting no matter who you are! invite: https://discord.gg/fD3cWyJ")
@@ -68,10 +71,13 @@ public class GeekBot {
 				event -> event.getMessage().getChannel().block().createMessage(
 						"until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ")
 						.block());
-		
+
 		commands.put("hug", event -> event.getMessage().getChannel().block()
 				.createMessage(event.getMember().get().getMention() + " *hugs*").block());
-		
+
+		commands.put(id + "-hug", event -> event.getMessage().getChannel().block()
+				.createMessage(getMemberFromID(id, event).getMention() + " *hugs*").block());
+
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -114,13 +120,14 @@ public class GeekBot {
 //				+ getYTApiKey());
 
 //		sr = gson.fromJson(result, SearchListResponse.class);
+
+		// set discord events
 		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
 		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
 				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
-		
+
 		DisClient.login().block();
 		System.out.println(result);
-//		System.out.println(sr.getItems());
 
 		System.out.println("End Of Program");
 	}
@@ -159,7 +166,7 @@ public class GeekBot {
 	}
 
 	// -----Utility-Methods----- //
-	
+
 	/**
 	 * 
 	 * @return if the loop should continue being loopy
@@ -191,18 +198,19 @@ public class GeekBot {
 
 	public static void welcome(Snowflake guildId, Member member, MemberJoinEvent eventIn) {
 		eventIn.getGuild().block().getSystemChannel().block()
-				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!");
-		
+				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!")
+				.block();
+
 	}
 
 	public static void parseMessage(MessageCreateEvent eventIn) {
 		if (eventIn.getMessage().getContent().isPresent()) {
 			String Message1 = eventIn.getMessage().getContent().get().toString();
 
-			if(eventIn.getGuildId().get().asString().equals("542561748327202836")) {
+			if (eventIn.getGuildId().get().asString().equals("542561748327202836")) {
 				return;
 			}
-			
+
 			System.out.println("message: [" + Message1 + "]");
 			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
 				// We will be using !gb as our "prefix" to any command in the system.
@@ -211,19 +219,31 @@ public class GeekBot {
 					break;
 				}
 			}
-			
+
 			eventIn.getMessage().getContent()
 					.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.trim().toString()));
-		
-			}
+
+		}
 	}
 
 	public static String getMemberName(MessageCreateEvent eventIn) {
-			if (eventIn.getMember().get().isBot()) {
-				return eventIn.getMember().get().getDisplayName() + "[BOT]";
-			}
-			return eventIn.getMember().get().getDisplayName();
+		if (eventIn.getMember().get().isBot()) {
+			return eventIn.getMember().get().getDisplayName() + "[BOT]";
 		}
+		return eventIn.getMember().get().getDisplayName();
+	}
+
+	public static Member getMemberFromID(long id, MessageCreateEvent event) {
+		Member member;
+		Snowflake Sid = Snowflake.of(id);
+//		member = event.getGuild().block().getMemberById(id).block();
+		System.out.println("Getting member with id of: " + Sid.asString());
+
+		member = DisClient.getMemberById(event.getGuildId().get(), Sid).block();
+
+		System.out.println("Member is: " + member.getDisplayName());
+		return member;
+	}
 
 	// -----GETTERS-&-SETTERS----- //
 
