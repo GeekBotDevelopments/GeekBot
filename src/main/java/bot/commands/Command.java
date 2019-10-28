@@ -1,4 +1,4 @@
-package bot;
+package bot.commands;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 
