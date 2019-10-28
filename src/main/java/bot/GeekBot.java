@@ -19,14 +19,20 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.gson.Gson;
 
+import bot.commands.Command;
+import bot.commands.Minecraft;
+import bot.commands.hug;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
-import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
 import discord4j.core.object.util.Snowflake;
+import reactor.util.Logger;
+import reactor.util.Loggers;
 
 public class GeekBot {
 	private static boolean NeverEndingVariable = true;
@@ -55,6 +61,7 @@ public class GeekBot {
 	private static String BotPrefix = "!gb";
 	private static final Map<String, Command> commands = new HashMap<>();
 	private static long id;
+	public static Logger log = Loggers.getLogger(botname);
 	static {
 		commands.put("ping", event -> event.getMessage().getChannel().block()
 				.createMessage(event.getMember().get().getMention() + " Pong!").block());
@@ -72,11 +79,13 @@ public class GeekBot {
 						"until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ")
 						.block());
 
-		commands.put("hug", event -> event.getMessage().getChannel().block()
-				.createMessage(event.getMember().get().getMention() + " *hugs*").block());
+		commands.put("hug", event -> event.getMessage().getChannel().block().createMessage(hug.hug(event)).block());
 
-		commands.put(id + "-hug", event -> event.getMessage().getChannel().block()
-				.createMessage(getMemberFromID(id, event).getMention() + " *hugs*").block());
+		commands.put("latest minecraft version",
+				event -> event.getMessage().getChannel().block().createMessage(Minecraft.MinecraftVersion()).block());
+
+		commands.put("latest forge mappings",
+				event -> event.getMessage().getChannel().block().createMessage(Minecraft.ForgeStatus()).block());
 
 	}
 
@@ -86,9 +95,11 @@ public class GeekBot {
 
 			Properties prop = new Properties();
 			if (input == null) {
-				System.out.println("unable to find Config.properties");
+				log.error("unable to find Config.properties");
 				return;
 			}
+
+			log.info("Loading keys");
 			prop.load(input);
 			GOOGLE_API_KEY = prop.getProperty("key.google");
 			DISCORD_ID = prop.getProperty("id.discord");
@@ -99,6 +110,9 @@ public class GeekBot {
 
 		factory = new GsonFactory();
 		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
+//		DisClient.updatePresence(Presence.online(Activity.listening(" for !gb")).asStatusUpdate());
+		DisClient.updatePresence(Presence.online(Activity.listening("to Portal 2 OST")));
+
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
 
 			@Override
@@ -112,9 +126,9 @@ public class GeekBot {
 
 		request.setChannelId(getID());
 		request.buildHttpRequest();
-		System.out.println("request json content: " + request.getJsonContent());
+		log.info("request json content: " + request.getJsonContent());
 
-		System.out.println("Java Properties: " + System.getProperties());
+		log.info("Java Properties: " + System.getProperties());
 
 //		result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID() + "&key="
 //				+ getYTApiKey());
@@ -125,11 +139,11 @@ public class GeekBot {
 		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
 		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
 				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
+//		DisClient.getEventDispatcher().on(MinecraftEvent.class).subscribe(event -> event);
+		DisClient.login().log().block();
+		log.info(result);
 
-		DisClient.login().block();
-		System.out.println(result);
-
-		System.out.println("End Of Program");
+		log.info("End Of Program");
 	}
 
 	public static String get(String url) throws IOException {
@@ -145,7 +159,7 @@ public class GeekBot {
 
 		// check response code for an okay
 		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code: " + responseCode);
+		log.info("GET Response Code: " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
 			// Read the Response from the site
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -211,7 +225,7 @@ public class GeekBot {
 				return;
 			}
 
-			System.out.println("message: [" + Message1 + "]");
+			log.debug("message: [" + Message1 + "]");
 			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
 				// We will be using !gb as our "prefix" to any command in the system.
 				if (Message1.startsWith("!gb " + entry.getKey())) {
@@ -237,11 +251,11 @@ public class GeekBot {
 		Member member;
 		Snowflake Sid = Snowflake.of(id);
 //		member = event.getGuild().block().getMemberById(id).block();
-		System.out.println("Getting member with id of: " + Sid.asString());
+		log.debug("Getting member with id of: " + Sid.asString());
 
 		member = DisClient.getMemberById(event.getGuildId().get(), Sid).block();
 
-		System.out.println("Member is: " + member.getDisplayName());
+		log.debug("Member is: " + member.getDisplayName());
 		return member;
 	}
 
