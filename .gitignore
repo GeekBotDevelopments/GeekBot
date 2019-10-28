@@ -20,6 +20,5 @@ out
 # other
 eclipse
 run
-*.properties
-!gradle.properties
 src/main/resources/Config.properties
+target/
