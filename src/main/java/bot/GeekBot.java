@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
@@ -31,8 +34,6 @@ import discord4j.core.object.entity.Member;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import discord4j.core.object.util.Snowflake;
-import reactor.util.Logger;
-import reactor.util.Loggers;
 
 public class GeekBot {
 	private static boolean NeverEndingVariable = true;
@@ -57,11 +58,12 @@ public class GeekBot {
 	public static DiscordClient DisClient;
 	public static YouTube YTClient;
 	private static String result;
-	private static String botname = "GeekBot";
+	public static String botname = "GeekBot";
 	private static String BotPrefix = "!gb";
 	private static final Map<String, Command> commands = new HashMap<>();
 	private static long id;
-	public static Logger log = Loggers.getLogger(botname);
+	private static Logger log = LogManager.getLogger(GeekBot.class);
+
 	static {
 		commands.put("ping", event -> event.getMessage().getChannel().block()
 				.createMessage(event.getMember().get().getMention() + " Pong!").block());
@@ -91,6 +93,7 @@ public class GeekBot {
 
 	public static void main(String[] args) throws IOException {
 		Gson gson = new Gson();
+
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
 			Properties prop = new Properties();
@@ -235,7 +238,7 @@ public class GeekBot {
 			}
 
 			eventIn.getMessage().getContent()
-					.ifPresent(c -> System.out.println(getMemberName(eventIn) + ": " + c.trim().toString()));
+					.ifPresent(c -> log.info(getMemberName(eventIn) + ": " + c.trim().toString()));
 
 		}
 	}
