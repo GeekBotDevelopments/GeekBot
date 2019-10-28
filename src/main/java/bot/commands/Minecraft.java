@@ -3,17 +3,21 @@ package bot.commands;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+
+import bot.json.models.ForgeMapping;
 
 public class Minecraft {
+	static Logger log = LogManager.getLogger(Minecraft.class);
 
 	public static String MinecraftVersion() {
 		Gson gson = new Gson();
@@ -38,36 +42,44 @@ public class Minecraft {
 	public static String ForgeStatus() {
 		Gson gson = new Gson();
 		JsonElement statusCheck = null;
-		String snapshotName = "snapyshot";
+		String snapshotName = "snapshot";
+		String stableName = "stable";
 		int snapshotVersion = 0;
 		String latestMCVersion = "1.12.2";
+		ForgeMapping mapping;
 
 		try {
 			statusCheck = get("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		log.info("is statusCheck an JsonObject: {}", statusCheck.isJsonObject());
+		log.info("is statusCheck an JsonArray: {}", statusCheck.isJsonArray());
+		log.info("is statusCheck an JsonPrimitive: {}", statusCheck.isJsonPrimitive());
+		log.info("is statusCheck an JsonNull: {}", statusCheck.isJsonNull());
+		log.info(statusCheck);
+		mapping = gson.fromJson(statusCheck, ForgeMapping.class);
+		log.info("statusCheck-Version: {}", mapping.getVersion());
+		log.info("statusCheck-SnapShot: {}", mapping.getSnaphsot());
+		log.info("statusCheck-Stable: {}", mapping.getStable());
 
 		JsonElement JObject = statusCheck.getAsJsonObject();
 
-		JsonReader reader = new JsonReader(new StringReader(JObject.getAsString().toString()));
-		try {
-			reader.beginObject();
-			latestMCVersion = reader.nextName();
-			reader.beginObject();
-			snapshotName = reader.nextName();
-			snapshotVersion = reader.nextInt();
+		log.info("is JObject an JsonObject: {}", JObject.isJsonObject());
+		log.info("is JObject an JsonArray: {}", JObject.isJsonArray());
+		log.info("is JObject an JsonPrimitive: {}", JObject.isJsonPrimitive());
+		log.info("is JObject an JsonNull: {}", JObject.isJsonNull());
+		log.info(JObject);
+		mapping = gson.fromJson(JObject, ForgeMapping.class);
+		log.info("JObject-Version: {}", mapping.getVersion());
+		log.info("JObject-SnapShot: {}", mapping.getSnaphsot());
+		log.info("JObject-Stable: {}", mapping.getStable());
+//		String jobjString = statusCheck.getAsString();
+//		log.info("JObject as string: " + jobjString);
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		JsonElement versions = JObject.get("latest").getAsJsonObject();
 
-		JsonObject versions = JObject.get("latest").getAsJsonObject();
-
-		String message = "the latest " + snapshotName + " is: " + snapshotVersion + " for minecraft version: "
-				+ latestMCVersion;
+		String message = "the latest snapshot is: " + snapshotVersion + " for minecraft version: " + latestMCVersion;
 
 		return message;
 	}
@@ -87,7 +99,7 @@ public class Minecraft {
 
 		// check response code for an okay
 		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code: " + responseCode);
+		log.info("GET Response Code: " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
 			// Read the Response from the site
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -107,6 +119,7 @@ public class Minecraft {
 			// print result
 			return jobj;
 		}
+		log.error("GET Failed");
 		return null;
 	}
 
