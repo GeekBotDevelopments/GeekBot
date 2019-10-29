@@ -217,16 +217,18 @@ public class GeekBot {
 		eventIn.getGuild().block().getSystemChannel().block()
 				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!")
 				.block();
+		if (eventIn.getGuildId().asString().equals("605590142647795732")) {
+			eventIn.getGuild().block().getSystemChannel().block()
+					.createMessage(
+							"be sure to read <#618920323949133836> and introduce yourself in <#618908853446115348>")
+					.block();
+		}
 
 	}
 
 	public static void parseMessage(MessageCreateEvent eventIn) {
 		if (eventIn.getMessage().getContent().isPresent()) {
 			String Message1 = eventIn.getMessage().getContent().get().toString();
-
-			if (eventIn.getGuildId().get().asString().equals("542561748327202836")) {
-				return;
-			}
 
 			log.debug("message: [" + Message1 + "]");
 			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
@@ -236,10 +238,10 @@ public class GeekBot {
 					break;
 				}
 			}
-
-			eventIn.getMessage().getContent()
-					.ifPresent(c -> log.info(getMemberName(eventIn) + ": " + c.trim().toString()));
-
+			if (!eventIn.getGuildId().get().asString().equals("542561748327202836")) {
+				eventIn.getMessage().getContent()
+						.ifPresent(c -> log.info(getMemberName(eventIn) + ": " + c.trim().toString()));
+			}
 		}
 	}
 

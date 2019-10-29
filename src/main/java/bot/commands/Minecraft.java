@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +21,7 @@ import bot.json.models.ForgeMapping;
 
 public class Minecraft {
 	static Logger log = LogManager.getLogger(Minecraft.class);
+	public static List<ForgeMapping> mappingsList = new ArrayList<>();
 
 	public static String MinecraftVersion() {
 		Gson gson = new Gson();
@@ -53,27 +57,41 @@ public class Minecraft {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		log.info("is statusCheck an JsonObject: {}", statusCheck.isJsonObject());
-		log.info("is statusCheck an JsonArray: {}", statusCheck.isJsonArray());
+		log.info("is statusCheck an JsonObject:    {}", statusCheck.isJsonObject());
+		log.info("is statusCheck an JsonArray:     {}", statusCheck.isJsonArray());
 		log.info("is statusCheck an JsonPrimitive: {}", statusCheck.isJsonPrimitive());
-		log.info("is statusCheck an JsonNull: {}", statusCheck.isJsonNull());
-		log.info(statusCheck);
+		log.info("is statusCheck an JsonNull:      {}", statusCheck.isJsonNull());
+		log.info("---------------------------------------------------");
 		mapping = gson.fromJson(statusCheck, ForgeMapping.class);
 		log.info("statusCheck-Version: {}", mapping.getVersion());
-		log.info("statusCheck-SnapShot: {}", mapping.getSnaphsot());
-		log.info("statusCheck-Stable: {}", mapping.getStable());
+		log.info("statusCheck-SnapShot: {}", mapping.getSnapshot().size());
+		log.info("statusCheck-Stable: {}", mapping.getStable().size());
+		log.info("---------------------------------------------------");
+		log.info(statusCheck);
+		log.info("---------------------------------------------------");
 
 		JsonElement JObject = statusCheck.getAsJsonObject();
 
-		log.info("is JObject an JsonObject: {}", JObject.isJsonObject());
-		log.info("is JObject an JsonArray: {}", JObject.isJsonArray());
+		log.info("is JObject an JsonObject:    {}", JObject.isJsonObject());
+		log.info("is JObject an JsonArray:     {}", JObject.isJsonArray());
 		log.info("is JObject an JsonPrimitive: {}", JObject.isJsonPrimitive());
-		log.info("is JObject an JsonNull: {}", JObject.isJsonNull());
-		log.info(JObject);
+		log.info("is JObject an JsonNull:      {}", JObject.isJsonNull());
+		log.info("---------------------------------------------------");
 		mapping = gson.fromJson(JObject, ForgeMapping.class);
 		log.info("JObject-Version: {}", mapping.getVersion());
-		log.info("JObject-SnapShot: {}", mapping.getSnaphsot());
-		log.info("JObject-Stable: {}", mapping.getStable());
+		log.info("JObject-SnapShot: {}", mapping.getSnapshot().size());
+		log.info("JObject-Stable: {}", mapping.getStable().size());
+		log.info("---------------------------------------------------");
+		log.info(JObject);
+		log.info("---------------------------------------------------");
+
+		MappingObject object = gson.fromJson(statusCheck, MappingObject.class);
+
+		for (Map.Entry<String, JsonElement> entry : object.map.entrySet()) {
+			ForgeMapping maps = gson.fromJson(entry.getValue().toString(), ForgeMapping.class);
+			maps.version = entry.getKey();
+
+		}
 //		String jobjString = statusCheck.getAsString();
 //		log.info("JObject as string: " + jobjString);
 
@@ -123,4 +141,7 @@ public class Minecraft {
 		return null;
 	}
 
+	class MappingObject {
+		JsonObject map;
+	}
 }

@@ -1,9 +1,12 @@
 package bot.json.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ForgeMapping {
-	String version;
-	int[] snaphsot;
-	int[] stable;
+	public String version = "";
+	List<Integer> snapshot = new ArrayList<>();
+	List<Integer> stable = new ArrayList<>();
 
 	public ForgeMapping() {
 
@@ -17,17 +20,17 @@ public class ForgeMapping {
 	}
 
 	/**
-	 * @return the snaphsot
+	 * @return the stable
 	 */
-	public int[] getSnaphsot() {
-		return snaphsot;
+	public List<Integer> getStable() {
+		return stable;
 	}
 
 	/**
-	 * @return the stable
+	 * @return the snapshot
 	 */
-	public int[] getStable() {
-		return stable;
+	public List<Integer> getSnapshot() {
+		return snapshot;
 	}
 
 	/**
@@ -38,17 +41,21 @@ public class ForgeMapping {
 	}
 
 	/**
-	 * @param snaphsot the snaphsot to set
+	 * @param stable the stable to set
 	 */
-	public void setSnaphsot(int[] snaphsot) {
-		this.snaphsot = snaphsot;
+	public void setStable(List<Integer> stable) {
+		this.stable = stable;
 	}
 
 	/**
-	 * @param stable the stable to set
+	 * @param snapshot the snapshot to set
 	 */
-	public void setStable(int[] stable) {
-		this.stable = stable;
+	public void setSnapshot(List<Integer> snapshot) {
+		this.snapshot = snapshot;
 	}
+
+}
+
+class Mappings {
 
 }
