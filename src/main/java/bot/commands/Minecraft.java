@@ -1,147 +1,126 @@
 package bot.commands;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import bot.json.models.ForgeMapping;
+import bot.json.models.MinecraftVersion;
 
 public class Minecraft {
 	static Logger log = LogManager.getLogger(Minecraft.class);
 	public static List<ForgeMapping> mappingsList = new ArrayList<>();
+	public static List<MinecraftVersion> versionList = new ArrayList<>();
+
+	// Constants
+	public static final String RELEASE = "release";
+	public static final String SNAPSHOT = "snapshot";
+	public static final String OLDBETA = "old_beta";
+	public static final String OLDALPHA = "old_alpha";
 
 	public static String MinecraftVersion() {
 		Gson gson = new Gson();
-		JsonElement statusCheck = null;
+		String message = null;
+		File backupJsonVersion = new File("C:\\Users\\Daley-Hawkins\\Downloads\\version_manifest.json");
 
-		try {
-			statusCheck = get("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			statusCheck = Json.getJsonFileFromWeb("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
-		JsonObject JObject = statusCheck.getAsJsonObject();
-		JsonObject versions = JObject.get("latest").getAsJsonObject();
+		try (BufferedReader data = Files.newBufferedReader(backupJsonVersion.toPath())) {
 
-		String message = "latest release is: " + versions.get("release") + "; " + "the latest snapshot is: "
-				+ versions.get("snapshot");
+			final JsonElement json = JsonParser.parseReader(data);
 
-		return message;
-	}
-
-	public static String ForgeStatus() {
-		Gson gson = new Gson();
-		JsonElement statusCheck = null;
-		String snapshotName = "snapshot";
-		String stableName = "stable";
-		int snapshotVersion = 0;
-		String latestMCVersion = "1.12.2";
-		ForgeMapping mapping;
-
-		try {
-			statusCheck = get("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		log.info("is statusCheck an JsonObject:    {}", statusCheck.isJsonObject());
-		log.info("is statusCheck an JsonArray:     {}", statusCheck.isJsonArray());
-		log.info("is statusCheck an JsonPrimitive: {}", statusCheck.isJsonPrimitive());
-		log.info("is statusCheck an JsonNull:      {}", statusCheck.isJsonNull());
-		log.info("---------------------------------------------------");
-		mapping = gson.fromJson(statusCheck, ForgeMapping.class);
-		log.info("statusCheck-Version: {}", mapping.getVersion());
-		log.info("statusCheck-SnapShot: {}", mapping.getSnapshot().size());
-		log.info("statusCheck-Stable: {}", mapping.getStable().size());
-		log.info("---------------------------------------------------");
-		log.info(statusCheck);
-		log.info("---------------------------------------------------");
-
-		JsonElement JObject = statusCheck.getAsJsonObject();
-
-		log.info("is JObject an JsonObject:    {}", JObject.isJsonObject());
-		log.info("is JObject an JsonArray:     {}", JObject.isJsonArray());
-		log.info("is JObject an JsonPrimitive: {}", JObject.isJsonPrimitive());
-		log.info("is JObject an JsonNull:      {}", JObject.isJsonNull());
-		log.info("---------------------------------------------------");
-		mapping = gson.fromJson(JObject, ForgeMapping.class);
-		log.info("JObject-Version: {}", mapping.getVersion());
-		log.info("JObject-SnapShot: {}", mapping.getSnapshot().size());
-		log.info("JObject-Stable: {}", mapping.getStable().size());
-		log.info("---------------------------------------------------");
-		log.info(JObject);
-		log.info("---------------------------------------------------");
-
-		MappingObject object = gson.fromJson(statusCheck, MappingObject.class);
-
-		for (Map.Entry<String, JsonElement> entry : object.map.entrySet()) {
-			ForgeMapping maps = gson.fromJson(entry.getValue().toString(), ForgeMapping.class);
-			maps.version = entry.getKey();
-
-		}
-//		String jobjString = statusCheck.getAsString();
-//		log.info("JObject as string: " + jobjString);
-
-//		JsonElement versions = JObject.get("latest").getAsJsonObject();
-
-		String message = "the latest snapshot is: " + snapshotVersion + " for minecraft version: " + latestMCVersion;
-
-		return message;
-	}
-
-	public static JsonElement get(String url) throws IOException {
-		Gson gson = new Gson();
-
-		// URL declaration
-		URL obj = new URL(url);
-
-		// URL connection
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// Request Settings
-		con.setRequestMethod("GET");
-		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-		// check response code for an okay
-		int responseCode = con.getResponseCode();
-		log.info("GET Response Code: " + responseCode);
-		if (responseCode == HttpURLConnection.HTTP_OK) { // success
-			// Read the Response from the site
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			JsonParser parsely = new JsonParser();
-			JsonElement jobj = parsely.parse(in);
-
-			// Generate a response to return
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
+			if (!json.isJsonObject()) {
+				throw new Exception();
 			}
-			// Close Reader
-			in.close();
+			final JsonObject root = json.getAsJsonObject();
+			final JsonObject latest = root.get("latest").getAsJsonObject();
+			final JsonArray versions = root.get("versions").getAsJsonArray();
 
-			// print result
-			return jobj;
+			versions.forEach(action -> {
+				MinecraftVersion versioning = gson.fromJson(action.getAsJsonObject(), MinecraftVersion.class);
+				versionList.add(versioning);
+				if (versioning.getType().equals("release")) {
+					log.info("Version id: {}", versioning.getId());
+					log.info("Version Type: {}", versioning.getType());
+				}
+
+			});
+			message = "latest release is: " + latest.get("release") + "; " + "the latest snapshot is: "
+					+ latest.get("snapshot");
+		} catch (Exception e) {
+			log.catching(Level.ERROR, e);
 		}
-		log.error("GET Failed");
-		return null;
+
+		return message;
 	}
 
-	class MappingObject {
-		JsonObject map;
+	public static String ForgeStatus() throws IOException {
+		Gson gson = new Gson();
+		int snapshotVersion = 0;
+		int stableVersion = 0;
+		String latestMCVersion = "1.12.2";
+		String message = "";
+		String message2;
+		File backupJsonStatus = new File("C:\\Users\\Daley-Hawkins\\Downloads\\versions.json");
+
+		try (BufferedReader data = Files.newBufferedReader(backupJsonStatus.toPath())) {
+
+			final JsonElement json = JsonParser.parseReader(data);
+
+			if (!json.isJsonObject()) {
+				throw new Exception();
+			}
+			final JsonObject root = json.getAsJsonObject();
+			for (Entry<String, JsonElement> entry : root.entrySet()) {
+				ForgeMapping mappingobj = gson.fromJson(entry.getValue().toString(), ForgeMapping.class);
+				mappingobj.MCVersion = entry.getKey();
+				mappingsList.add(mappingobj);
+				log.info("mappingobj-mcversion: {}", mappingobj.getMCVersion());
+				log.info("mappingobj-snapshot: {}", mappingobj.getSnapshot()[0]);
+				if (mappingobj.getStable().length > 0) {
+					log.info("mappingobj-stable: {}", mappingobj.getStable()[0]);
+				}
+			}
+			if (versionList.isEmpty()) {
+				MinecraftVersion();
+			}
+
+		} catch (Exception e) {
+			log.catching(Level.ERROR, e);
+		}
+		for (int i = 0; i < versionList.size(); i++) {
+			if (versionList.get(i).getType().equals(RELEASE)) {
+				for (int i2 = 0; i2 < mappingsList.size(); i2++) {
+					if (versionList.get(i).getType() == mappingsList.get(i2).getMCVersion()) {
+						log.info("minecraft version list id: {}, mcp mappings list id: {};", versionList.get(i).getId(),
+								mappingsList.get(i2).getMCVersion());
+					}
+				}
+			}
+		}
+		if (message.isEmpty()) {
+			message = "nope, didnt work right kenz";
+		}
+		return message;
 	}
+
 }
