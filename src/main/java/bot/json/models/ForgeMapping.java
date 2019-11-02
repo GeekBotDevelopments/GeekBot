@@ -1,61 +1,36 @@
 package bot.json.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ForgeMapping {
-	public String version = "";
-	List<Integer> snapshot = new ArrayList<>();
-	List<Integer> stable = new ArrayList<>();
+	public String MCVersion = "";
+	int[] snapshot;;
+	int[] stable;
 
 	public ForgeMapping() {
 
 	}
 
-	/**
-	 * @return the version
-	 */
-	public String getVersion() {
-		return version;
+	public String getMCVersion() {
+		return MCVersion;
 	}
 
-	/**
-	 * @return the stable
-	 */
-	public List<Integer> getStable() {
-		return stable;
-	}
-
-	/**
-	 * @return the snapshot
-	 */
-	public List<Integer> getSnapshot() {
+	public int[] getSnapshot() {
 		return snapshot;
 	}
 
-	/**
-	 * @param version the version to set
-	 */
-	public void setVersion(String version) {
-		this.version = version;
+	public int[] getStable() {
+		return stable;
 	}
 
-	/**
-	 * @param stable the stable to set
-	 */
-	public void setStable(List<Integer> stable) {
-		this.stable = stable;
+	public void setMCVersion(String mCVersion) {
+		MCVersion = mCVersion;
 	}
 
-	/**
-	 * @param snapshot the snapshot to set
-	 */
-	public void setSnapshot(List<Integer> snapshot) {
+	public void setSnapshot(int[] snapshot) {
 		this.snapshot = snapshot;
 	}
 
-}
-
-class Mappings {
+	public void setStable(int[] stable) {
+		this.stable = stable;
+	}
 
 }
