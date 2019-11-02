@@ -86,8 +86,24 @@ public class GeekBot {
 		commands.put("latest minecraft version",
 				event -> event.getMessage().getChannel().block().createMessage(Minecraft.MinecraftVersion()).block());
 
-		commands.put("latest forge mappings",
-				event -> event.getMessage().getChannel().block().createMessage(Minecraft.ForgeStatus()).block());
+		commands.put("latest forge mappings", event -> {
+			try {
+				event.getMessage().getChannel().block().createMessage(Minecraft.ForgeStatus()).block();
+			} catch (IOException e) {
+				log.catching(e);
+			}
+		});
+
+		commands.put("what about me?!", event -> event.getMessage().getChannel().block().createEmbed(spec -> {
+			spec.addField("Username", event.getMember().get().getUsername(), true);
+			spec.addField("Nickname", event.getMember().get().getNickname().get(), true);
+			spec.addField("User Id", event.getMember().get().getId().asString(), true);
+			spec.addField("Highest Role", event.getMember().get().getHighestRole().block().getName(), true);
+			spec.addField("Avatar", event.getMember().get().getAvatarUrl(), true);
+			spec.setAuthor(event.getMember().get().getDisplayName(), event.getMember().get().getAvatarUrl(),
+					event.getMember().get().getAvatarUrl());
+
+		}).block());
 
 	}
 
@@ -114,7 +130,8 @@ public class GeekBot {
 		factory = new GsonFactory();
 		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
 //		DisClient.updatePresence(Presence.online(Activity.listening(" for !gb")).asStatusUpdate());
-		DisClient.updatePresence(Presence.online(Activity.listening("to Portal 2 OST")));
+		Presence status = Presence.online(Activity.listening("to Portal 2 OST"));
+		DisClient.updatePresence(status);
 
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
 
