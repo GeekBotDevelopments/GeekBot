@@ -6,9 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +28,7 @@ import com.google.gson.Gson;
 import bot.commands.Command;
 import bot.commands.Minecraft;
 import bot.commands.hug;
+import bot.events.MinecraftUpdateEvent;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
@@ -108,6 +112,8 @@ public class GeekBot {
 	}
 
 	public static void main(String[] args) throws IOException {
+		TimerTask task = new MinecraftUpdateEvent();
+		Timer timer = new Timer();
 		Gson gson = new Gson();
 
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
@@ -129,7 +135,6 @@ public class GeekBot {
 
 		factory = new GsonFactory();
 		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
-//		DisClient.updatePresence(Presence.online(Activity.listening(" for !gb")).asStatusUpdate());
 		Presence status = Presence.online(Activity.listening("to Portal 2 OST"));
 		DisClient.updatePresence(status);
 
@@ -159,7 +164,11 @@ public class GeekBot {
 		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
 		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
 				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
-//		DisClient.getEventDispatcher().on(MinecraftEvent.class).subscribe(event -> event);
+		DisClient.getGuilds().toIterable().forEach(guild -> {
+			log.info("guild name: {}", guild.getName());
+			log.info("Owner's Display Name: {}", guild.getOwner().block().getDisplayName());
+		});
+		timer.schedule(task, get8());
 		DisClient.login().log().block();
 		log.info(result);
 
@@ -339,4 +348,10 @@ public class GeekBot {
 		return BotPrefix;
 	}
 
+	public static Date get8() {
+		Date date = new Date();
+		date.setHours(8);
+		date.setMinutes(0);
+		return date;
+	}
 }
