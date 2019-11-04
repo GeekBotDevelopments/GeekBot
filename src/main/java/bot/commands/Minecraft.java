@@ -37,13 +37,6 @@ public class Minecraft {
 		String message = null;
 		File backupJsonVersion = new File("C:\\Users\\Daley-Hawkins\\Downloads\\version_manifest.json");
 
-//		try {
-//			statusCheck = Json.getJsonFileFromWeb("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
 		try (BufferedReader data = Files.newBufferedReader(backupJsonVersion.toPath())) {
 
 			final JsonElement json = JsonParser.parseReader(data);
@@ -58,14 +51,14 @@ public class Minecraft {
 			versions.forEach(action -> {
 				MinecraftVersion versioning = gson.fromJson(action.getAsJsonObject(), MinecraftVersion.class);
 				versionList.add(versioning);
-				if (versioning.getType().equals("release")) {
+				if (versioning.getType().equals(RELEASE)) {
 					log.info("Version id: {}", versioning.getId());
 					log.info("Version Type: {}", versioning.getType());
 				}
 
 			});
-			message = "latest release is: " + latest.get("release") + "; " + "the latest snapshot is: "
-					+ latest.get("snapshot");
+			message = "latest release is: " + latest.get(RELEASE) + "; " + "the latest snapshot is: "
+					+ latest.get(SNAPSHOT);
 		} catch (Exception e) {
 			log.catching(Level.ERROR, e);
 		}
@@ -108,9 +101,14 @@ public class Minecraft {
 			log.catching(Level.ERROR, e);
 		}
 		for (int i = 0; i < versionList.size(); i++) {
-			if (versionList.get(i).getType().equals(RELEASE)) {
+			String version_i = versionList.get(i).getType();
+			log.info("type from mojangs list: {}", version_i);
+			if (RELEASE.equals(versionList.get(i).getType())) {
+				log.info("Release version found: {}", versionList.get(i).getId());
 				for (int i2 = 0; i2 < mappingsList.size(); i2++) {
-					if (versionList.get(i).getType() == mappingsList.get(i2).getMCVersion()) {
+					String version_i2 = mappingsList.get(i2).getMCVersion();
+					log.info("Minecraft version from mcp's list: {}", version_i2);
+					if (version_i.equals(version_i2)) {
 						log.info("minecraft version list id: {}, mcp mappings list id: {};", versionList.get(i).getId(),
 								mappingsList.get(i2).getMCVersion());
 					}
