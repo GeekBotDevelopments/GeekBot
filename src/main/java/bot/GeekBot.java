@@ -112,8 +112,6 @@ public class GeekBot {
 	}
 
 	public static void main(String[] args) throws IOException {
-		TimerTask task = new MinecraftUpdateEvent();
-		Timer timer = new Timer();
 		Gson gson = new Gson();
 
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
@@ -137,6 +135,8 @@ public class GeekBot {
 		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
 		Presence status = Presence.online(Activity.listening("to Portal 2 OST"));
 		DisClient.updatePresence(status);
+		TimerTask task = new MinecraftUpdateEvent();
+		Timer timer = new Timer();
 
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
 
