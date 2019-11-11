@@ -3,6 +3,7 @@ package bot.events;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.TimerTask;
@@ -12,12 +13,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import bot.GeekBot;
 import bot.commands.Minecraft;
+import bot.json.Json;
 import discord4j.core.object.entity.Channel;
 import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.util.Snowflake;
@@ -29,12 +32,24 @@ public class MinecraftUpdateEvent extends TimerTask {
 			.getChannelById(Snowflake.of("637651124530446366")).block();
 	MessageChannel mchan = (MessageChannel) channel;
 
-	Gson gson = new Gson();
+	Gson gson = new GsonBuilder().create();
 
-	File minecraftVerionJson = new File("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+	try{
+		JsonElement minecraftVerionJson = Json
+				.getJsonFileFromWeb("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+	}catch(IOException e) {
+		log.error("Cannot get the Minecraft Version Manifest");
+		log.catching(e);
+	}
 	File localMinecraftVersionJson = new File("C:\\Users\\Daley-Hawkins\\Downloads\\version_manifest.json");
 
-	File mcpVersionJson = new File("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json");
+	try{
+		JsonElement mcpVersionJson = Json
+				.getJsonFileFromWeb("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json");
+	}catch(IOException e2) {
+		log.error("Cannot get the MCP Version Manifest");
+		log.catching(e);
+	}
 	File localMCPVersionJson = new File("C:\\Users\\Daley-Hawkins\\Downloads\\versions.json");
 
 	@Override
