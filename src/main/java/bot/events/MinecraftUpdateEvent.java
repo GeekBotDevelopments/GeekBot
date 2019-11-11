@@ -1,13 +1,14 @@
 package bot.events;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.TimerTask;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,10 +18,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
 
 import bot.GeekBot;
 import bot.commands.Minecraft;
-import bot.json.Json;
 import discord4j.core.object.entity.Channel;
 import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.util.Snowflake;
@@ -32,25 +33,12 @@ public class MinecraftUpdateEvent extends TimerTask {
 			.getChannelById(Snowflake.of("637651124530446366")).block();
 	MessageChannel mchan = (MessageChannel) channel;
 
-	Gson gson = new GsonBuilder().create();
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	try{
-		JsonElement minecraftVerionJson = Json
-				.getJsonFileFromWeb("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-	}catch(IOException e) {
-		log.error("Cannot get the Minecraft Version Manifest");
-		log.catching(e);
-	}
+	File BotPath = new File("C:\\GeekBot");
+
+	File minecraftVerionJson = new File("C:\\GeekBot\\MinecraftVersionManifest.json");
 	File localMinecraftVersionJson = new File("C:\\Users\\Daley-Hawkins\\Downloads\\version_manifest.json");
-
-	try{
-		JsonElement mcpVersionJson = Json
-				.getJsonFileFromWeb("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json");
-	}catch(IOException e2) {
-		log.error("Cannot get the MCP Version Manifest");
-		log.catching(e);
-	}
-	File localMCPVersionJson = new File("C:\\Users\\Daley-Hawkins\\Downloads\\versions.json");
 
 	@Override
 	public void run() {
@@ -58,12 +46,13 @@ public class MinecraftUpdateEvent extends TimerTask {
 		String oldSnapshot = "";
 		String newRelease = "";
 		String newSnapshot = "";
-		try (BufferedReader data = Files.newBufferedReader(localMinecraftVersionJson.toPath())) {
+
+		try (BufferedReader data = Files.newBufferedReader(minecraftVerionJson.toPath())) {
 
 			final JsonElement json = JsonParser.parseReader(data);
 
 			if (!json.isJsonObject()) {
-				throw new Exception();
+				throw new MalformedJsonException("Not a JsonObject");
 			}
 			final JsonObject root = json.getAsJsonObject();
 			final JsonObject latest = root.get("latest").getAsJsonObject();
@@ -77,24 +66,25 @@ public class MinecraftUpdateEvent extends TimerTask {
 			log.catching(Level.ERROR, e);
 		}
 		try {
-			BufferedReader in = Files.newBufferedReader(minecraftVerionJson.toPath());
-			String input;
-			BufferedWriter out = Files.newBufferedWriter(localMinecraftVersionJson.toPath(), StandardOpenOption.WRITE);
-			while ((input = in.readLine()) != null) {
-				out.write(input);
+			URL minecraftVersionUrl = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+			BotPath.mkdir();
+			if (!minecraftVerionJson.createNewFile()) {
+				log.error("Couldn't make a Dang File");
 			}
-			in.close();
-			out.close();
-		} catch (Exception e) {
-			log.catching(Level.ERROR, e);
+			FileUtils.copyURLToFile(minecraftVersionUrl, minecraftVerionJson);
+
+		} catch (MalformedURLException e1) {
+			log.catching(e1);
+		} catch (IOException e) {
+			log.catching(e);
 		}
 
-		try (BufferedReader data = Files.newBufferedReader(localMinecraftVersionJson.toPath())) {
+		try (BufferedReader data = Files.newBufferedReader(minecraftVerionJson.toPath())) {
 
 			final JsonElement json = JsonParser.parseReader(data);
 
 			if (!json.isJsonObject()) {
-				throw new Exception();
+				throw new MalformedJsonException("Not a JsonObject");
 			}
 			final JsonObject root = json.getAsJsonObject();
 			final JsonObject latest = root.get("latest").getAsJsonObject();
@@ -107,13 +97,11 @@ public class MinecraftUpdateEvent extends TimerTask {
 		} catch (Exception e) {
 			log.catching(Level.ERROR, e);
 		}
-		if (!oldRelease.isEmpty() || !oldSnapshot.isEmpty() || !newRelease.isEmpty() || !newSnapshot.isEmpty()) {
-			if (!oldRelease.equals(newRelease)) {
-				mchan.createMessage("New Release Version of Minecraft is out! Version: " + newRelease);
-			}
-			if (!oldSnapshot.equals(newSnapshot)) {
-				mchan.createMessage("New Snapshot Version of Minecraft is out! Version: " + newSnapshot);
-			}
+		if (!oldRelease.equals(newRelease)) {
+			mchan.createMessage("New Release Version of Minecraft is out! Version: " + newRelease).block();
+		}
+		if (!oldSnapshot.equals(newSnapshot)) {
+			mchan.createMessage("New Snapshot Version of Minecraft is out! Version: " + newSnapshot).block();
 		}
 	}
 
