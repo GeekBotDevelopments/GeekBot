@@ -68,8 +68,8 @@ public class MinecraftUpdateEvent extends TimerTask {
 		try {
 			URL minecraftVersionUrl = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
 			BotPath.mkdir();
-			if (!minecraftVerionJson.createNewFile()) {
-				log.error("Couldn't make a Dang File");
+			if (!minecraftVerionJson.exists()) {
+				minecraftVerionJson.createNewFile();
 			}
 			FileUtils.copyURLToFile(minecraftVersionUrl, minecraftVerionJson);
 

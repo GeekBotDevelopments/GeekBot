@@ -1,6 +1,7 @@
 package bot.json;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -18,9 +19,10 @@ import discord4j.core.object.entity.Guild;
 public class Json {
 	static Logger log = LogManager.getLogger(Json.class);
 	Gson gson = new Gson();
-	String databasePath = "C:\\programfiles\\geekbot\\";
+	public File BotSettingsPath = new File("C:\\GeekBot\\ServerSettings");
 
 	public void ServerSettings(Guild guild) {
+		BotSettingsPath.mkdirs();
 
 	}
 

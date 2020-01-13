@@ -1,18 +1,24 @@
 package bot;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,14 +30,21 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
 
 import bot.commands.Command;
 import bot.commands.Minecraft;
+import bot.commands.Settings;
 import bot.commands.hug;
 import bot.events.MinecraftUpdateEvent;
+import bot.json.models.ServerSettings;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.EventDispatcher;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
@@ -66,8 +79,9 @@ public class GeekBot {
 	private static String BotPrefix = "!gb";
 	private static final Map<String, Command> commands = new HashMap<>();
 	private static long id;
+	public List<ServerSettings> settingsList = new ArrayList<>();
 	private static Logger log = LogManager.getLogger(GeekBot.class);
-
+	public static final File BotPath = new File("C:\\GeekBot\\ServerSettings");
 	static {
 		commands.put("ping", event -> event.getMessage().getChannel().block()
 				.createMessage(event.getMember().get().getMention() + " Pong!").block());
@@ -109,10 +123,13 @@ public class GeekBot {
 
 		}).block());
 
+		commands.put("settings",
+				event -> event.getMessage().getChannel().block().createMessage(Settings.settings(event)).block());
+
 	}
 
 	public static void main(String[] args) throws IOException {
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
@@ -129,6 +146,10 @@ public class GeekBot {
 			DISCORD_SECRET = prop.getProperty("secret.discord");
 			DISCORD_TOKEN = prop.getProperty("token.discord");
 
+		}
+
+		if (!BotPath.exists()) {
+			BotPath.mkdirs();
 		}
 
 		factory = new GsonFactory();
@@ -155,6 +176,23 @@ public class GeekBot {
 
 		log.info("Java Properties: " + System.getProperties());
 
+		for (final File entry : BotPath.listFiles()) {
+			try (BufferedReader data = Files.newBufferedReader(entry.toPath())) {
+
+				final JsonElement json = JsonParser.parseReader(data);
+
+				if (!json.isJsonObject()) {
+					throw new MalformedJsonException("Not a JsonObject");
+				}
+				final ServerSettings guildsettings = gson.fromJson(json, ServerSettings.class);
+				log.info("Guild settings loaded for {} from file Successfully", guildsettings.getName());
+
+				new GeekBot().settingsList.add(guildsettings);
+			} catch (Exception e) {
+				log.catching(Level.ERROR, e);
+			}
+		}
+
 //		result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID() + "&key="
 //				+ getYTApiKey());
 
@@ -164,9 +202,36 @@ public class GeekBot {
 		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
 		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
 				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
-		DisClient.getGuilds().toIterable().forEach(guild -> {
-			log.info("guild name: {}", guild.getName());
-			log.info("Owner's Display Name: {}", guild.getOwner().block().getDisplayName());
+		DisClient.getEventDispatcher().on(GuildCreateEvent.class).subscribe(event -> {
+
+			if (!new GeekBot().settingsList.contains(event.getGuild().getId())) {
+				ServerSettings guildsettings = new ServerSettings();
+				guildsettings.setGuildId(event.getGuild().getId().asLong());
+				guildsettings.setName(event.getGuild().getName());
+				guildsettings.setRecieveMCPMappingUpdates(false);
+				guildsettings.setRecieveMinecraftReleaseUpdates(false);
+				guildsettings.setRecieveMinecraftSanpshotUpdates(false);
+				new GeekBot().settingsList.add(guildsettings);
+				log.info("Created Guild Settings File for Guild {} Sucessfully", guildsettings.getName());
+
+				File settingsfile = new File("C:\\GeekBot\\ServerSettings\\" + guildsettings.getGuildId() + ".json");
+				if (!settingsfile.exists()) {
+					try {
+						settingsfile.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				try {
+					FileWriter writer = new FileWriter(settingsfile);
+					writer.write(gson.toJson(guildsettings));
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		});
 		timer.schedule(task, get8());
 		DisClient.login().log().block();

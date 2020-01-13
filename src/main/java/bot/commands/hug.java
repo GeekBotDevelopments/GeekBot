@@ -13,14 +13,14 @@ public class hug {
 
 	public static String hug(MessageCreateEvent event) {
 		String mention = event.getMember().get().getMention();
-		String messageToSend = mention + " *hugs*";
+		String messageToSend = "*hugs* " + mention;
 		String messageSent = event.getMessage().getContent().get();
 		try {
 			if (messageSent.length() >= 8) {
 				String userid = messageSent.substring(8);
 				Snowflake flake = Snowflake.of(userid);
 				Member member = event.getGuild().block().getMemberById(flake).block();
-				messageToSend = member.getMention() + " *hugs*";
+				messageToSend = "*hugs* " + member.getMention();
 			}
 		} catch (Exception e) {
 			log.catching(Level.ERROR, e);
