@@ -52,11 +52,6 @@ public class Minecraft {
 			versions.forEach(action -> {
 				MinecraftVersion versioning = gson.fromJson(action.getAsJsonObject(), MinecraftVersion.class);
 				versionList.add(versioning);
-				if (versioning.getType().equals(RELEASE)) {
-					log.info("Version id: {}", versioning.getId());
-					log.info("Version Type: {}", versioning.getType());
-				}
-
 			});
 			message = "latest release is: " + latest.get(RELEASE) + "; " + "the latest snapshot is: "
 					+ latest.get(SNAPSHOT) + " <:PixelCreeperBig:665599312134144044>";
@@ -74,7 +69,7 @@ public class Minecraft {
 		String latestMCVersion = "1.12.2";
 		StringBuilder message = new StringBuilder("");
 		String message2;
-		File backupJsonStatus = new File("C:\\Users\\Daley-Hawkins\\Downloads\\versions.json");
+		File backupJsonStatus = new File("C:\\\\GeekBot\\\\MCPVersionManifest.json");
 
 		try (BufferedReader data = Files.newBufferedReader(backupJsonStatus.toPath())) {
 
@@ -88,22 +83,12 @@ public class Minecraft {
 				ForgeMapping mappingobj = gson.fromJson(entry.getValue().toString(), ForgeMapping.class);
 				mappingobj.setMCVersion(entry.getKey());
 				String[] splitVersion = mappingobj.getMCVersion().split("\\.");
-				log.info("mcversion ({}) split is {}", mappingobj.getMCVersion(), splitVersion);
-				log.info("splitVersion length: {}", splitVersion.length);
 				mappingobj.setMCMajor(Integer.parseInt(splitVersion[0]));
 				mappingobj.setMCMinor(Integer.parseInt(splitVersion[1]));
 				if (splitVersion.length == 3) {
 					mappingobj.setMCPatch(Integer.parseInt(splitVersion[2]));
 				}
-				log.info("major mc version: {} ", mappingobj.getMCMajor());
-				log.info("minor mc version: {} ", mappingobj.getMCMinor());
-				log.info("patch mc version: {} ", mappingobj.getMCPatch());
 				mappingsList.add(mappingobj);
-				log.info("mappingobj-mcversion: {}", mappingobj.getMCVersion());
-				log.info("mappingobj-snapshot: {}", mappingobj.getSnapshot()[0]);
-				if (mappingobj.getStable().length > 0) {
-					log.info("mappingobj-stable: {}", mappingobj.getStable()[0]);
-				}
 			}
 			Collections.sort(mappingsList);
 			if (versionList.isEmpty()) {

@@ -39,6 +39,7 @@ import bot.commands.Command;
 import bot.commands.Minecraft;
 import bot.commands.Settings;
 import bot.commands.hug;
+import bot.events.MCPUpdateEvent;
 import bot.events.MinecraftUpdateEvent;
 import bot.json.models.ServerSettings;
 import discord4j.core.DiscordClient;
@@ -157,6 +158,7 @@ public class GeekBot {
 		Presence status = Presence.online(Activity.listening("to Portal 2 OST"));
 		DisClient.updatePresence(status);
 		TimerTask task = new MinecraftUpdateEvent();
+		TimerTask task2 = new MCPUpdateEvent();
 		Timer timer = new Timer();
 
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
@@ -234,6 +236,7 @@ public class GeekBot {
 			}
 		});
 		timer.schedule(task, get8());
+		timer.schedule(task2, get8());
 		DisClient.login().log().block();
 		log.info(result);
 
