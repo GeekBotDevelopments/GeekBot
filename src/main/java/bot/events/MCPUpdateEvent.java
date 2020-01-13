@@ -93,14 +93,12 @@ public class MCPUpdateEvent extends TimerTask {
 		log.info("New Release: {}", newRelease);
 		log.info("New Snapshot: {}", newSnapshot);
 
-//		if (!oldRelease.isEmpty() || !oldSnapshot.isEmpty() || !newRelease.isEmpty() || !newSnapshot.isEmpty()) {
 		if (!oldRelease.equals(newRelease)) {
 			mchan.createMessage("New Stable Version of MCP Mappings is out! Version: " + newRelease);
 		}
 		if (!oldSnapshot.equals(newSnapshot)) {
 			mchan.createMessage("New Snapshot Version of MCP Mappings is out! Version: " + newSnapshot);
 		}
-//		}
 	}
 
 }
