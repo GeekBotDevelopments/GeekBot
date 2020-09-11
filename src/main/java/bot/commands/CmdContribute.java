@@ -12,9 +12,9 @@ public class CmdContribute extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		event.getChannel().sendMessage("to contribute to the bot, or get help with commands, visit the bots dev server here "
-				+ "https://discord.gg/ADrTFRZ or create an issue on our github instead here "
-				+ "https://github.com/LegendaryGeek/GeekBot/issues/new");
+		event.getChannel().sendMessage("to contribute to the bot, or get help with commands, visit the bots dev server here"
+				+ " https://discord.gg/ADrTFRZ or create an issue on our github instead here issue on our github instead here"
+				+ " <https://github.com/LegendaryGeek/GeekBot/issues/new>").submit();
 
 	}
 
