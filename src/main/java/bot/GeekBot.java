@@ -12,11 +12,15 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.security.auth.login.LoginException;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,24 +38,24 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.MalformedJsonException;
+import com.jagrosh.jdautilities.command.CommandClient;
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
 
-import bot.commands.Command;
+import bot.commands.CmdHug;
+import bot.commands.CmdInvite;
+import bot.commands.CmdPing;
+import bot.commands.CmdContribute;
+import bot.commands.CmdUserInfo;
 import bot.commands.Minecraft;
-import bot.commands.Settings;
-import bot.commands.hug;
+import bot.commands.WelcomeEvent;
 import bot.events.MCPUpdateEvent;
 import bot.events.MinecraftUpdateEvent;
 import bot.json.models.ServerSettings;
-import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
-import discord4j.core.event.EventDispatcher;
-import discord4j.core.event.domain.guild.GuildCreateEvent;
-import discord4j.core.event.domain.guild.MemberJoinEvent;
-import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.Member;
-import discord4j.core.object.presence.Activity;
-import discord4j.core.object.presence.Presence;
-import discord4j.core.object.util.Snowflake;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class GeekBot {
 	private static boolean NeverEndingVariable = true;
@@ -60,6 +64,8 @@ public class GeekBot {
 	private static String DISCORD_TOKEN;
 	private static String DISCORD_ID;
 	private static String DISCORD_SECRET;
+	private static String YOUTUBE_ID;
+	private static String OWNER_ID;
 	private static HttpTransport transport = new HttpTransport() {
 
 		@Override
@@ -70,63 +76,30 @@ public class GeekBot {
 	};
 	private static URL url1;
 	private static GsonFactory factory;
-	private static String ID;
 	private static SearchListResponse sr;
-	private static EventDispatcher dispatcher;
-	public static DiscordClient DisClient;
+	// private static EventDispatcher dispatcher;
+	public static JDABuilder builder;
+	public static JDA DisClient;
+	final static CommandClientBuilder commandBuilder = new CommandClientBuilder();
 	public static YouTube YTClient;
 	private static String result;
 	public static String botname = "GeekBot";
 	private static String BotPrefix = "!gb";
-	private static final Map<String, Command> commands = new HashMap<>();
+	//private static final Map<String, Command> commands = new HashMap<>();
 	private static long id;
 	public List<ServerSettings> settingsList = new ArrayList<>();
 	private static Logger log = LogManager.getLogger(GeekBot.class);
 	public static final File BotPath = new File("C:\\GeekBot\\ServerSettings");
+	private static Timer timer = new Timer();
+	
+	private static Set<GatewayIntent> intents = new HashSet<>();
+	
 	static {
-		commands.put("ping", event -> event.getMessage().getChannel().block()
-				.createMessage(event.getMember().get().getMention() + " Pong!").block());
-
-		commands.put("transsafezone", event -> event.getMessage().getChannel().block().createMessage(
-				"Come Join TransSafezone! A server that is free of trans hate, and accepting no matter who you are! invite: https://discord.gg/fD3cWyJ")
-				.block());
-
-		commands.put("invite-bot", event -> event.getMessage().getChannel().block().createMessage(
-				"https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=8&scope=bot")
-				.block());
-
-		commands.put("help",
-				event -> event.getMessage().getChannel().block().createMessage(
-						"until this gets more developed, join the bot's test server: https://discord.gg/ADrTFRZ")
-						.block());
-
-		commands.put("hug", event -> event.getMessage().getChannel().block().createMessage(hug.hug(event)).block());
-
-		commands.put("latest minecraft version",
-				event -> event.getMessage().getChannel().block().createMessage(Minecraft.MinecraftVersion()).block());
-
-		commands.put("latest forge mappings", event -> {
-			try {
-				event.getMessage().getChannel().block().createMessage(Minecraft.ForgeStatus()).block();
-			} catch (IOException e) {
-				log.catching(e);
-			}
-		});
-
-		commands.put("what about me?!", event -> event.getMessage().getChannel().block().createEmbed(spec -> {
-			spec.addField("Username", event.getMember().get().getUsername(), true);
-			spec.addField("Nickname", event.getMember().get().getNickname().get(), true);
-			spec.addField("User Id", event.getMember().get().getId().asString(), true);
-			spec.addField("Highest Role", event.getMember().get().getHighestRole().block().getName(), true);
-			spec.addField("Avatar", event.getMember().get().getAvatarUrl(), true);
-			spec.setAuthor(event.getMember().get().getDisplayName(), event.getMember().get().getAvatarUrl(),
-					event.getMember().get().getAvatarUrl());
-
-		}).block());
-
-		commands.put("settings",
-				event -> event.getMessage().getChannel().block().createMessage(Settings.settings(event)).block());
-
+		intents.add(GatewayIntent.DIRECT_MESSAGES);
+		intents.add(GatewayIntent.DIRECT_MESSAGE_TYPING);
+		intents.add(GatewayIntent.GUILD_MEMBERS);
+		intents.add(GatewayIntent.GUILD_MESSAGES);
+		intents.add(GatewayIntent.GUILD_MESSAGE_TYPING);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -146,6 +119,8 @@ public class GeekBot {
 			DISCORD_ID = prop.getProperty("id.discord");
 			DISCORD_SECRET = prop.getProperty("secret.discord");
 			DISCORD_TOKEN = prop.getProperty("token.discord");
+			YOUTUBE_ID = prop.getProperty("id.youtube");
+			OWNER_ID = prop.getProperty("id.owner");
 
 		}
 
@@ -154,12 +129,12 @@ public class GeekBot {
 		}
 
 		factory = new GsonFactory();
-		DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
-		Presence status = Presence.online(Activity.listening("to Portal 2 OST"));
-		DisClient.updatePresence(status);
-		TimerTask task = new MinecraftUpdateEvent();
-		TimerTask task2 = new MCPUpdateEvent();
-		Timer timer = new Timer();
+		// DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
+		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
+		// StatusUpdate status = Presence.online(Activity.listening("to Portal 2 OST"));
+		// DisClient.updatePresence(status);
+		//TimerTask task = new MinecraftUpdateEvent();
+		//TimerTask task2 = new MCPUpdateEvent();
 
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
 
@@ -169,8 +144,6 @@ public class GeekBot {
 			}
 		}).setApplicationName(botname).build();
 		YouTube.Search.List request = YTClient.search().list("id,snippet");
-
-		GeekBot.ID = "UC5qTgnQwtojeVvOKncoNfRA";
 
 		request.setChannelId(getID());
 		request.buildHttpRequest();
@@ -186,10 +159,10 @@ public class GeekBot {
 				if (!json.isJsonObject()) {
 					throw new MalformedJsonException("Not a JsonObject");
 				}
-				final ServerSettings guildsettings = gson.fromJson(json, ServerSettings.class);
-				log.info("Guild settings loaded for {} from file Successfully", guildsettings.getName());
+				//final ServerSettings guildsettings = gson.fromJson(json, ServerSettings.class);
+				//log.info("Guild settings loaded for {} from file Successfully", guildsettings.getName());
 
-				new GeekBot().settingsList.add(guildsettings);
+				//ew GeekBot().settingsList.add(guildsettings);
 			} catch (Exception e) {
 				log.catching(Level.ERROR, e);
 			}
@@ -200,46 +173,36 @@ public class GeekBot {
 
 //		sr = gson.fromJson(result, SearchListResponse.class);
 
+	 
+
 		// set discord events
-		DisClient.getEventDispatcher().on(MessageCreateEvent.class).subscribe(event -> parseMessage(event));
-		DisClient.getEventDispatcher().on(MemberJoinEvent.class)
-				.subscribe(event -> welcome(event.getGuildId(), event.getMember(), event));
-		DisClient.getEventDispatcher().on(GuildCreateEvent.class).subscribe(event -> {
+		builder.addEventListeners(new WelcomeEvent());
+		commandBuilder.setPrefix("!gb ");
+		commandBuilder.setOwnerId(OWNER_ID);
+		commandBuilder.addCommand(new CmdPing());
+		commandBuilder.addCommand(new CmdInvite());
+		commandBuilder.addCommand(new CmdContribute());
+		commandBuilder.addCommand(new CmdHug());
+		commandBuilder.addCommand(new CmdUserInfo());
 
-			if (!new GeekBot().settingsList.contains(event.getGuild().getId())) {
-				ServerSettings guildsettings = new ServerSettings();
-				guildsettings.setGuildId(event.getGuild().getId().asLong());
-				guildsettings.setName(event.getGuild().getName());
-				guildsettings.setRecieveMCPMappingUpdates(false);
-				guildsettings.setRecieveMinecraftReleaseUpdates(false);
-				guildsettings.setRecieveMinecraftSanpshotUpdates(false);
-				new GeekBot().settingsList.add(guildsettings);
-				log.info("Created Guild Settings File for Guild {} Sucessfully", guildsettings.getName());
+		commandBuilder.setHelpWord("help");
 
-				File settingsfile = new File("C:\\GeekBot\\ServerSettings\\" + guildsettings.getGuildId() + ".json");
-				if (!settingsfile.exists()) {
-					try {
-						settingsfile.createNewFile();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				try {
-					FileWriter writer = new FileWriter(settingsfile);
-					writer.write(gson.toJson(guildsettings));
-					writer.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		timer.schedule(task, get8());
-		timer.schedule(task2, get8());
-		DisClient.login().log().block();
+		//timer.schedule(task, get8());
+		//timer.schedule(task2, get8());
+		final CommandClient commandListener = commandBuilder.build();
+		builder.addEventListeners(commandListener);
+		builder.enableIntents(intents);
+
+		try {
+			builder.build();
+		} catch (LoginException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DisClient.setAutoReconnect(true);
+		DisClient.getPresence().setActivity(Activity.watching("for !gb help"));
+		// DisClient.login().log().block();
 		log.info(result);
-
 		log.info("End Of Program");
 	}
 
@@ -276,87 +239,7 @@ public class GeekBot {
 		return null;
 	}
 
-	// -----Utility-Methods----- //
 
-	/**
-	 * 
-	 * @return if the loop should continue being loopy
-	 */
-	public static boolean isNeverendingvar() {
-		return NeverEndingVariable;
-	}
-
-	/**
-	 * stops the bit
-	 *
-	 */
-	public static void stop() {
-		DisClient.logout().block();
-		return;
-	}
-
-	/**
-	 * restarts the bit
-	 *
-	 */
-	public static void restart() {
-		DisClient.logout().block();
-		DisClient.login().block();
-		return;
-	}
-
-	// -----BOT-STUFF----- //
-
-	public static void welcome(Snowflake guildId, Member member, MemberJoinEvent eventIn) {
-		eventIn.getGuild().block().getSystemChannel().block()
-				.createMessage("welcome " + member.getMention() + " to " + eventIn.getGuild().block().getName() + "!")
-				.block();
-		if (eventIn.getGuildId().asString().equals("605590142647795732")) {
-			eventIn.getGuild().block().getSystemChannel().block()
-					.createMessage(
-							"be sure to read <#618920323949133836> and introduce yourself in <#618908853446115348>")
-					.block();
-		}
-
-	}
-
-	public static void parseMessage(MessageCreateEvent eventIn) {
-		if (eventIn.getMessage().getContent().isPresent()) {
-			String Message1 = eventIn.getMessage().getContent().get().toString();
-
-			log.debug("message: [" + Message1 + "]");
-			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
-				// We will be using !gb as our "prefix" to any command in the system.
-				if (Message1.startsWith("!gb " + entry.getKey())) {
-					entry.getValue().execute(eventIn);
-					break;
-				}
-			}
-			if (!eventIn.getGuildId().get().asString().equals("542561748327202836")) {
-				eventIn.getMessage().getContent()
-						.ifPresent(c -> log.info(getMemberName(eventIn) + ": " + c.trim().toString()));
-			}
-		}
-	}
-
-	public static String getMemberName(MessageCreateEvent eventIn) {
-		if (eventIn.getMember().get().isBot()) {
-			return eventIn.getMember().get().getDisplayName() + "[BOT]";
-		}
-		return eventIn.getMember().get().getDisplayName();
-	}
-
-	public static Member getMemberFromID(long id, MessageCreateEvent event) {
-		Member member;
-		Snowflake Sid = Snowflake.of(id);
-//		member = event.getGuild().block().getMemberById(id).block();
-		log.debug("Getting member with id of: " + Sid.asString());
-
-		member = DisClient.getMemberById(event.getGuildId().get(), Sid).block();
-
-		log.debug("Member is: " + member.getDisplayName());
-		return member;
-	}
 
 	// -----GETTERS-&-SETTERS----- //
 
@@ -368,31 +251,23 @@ public class GeekBot {
 		return BASEURL;
 	}
 
-	public static EventDispatcher getDispatcher() {
-		return dispatcher;
-	}
+//	public static EventDispatcher getDispatcher() {
+//		return dispatcher;
+//	}
 
 	public static URL getUrl1() {
 		return url1;
 	}
 
 	public static String getID() {
-		return ID;
-	}
-
-	public static void setDispatcher(EventDispatcher dispatcher) {
-		GeekBot.dispatcher = dispatcher;
+		return YOUTUBE_ID;
 	}
 
 	public static void setUrl1(URL url1) {
 		GeekBot.url1 = url1;
 	}
 
-	public static void setID(String iD) {
-		ID = iD;
-	}
-
-	public static DiscordClient getClient() {
+	public static JDA getClient() {
 		return DisClient;
 	}
 

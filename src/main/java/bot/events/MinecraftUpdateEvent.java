@@ -22,23 +22,18 @@ import com.google.gson.stream.MalformedJsonException;
 
 import bot.GeekBot;
 import bot.commands.Minecraft;
-import discord4j.core.object.entity.Channel;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.util.Snowflake;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class MinecraftUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MinecraftUpdateEvent.class);
 
-	Channel channel = GeekBot.getClient().getGuildById(Snowflake.of("632708637122625538")).block()
-			.getChannelById(Snowflake.of("637651124530446366")).block();
-	MessageChannel mchan = (MessageChannel) channel;
+	TextChannel channel[];
 
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	File BotPath = new File("C:\\GeekBot");
 
 	File minecraftVerionJson = new File("C:\\GeekBot\\MinecraftVersionManifest.json");
-	File localMinecraftVersionJson = new File("C:\\Users\\Daley-Hawkins\\Downloads\\version_manifest.json");
 
 	@Override
 	public void run() {
@@ -98,10 +93,12 @@ public class MinecraftUpdateEvent extends TimerTask {
 			log.catching(Level.ERROR, e);
 		}
 		if (!oldRelease.equals(newRelease)) {
-			mchan.createMessage("New Release Version of Minecraft is out! Version: " + newRelease).block();
+			// mchan.createMessage("New Release Version of Minecraft is out! Version: " +
+			// newRelease).block();
 		}
 		if (!oldSnapshot.equals(newSnapshot)) {
-			mchan.createMessage("New Snapshot Version of Minecraft is out! Version: " + newSnapshot).block();
+			// mchan.createMessage("New Snapshot Version of Minecraft is out! Version: " +
+			// newSnapshot).block();
 		}
 	}
 

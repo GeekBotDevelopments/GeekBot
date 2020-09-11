@@ -16,16 +16,14 @@ import com.google.gson.GsonBuilder;
 import bot.GeekBot;
 import bot.commands.Minecraft;
 import bot.json.models.ForgeMapping;
-import discord4j.core.object.entity.Channel;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.util.Snowflake;
 
 public class MCPUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MCPUpdateEvent.class);
 
-	Channel channel = GeekBot.getClient().getGuildById(Snowflake.of("632708637122625538")).block()
-			.getChannelById(Snowflake.of("637651124530446366")).block();
-	MessageChannel mchan = (MessageChannel) channel;
+	// Channel channel =
+	// GeekBot.getClient().getGuildById(Snowflake.of("632708637122625538")).block()
+	// .getChannelById(Snowflake.of("637651124530446366")).block();
+	// MessageChannel mchan = (MessageChannel) channel;
 
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -94,10 +92,12 @@ public class MCPUpdateEvent extends TimerTask {
 		log.info("New Snapshot: {}", newSnapshot);
 
 		if (!oldRelease.equals(newRelease)) {
-			mchan.createMessage("New Stable Version of MCP Mappings is out! Version: " + newRelease);
+			// mchan.createMessage("New Stable Version of MCP Mappings is out! Version: " +
+			// newRelease);
 		}
 		if (!oldSnapshot.equals(newSnapshot)) {
-			mchan.createMessage("New Snapshot Version of MCP Mappings is out! Version: " + newSnapshot);
+			// mchan.createMessage("New Snapshot Version of MCP Mappings is out! Version: "
+			// + newSnapshot);
 		}
 	}
 

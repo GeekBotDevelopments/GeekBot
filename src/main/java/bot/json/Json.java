@@ -14,17 +14,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import discord4j.core.object.entity.Guild;
-
 public class Json {
 	static Logger log = LogManager.getLogger(Json.class);
 	Gson gson = new Gson();
 	public File BotSettingsPath = new File("C:\\GeekBot\\ServerSettings");
 
-	public void ServerSettings(Guild guild) {
-		BotSettingsPath.mkdirs();
-
-	}
+//	public void ServerSettings(Guild guild) {
+//		BotSettingsPath.mkdirs();
+//
+//	}
 
 	public static JsonElement getJsonFileFromWeb(String url) throws IOException {
 		Gson gson = new Gson();
