@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -44,12 +45,16 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdPing;
+import bot.commands.CmdStarboundRole;
+import bot.commands.CmdChironHistory;
+import bot.commands.CmdChironJob;
 import bot.commands.CmdContribute;
 import bot.commands.CmdUserInfo;
+import bot.commands.EventStarboudServerReset;
 import bot.commands.Minecraft;
-import bot.commands.WelcomeEvent;
 import bot.events.MCPUpdateEvent;
 import bot.events.MinecraftUpdateEvent;
+import bot.events.WelcomeEvent;
 import bot.json.models.ServerSettings;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
@@ -66,6 +71,11 @@ public class GeekBot {
 	private static String DISCORD_SECRET;
 	private static String YOUTUBE_ID;
 	private static String OWNER_ID;
+	private static String LABRINTH_ID;
+	private static String LABUPDATE;
+	private static String CHIRON_KEY;
+	private static String  CHIRON_URL;
+	
 	private static HttpTransport transport = new HttpTransport() {
 
 		@Override
@@ -121,6 +131,10 @@ public class GeekBot {
 			DISCORD_TOKEN = prop.getProperty("token.discord");
 			YOUTUBE_ID = prop.getProperty("id.youtube");
 			OWNER_ID = prop.getProperty("id.owner");
+			LABRINTH_ID = prop.getProperty("id.labrinth");
+			LABUPDATE = prop.getProperty("id.labupdate");
+			CHIRON_KEY = prop.getProperty("key.chiron");
+			CHIRON_URL = prop.getProperty("url.chiron");
 
 		}
 
@@ -133,8 +147,7 @@ public class GeekBot {
 		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
 		// StatusUpdate status = Presence.online(Activity.listening("to Portal 2 OST"));
 		// DisClient.updatePresence(status);
-		//TimerTask task = new MinecraftUpdateEvent();
-		//TimerTask task2 = new MCPUpdateEvent();
+		TimerTask task = new EventStarboudServerReset();
 
 		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
 
@@ -184,11 +197,15 @@ public class GeekBot {
 		commandBuilder.addCommand(new CmdContribute());
 		commandBuilder.addCommand(new CmdHug());
 		commandBuilder.addCommand(new CmdUserInfo());
+		
+		// commands not used  by the public
+		commandBuilder.addCommand(new CmdStarboundRole());
+		commandBuilder.addCommand(new CmdChironHistory());
+		commandBuilder.addCommand(new CmdChironJob());
 
 		commandBuilder.setHelpWord("help");
 
-		//timer.schedule(task, get8());
-		//timer.schedule(task2, get8());
+		timer.schedule(task, get24());
 		final CommandClient commandListener = commandBuilder.build();
 		builder.addEventListeners(commandListener);
 		builder.enableIntents(intents);
@@ -204,6 +221,30 @@ public class GeekBot {
 		// DisClient.login().log().block();
 		log.info(result);
 		log.info("End Of Program");
+	}
+
+	public static String getCHIRON_KEY() {
+		return CHIRON_KEY;
+	}
+
+	public static String getCHIRON_URL() {
+		return CHIRON_URL;
+	}
+
+	public static String getLABRINTH_ID() {
+		return LABRINTH_ID;
+	}
+
+	public static void setLABRINTH_ID(String lABRINTH_ID) {
+		LABRINTH_ID = lABRINTH_ID;
+	}
+
+	public static String getLABUPDATE() {
+		return LABUPDATE;
+	}
+
+	public static void setLABUPDATE(String lABUPDATE) {
+		LABUPDATE = lABUPDATE;
 	}
 
 	public static String get(String url) throws IOException {
@@ -237,6 +278,18 @@ public class GeekBot {
 			return response.toString();
 		}
 		return null;
+	}
+	
+	public static int post(String hostUrl, String send) throws IOException{
+		URL obj = new URL(hostUrl);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("POST");
+		con.setDoOutput(true);
+		
+		try(OutputStream os = con.getOutputStream()){
+			os.write(send.getBytes());
+		}
+		return con.getResponseCode();
 	}
 
 
@@ -291,9 +344,9 @@ public class GeekBot {
 		return BotPrefix;
 	}
 
-	public static Date get8() {
+	public static Date get24() {
 		Date date = new Date();
-		date.setHours(8);
+		date.setHours(24);
 		date.setMinutes(0);
 		return date;
 	}
