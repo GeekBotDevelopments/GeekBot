@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.events;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -20,7 +20,7 @@ public class WelcomeEvent extends ListenerAdapter {
 		TextChannel chan = event.getGuild().getSystemChannel();
 		Member member = event.getMember();
 		
-		chan.sendMessage("Welcome " + member.getNickname() + " to " + event.getGuild().getName());
+		chan.sendMessage("Welcome " + member.getEffectiveName() + " to " + event.getGuild().getName()).submit();
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class WelcomeEvent extends ListenerAdapter {
 		TextChannel chan = event.getGuild().getSystemChannel();
 		Member member = event.getMember();
 		
-		chan.sendMessage("member " + member.getEffectiveName() + " has left");
+		chan.sendMessage("member " + member.getEffectiveName() + " has left").submit();
 	}
 	
 	
