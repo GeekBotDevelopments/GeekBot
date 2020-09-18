@@ -12,7 +12,7 @@ public class CmdPing extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		event.getChannel().sendMessage("pong!");
+		event.getChannel().sendMessage("pong!").submit();
 	}
 
 }

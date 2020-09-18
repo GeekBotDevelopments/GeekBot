@@ -14,7 +14,7 @@ public class CmdInvite extends Command {
 	@Override
 	protected void execute(CommandEvent event) {
 		event.getChannel().sendMessage("have an invite link to invite the bot to your server: "
-				+ "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=8&scope=bot");
+				+ "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=8&scope=bot").submit();
 		
 	}
 
