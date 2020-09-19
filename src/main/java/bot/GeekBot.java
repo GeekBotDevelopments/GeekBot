@@ -46,6 +46,7 @@ import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdPing;
 import bot.commands.CmdStarboundRole;
+import bot.commands.CmdStopBot;
 import bot.commands.CmdChironHistory;
 import bot.commands.CmdChironJob;
 import bot.commands.CmdContribute;
@@ -56,6 +57,8 @@ import bot.events.MCPUpdateEvent;
 import bot.events.MinecraftUpdateEvent;
 import bot.events.WelcomeEvent;
 import bot.json.models.ServerSettings;
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -101,6 +104,8 @@ public class GeekBot {
 	private static Logger log = LogManager.getLogger(GeekBot.class);
 	public static final File BotPath = new File("C:\\GeekBot\\ServerSettings");
 	private static Timer timer = new Timer();
+	private static Configuration config = new Configuration();
+	private static StreamSpeechRecognizer recog;
 	
 	private static Set<GatewayIntent> intents = new HashSet<>();
 	
@@ -115,6 +120,12 @@ public class GeekBot {
 	public static void main(String[] args) throws IOException {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+
+		recog = new StreamSpeechRecognizer(config);
+		
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
 			Properties prop = new Properties();
@@ -212,7 +223,7 @@ public class GeekBot {
 		builder.enableIntents(intents);
 
 		try {
-			builder.build();
+			DisClient = builder.build();
 		} catch (LoginException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

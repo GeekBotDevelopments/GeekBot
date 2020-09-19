@@ -33,10 +33,13 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
 	mavenCentral()
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
 	//implementation 'com.discord4j:discord4j-core:3.0'
+	  compile group: 'edu.cmu.sphinx', name: 'sphinx4-core', version:'5prealpha-SNAPSHOT'
+    compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
 	compile 'com.jagrosh:jda-utilities:3.0.4'
     compile 'net.dv8tion:JDA:4.2.0_168'
 	compile 'com.google.api-client:google-api-client:1.30.2'
