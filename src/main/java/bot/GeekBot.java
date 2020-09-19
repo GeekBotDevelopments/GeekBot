@@ -199,6 +199,7 @@ public class GeekBot {
 		commandBuilder.addCommand(new CmdUserInfo());
 		
 		// commands not used  by the public
+		commandBuilder.addCommand(new CmdStopBot());
 		commandBuilder.addCommand(new CmdStarboundRole());
 		commandBuilder.addCommand(new CmdChironHistory());
 		commandBuilder.addCommand(new CmdChironJob());
