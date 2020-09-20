@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.events;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,6 +16,10 @@ public class EventStarboudServerReset extends TimerTask {
 
 	@Override
 	public void run() {
+
+	}
+	
+	public void starbound_reset() {
 		Role starbound = GeekBot.getClient().getGuildById(GeekBot.getLABRINTH_ID()).getRoleById(755597397710733352l);
 		Path serverPath = Paths.get("E:\\Games\\Steam\\steamapps\\common\\Starbound Dedicated Server\\win64");
 		GeekBot.getClient().getTextChannelById(GeekBot.getLABUPDATE()).sendMessage(starbound.getAsMention() + " server restart").submit();
@@ -29,7 +33,7 @@ public class EventStarboudServerReset extends TimerTask {
 		Runtime rs = Runtime.getRuntime();
 		try {
 			rs.exec("Taskkill /IM starbound_server.exe /F");
-			rs.exec("start \"Starbound Server\" " + serverPath.toString() + " starbound_server.exe");
+			rs.exec("start \"Starbound Server\" " + serverPath.toString() + " \\starbound_server.exe");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
