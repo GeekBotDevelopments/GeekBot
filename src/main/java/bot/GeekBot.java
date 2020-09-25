@@ -76,7 +76,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class GeekBot {
 	private static boolean NeverEndingVariable = true;
-	private static final String BASEURL = "https://www.googleapis.com/youtube/v3";
+	private static String BASEURL = "https://www.googleapis.com/youtube/v3";
 	private static String GOOGLE_API_KEY;
 	private static String DISCORD_TOKEN;
 	private static String DISCORD_ID;
@@ -91,7 +91,6 @@ public class GeekBot {
 	private static URL url1;
 	private static GsonFactory factory;
 	private static SearchListResponse sr;
-	// private static EventDispatcher dispatcher;
 	public static JDABuilder builder;
 	public static JDA DisClient;
 	final static CommandClientBuilder commandBuilder = new CommandClientBuilder();
@@ -99,7 +98,6 @@ public class GeekBot {
 	private static String result;
 	public static String botname = "GeekBot";
 	private static String BotPrefix = "!gb";
-	//private static final Map<String, Command> commands = new HashMap<>();
 	private static long id;
 	public List<ServerSettings> settingsList = new ArrayList<>();
 	private static Logger log = LogManager.getLogger(GeekBot.class);
@@ -163,10 +161,7 @@ public class GeekBot {
 		}
 
 		factory = new GsonFactory();
-		// DisClient = new DiscordClientBuilder(GeekBot.getDiscordToken()).build();
 		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
-		// StatusUpdate status = Presence.online(Activity.listening("to Portal 2 OST"));
-		// DisClient.updatePresence(status);
 		
 
 		YTClient = new YouTube.Builder(new HttpTransport() {
@@ -187,9 +182,9 @@ public class GeekBot {
 
 		request.setChannelId(getID());
 		request.buildHttpRequest();
-		log.info("request json content: " + request.getJsonContent());
+		log.info("request json content: {}", request.getJsonContent());
 
-		log.info("Java Properties: " + System.getProperties());
+		//log.info("Java Properties: " + System.getProperties());
 		
 		
 	
@@ -250,10 +245,8 @@ public class GeekBot {
 			DisClient.setAutoReconnect(true);
 			DisClient.getPresence().setActivity(Activity.watching("for !gb help"));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// DisClient.login().log().block();
 		log.info(result);
 		log.info("End Of Program");
 	}
