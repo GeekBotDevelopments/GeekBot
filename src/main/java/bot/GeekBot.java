@@ -1,5 +1,6 @@
 package bot;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,9 +9,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,15 +50,18 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
+import bot.commands.CmdJoinVoice;
 import bot.commands.CmdPing;
+import bot.commands.CmdStarBoundRestart;
 import bot.commands.CmdStarboundRole;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdChironHistory;
 import bot.commands.CmdChironJob;
 import bot.commands.CmdContribute;
+import bot.commands.CmdExitVoice;
 import bot.commands.CmdUserInfo;
-import bot.commands.EventStarboudServerReset;
 import bot.commands.Minecraft;
+import bot.events.EventStarboudServerReset;
 import bot.events.MCPUpdateEvent;
 import bot.events.MinecraftUpdateEvent;
 import bot.events.WelcomeEvent;
@@ -79,14 +88,6 @@ public class GeekBot {
 	private static String CHIRON_KEY;
 	private static String  CHIRON_URL;
 	
-	private static HttpTransport transport = new HttpTransport() {
-
-		@Override
-		protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	};
 	private static URL url1;
 	private static GsonFactory factory;
 	private static SearchListResponse sr;
@@ -106,6 +107,14 @@ public class GeekBot {
 	private static Timer timer = new Timer();
 	private static Configuration config = new Configuration();
 	private static StreamSpeechRecognizer recog;
+	public static TimerTask task = new EventStarboudServerReset();
+	public static final String STEAM_INSTALLATION_PATH = "C:\\Program Files (x86)\\Steam\\Steam.exe";
+    private static final boolean USE_STEAM_PROTOCOL = true;
+    private static Process steamProcess;
+    private static final String SEARCH_URL = "https://steamdb.info/search/?a=app&q=";
+    private static final String QUERY_SELECTOR = "#table-sortable > tbody > tr > td:nth-child(1) > a";
+
+
 	
 	private static Set<GatewayIntent> intents = new HashSet<>();
 	
@@ -158,9 +167,16 @@ public class GeekBot {
 		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
 		// StatusUpdate status = Presence.online(Activity.listening("to Portal 2 OST"));
 		// DisClient.updatePresence(status);
-		TimerTask task = new EventStarboudServerReset();
+		
 
-		YTClient = new YouTube.Builder(GeekBot.transport, factory, new HttpRequestInitializer() {
+		YTClient = new YouTube.Builder(new HttpTransport() {
+			
+			@Override
+			protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		}, factory, new HttpRequestInitializer() {
 
 			@Override
 			public void initialize(HttpRequest request) throws IOException {
@@ -174,6 +190,9 @@ public class GeekBot {
 		log.info("request json content: " + request.getJsonContent());
 
 		log.info("Java Properties: " + System.getProperties());
+		
+		
+	
 
 		for (final File entry : BotPath.listFiles()) {
 			try (BufferedReader data = Files.newBufferedReader(entry.toPath())) {
@@ -212,8 +231,11 @@ public class GeekBot {
 		// commands not used  by the public
 		commandBuilder.addCommand(new CmdStopBot());
 		commandBuilder.addCommand(new CmdStarboundRole());
+		commandBuilder.addCommand(new CmdStarBoundRestart());
 		commandBuilder.addCommand(new CmdChironHistory());
 		commandBuilder.addCommand(new CmdChironJob());
+		commandBuilder.addCommand(new CmdJoinVoice());
+		commandBuilder.addCommand(new CmdExitVoice());
 
 		commandBuilder.setHelpWord("help");
 
@@ -222,14 +244,15 @@ public class GeekBot {
 		builder.addEventListeners(commandListener);
 		builder.enableIntents(intents);
 
+		
 		try {
 			DisClient = builder.build();
-		} catch (LoginException e) {
+			DisClient.setAutoReconnect(true);
+			DisClient.getPresence().setActivity(Activity.watching("for !gb help"));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DisClient.setAutoReconnect(true);
-		DisClient.getPresence().setActivity(Activity.watching("for !gb help"));
 		// DisClient.login().log().block();
 		log.info(result);
 		log.info("End Of Program");
@@ -258,6 +281,48 @@ public class GeekBot {
 	public static void setLABUPDATE(String lABUPDATE) {
 		LABUPDATE = lABUPDATE;
 	}
+	
+
+//    public static void startGameById(String id) throws Exception
+//    {
+//        if (USE_STEAM_PROTOCOL)
+//        {
+//            Desktop desktop = Desktop.getDesktop();
+//            URI steamProtocol = new URI("steam://run/" + id);
+//            desktop.browse(steamProtocol);
+//        } else
+//        {
+//            startProcess("-applaunch", id);
+//        }
+//    }
+//    
+//    private static void startProcess(String... arguments) throws IOException
+//    {
+//        List<String> allArguments = new ArrayList<String>();
+//        allArguments.add(STEAM_INSTALLATION_PATH);
+//        List<String> argumentsList = Arrays.asList(arguments);
+//        allArguments.addAll(argumentsList);
+//        ProcessBuilder process = new ProcessBuilder(allArguments);
+//        steamProcess = process.start();
+//    }
+//    
+//    public static String getAppId(String searchTerm) throws IOException
+//    {
+//        String completeSearchURL = SEARCH_URL + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8.name());
+//        URLConnection connection = new URL(completeSearchURL).openConnection();
+//        String document = connection.getContent().toString();
+//        val selectedElements = document.
+//        val anchorElement = selectedElements.get(0);
+//        return anchorElement.text();
+//    }
+
+	public static Configuration getConfig() {
+		return config;
+	}
+
+	public static StreamSpeechRecognizer getRecog() {
+		return recog;
+	}
 
 	public static String get(String url) throws IOException {
 		// URL declaration
@@ -269,7 +334,43 @@ public class GeekBot {
 		// Request Settings
 		con.setRequestMethod("GET");
 		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		// check response code for an okay
+		int responseCode = con.getResponseCode();
+		log.info("GET Response Code: " + responseCode);
+		if (responseCode == HttpURLConnection.HTTP_OK) { // success
+			// Read the Response from the site
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
 
+			// Generate a response to return
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			// Close Reader
+			in.close();
+
+			// print result
+			return response.toString();
+		}
+		return null;
+	}
+	
+	public static String getOWNER_ID() {
+		return OWNER_ID;
+	}
+
+	public static String get(String url, String additionalPropertyKey, String additionalPropertyValue) throws IOException {
+		// URL declaration
+		URL obj = new URL(url);
+
+		// URL connection
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		// Request Settings
+		con.setRequestMethod("GET");
+		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		con.addRequestProperty(additionalPropertyKey, additionalPropertyValue);
 		// check response code for an okay
 		int responseCode = con.getResponseCode();
 		log.info("GET Response Code: " + responseCode);
