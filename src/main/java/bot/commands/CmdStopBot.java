@@ -2,6 +2,7 @@ package bot.commands;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.util.log.Log;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -22,6 +23,8 @@ public class CmdStopBot extends Command {
 		GeekBot.getClient().cancelRequests();
 		GeekBot.getClient().shutdown();
 		log.info("Shutdown");
+		System.exit(0);
+		log.info("Should not see thisss");
 	}
 
 }
