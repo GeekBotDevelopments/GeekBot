@@ -38,6 +38,7 @@ repositories {
 
 dependencies {
 	//implementation 'com.discord4j:discord4j-core:3.0'
+	  compile group: 'com.github.koraktor', name:'steam-condenser', version:'1.3.9'
 	  compile group: 'edu.cmu.sphinx', name: 'sphinx4-core', version:'5prealpha-SNAPSHOT'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
 	compile 'com.jagrosh:jda-utilities:3.0.4'
@@ -48,7 +49,6 @@ dependencies {
 	compile 'com.google.code.gson:gson:2.8.6'
 	compile 'com.google.http-client:google-http-client-gson:1.33.0'
 	compile 'org.apache.commons:commons-io:1.3.2'
-    //api 'org.apache.commons:commons-math3:3.6.1'
     compile 'com.google.guava:guava:26.0'
     testImplementation 'junit:junit:4.12'
     compile 'ch.qos.logback:logback-classic:1.2.3'
