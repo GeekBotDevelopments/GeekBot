@@ -20,12 +20,11 @@ public class WelcomeEvent extends ListenerAdapter {
 		TextChannel chan = event.getGuild().getSystemChannel();
 		Member member = event.getMember();
 		
-		chan.sendMessage("Welcome " + member.getEffectiveName() + " to " + event.getGuild().getName()).submit();
+		chan.sendMessage("Welcome **" + member.getEffectiveName() + "** to " + event.getGuild().getName()).submit();
 	}
 
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-		// TODO Auto-generated method stub
 		super.onGuildMemberRemove(event);
 		TextChannel chan = event.getGuild().getSystemChannel();
 		Member member = event.getMember();
