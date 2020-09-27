@@ -1,11 +1,23 @@
 package bot.events;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.github.koraktor.steamcondenser.exceptions.SteamCondenserException;
+import com.github.koraktor.steamcondenser.steam.community.SteamGame;
+import com.github.koraktor.steamcondenser.steam.community.XMLData;
+import com.github.koraktor.steamcondenser.steam.packets.rcon.RCONPacket;
+import com.github.koraktor.steamcondenser.steam.packets.rcon.RCONPacketFactory;
+import com.github.koraktor.steamcondenser.steam.servers.Server;
+import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
+import com.github.koraktor.steamcondenser.steam.sockets.RCONSocket;
+import com.google.common.net.InetAddresses;
 
 import bot.GeekBot;
 import net.dv8tion.jda.api.entities.Role;
@@ -31,23 +43,36 @@ public class EventStarboudServerReset extends TimerTask {
 				.sendMessage(starbound.getAsMention() + " server restart").submit();
 		try {
 			log.info("Waiting 5 minutes");
-			this.wait(300000);
+			//this.wait(300000);
 		} catch (Exception e) {
 			log.catching(e);
 		}
 		Runtime rs = Runtime.getRuntime();
-		//Process process;
-		//ProcessBuilder pb = new ProcessBuilder("start " + serverPath.toString() + "starbound_server.exe");
+		// Process process;
+		// ProcessBuilder pb = new ProcessBuilder("start " + serverPath.toString() +
+		// "starbound_server.exe");
 		try {
 			log.info("killing task");
-			rs.exec("Taskkill /IM starbound_server.exe /F");
-			
+			//rs.exec("Taskkill /IM starbound_server.exe /F");
+
 			log.info("Starting task");
+
+			InetAddress serverip = InetAddress.getByName("legendarygeek.ddns.net");
+			GeekBot.starboundServer = new SourceServer(serverip, 21025);
+			log.info("auth successsful: {}", GeekBot.starboundServer.rconAuth("toma"));
+			GeekBot.starboundServer.initSocket();
+			GeekBot.starboundServer.initialize();
+			log.info("server host names: {}" , GeekBot.starboundServer.getHostNames());
+			RCONSocket starsock = new RCONSocket(serverip, 21026);
+			log.info(starsock.getReply().toString());
+			//GeekBot.starboundServer.initialize();
+			log.info(GeekBot.starboundServer.getPlayers());
 			
-			log.info(GeekBot.get("steam://rungameid/533830"));
-			//process = pb.start();
-			//process = rs.exec(serverPath.toString() + "starbound_server.exe" , null, serverPath.toFile());
-			//EventStarboundLog starlog = new EventStarboundLog(process.getErrorStream());
+			// log.info(GeekBot.get("steam://rungameid/533830"));
+			// process = pb.start();
+			// process = rs.exec(serverPath.toString() + "starbound_server.exe" , null,
+			// serverPath.toFile());
+			// EventStarboundLog starlog = new EventStarboundLog(process.getErrorStream());
 		} catch (Exception e) {
 			log.catching(e);
 		}

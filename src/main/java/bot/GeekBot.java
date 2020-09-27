@@ -1,38 +1,28 @@
 package bot;
 
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.security.auth.login.LoginException;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
@@ -48,6 +38,10 @@ import com.google.gson.stream.MalformedJsonException;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 
+import bot.commands.CmdChironHistory;
+import bot.commands.CmdChironJob;
+import bot.commands.CmdContribute;
+import bot.commands.CmdExitVoice;
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdJoinVoice;
@@ -55,15 +49,8 @@ import bot.commands.CmdPing;
 import bot.commands.CmdStarBoundRestart;
 import bot.commands.CmdStarboundRole;
 import bot.commands.CmdStopBot;
-import bot.commands.CmdChironHistory;
-import bot.commands.CmdChironJob;
-import bot.commands.CmdContribute;
-import bot.commands.CmdExitVoice;
 import bot.commands.CmdUserInfo;
-import bot.commands.Minecraft;
 import bot.events.EventStarboudServerReset;
-import bot.events.MCPUpdateEvent;
-import bot.events.MinecraftUpdateEvent;
 import bot.events.WelcomeEvent;
 import bot.json.models.ServerSettings;
 import edu.cmu.sphinx.api.Configuration;
@@ -107,10 +94,7 @@ public class GeekBot {
 	private static StreamSpeechRecognizer recog;
 	public static TimerTask task = new EventStarboudServerReset();
 	public static final String STEAM_INSTALLATION_PATH = "C:\\Program Files (x86)\\Steam\\Steam.exe";
-    private static final boolean USE_STEAM_PROTOCOL = true;
-    private static Process steamProcess;
-    private static final String SEARCH_URL = "https://steamdb.info/search/?a=app&q=";
-    private static final String QUERY_SELECTOR = "#table-sortable > tbody > tr > td:nth-child(1) > a";
+    public static SourceServer starboundServer;
 
 
 	
@@ -342,6 +326,7 @@ public class GeekBot {
 			}
 			// Close Reader
 			in.close();
+			con.disconnect();
 
 			// print result
 			return response.toString();
@@ -379,6 +364,7 @@ public class GeekBot {
 			}
 			// Close Reader
 			in.close();
+			con.disconnect();
 
 			// print result
 			return response.toString();
