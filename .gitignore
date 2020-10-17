@@ -15,6 +15,7 @@ out
 
 # vs code
 .vscode/
+.vscode/settings.json
 *.sln
 
 # gradle
@@ -26,4 +27,5 @@ eclipse
 run
 src/main/resources/Config.properties
 target/
+
 
