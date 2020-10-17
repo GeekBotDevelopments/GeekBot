@@ -8,19 +8,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
 import com.google.api.client.http.HttpRequest;
@@ -33,14 +30,17 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.MalformedJsonException;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import bot.commands.CmdChironHistory;
 import bot.commands.CmdChironJob;
 import bot.commands.CmdContribute;
+import bot.commands.CmdEnderHistory;
+import bot.commands.CmdEnderJob;
 import bot.commands.CmdExitVoice;
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
@@ -52,7 +52,6 @@ import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
 import bot.events.EventStarboudServerReset;
 import bot.events.WelcomeEvent;
-import bot.json.models.ServerSettings;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import net.dv8tion.jda.api.AccountType;
@@ -73,8 +72,14 @@ public class GeekBot {
 	private static String LABRINTH_ID;
 	private static String LABUPDATE;
 	private static String CHIRON_KEY;
-	private static String  CHIRON_URL;
-	
+	private static String CHIRON_URL;
+	private static String MINDUSTRY_URL;
+	private static String DATABASE_URL;
+	private static String DATABASE_USER;
+	private static String DATABASE_PASS;
+	private static String ENDER_KEY;
+	private static String ENDER_URL;
+
 	private static URL url1;
 	private static GsonFactory factory;
 	private static SearchListResponse sr;
@@ -86,7 +91,8 @@ public class GeekBot {
 	public static String botname = "GeekBot";
 	private static String BotPrefix = "!gb";
 	private static long id;
-	public List<ServerSettings> settingsList = new ArrayList<>();
+	// public List<ServerSettings> settingsList = new ArrayList<>();
+	private static JsonElement serverSettings;
 	private static Logger log = LogManager.getLogger(GeekBot.class);
 	public static final File BotPath = new File("C:\\GeekBot\\ServerSettings");
 	private static Timer timer = new Timer();
@@ -94,12 +100,10 @@ public class GeekBot {
 	private static StreamSpeechRecognizer recog;
 	public static TimerTask task = new EventStarboudServerReset();
 	public static final String STEAM_INSTALLATION_PATH = "C:\\Program Files (x86)\\Steam\\Steam.exe";
-    public static SourceServer starboundServer;
+	public static SourceServer starboundServer;
 
-
-	
 	private static Set<GatewayIntent> intents = new HashSet<>();
-	
+
 	static {
 		intents.add(GatewayIntent.DIRECT_MESSAGES);
 		intents.add(GatewayIntent.DIRECT_MESSAGE_TYPING);
@@ -112,11 +116,11 @@ public class GeekBot {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
-        config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+		config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
 		recog = new StreamSpeechRecognizer(config);
-		
+
 		try (InputStream input = GeekBot.class.getClassLoader().getResourceAsStream("Config.properties")) {
 
 			Properties prop = new Properties();
@@ -127,17 +131,22 @@ public class GeekBot {
 
 			log.info("Loading keys");
 			prop.load(input);
-			GOOGLE_API_KEY = prop.getProperty("key.google");
-			DISCORD_ID = prop.getProperty("id.discord");
-			DISCORD_SECRET = prop.getProperty("secret.discord");
-			DISCORD_TOKEN = prop.getProperty("token.discord");
-			YOUTUBE_ID = prop.getProperty("id.youtube");
-			OWNER_ID = prop.getProperty("id.owner");
-			LABRINTH_ID = prop.getProperty("id.labrinth");
-			LABUPDATE = prop.getProperty("id.labupdate");
-			CHIRON_KEY = prop.getProperty("key.chiron");
-			CHIRON_URL = prop.getProperty("url.chiron");
-
+			setGOOGLE_API_KEY(prop.getProperty("key.google"));
+			setCHIRON_KEY(prop.getProperty("id.discord"));
+			setDISCORD_SECRET(prop.getProperty("secret.discord"));
+			setDISCORD_TOKEN(prop.getProperty("token.discord"));
+			setYOUTUBE_ID(prop.getProperty("id.youtube"));
+			setOWNER_ID(prop.getProperty("id.owner"));
+			setLABRINTH_ID(prop.getProperty("id.labrinth"));
+			setLABUPDATE(prop.getProperty("id.labupdate"));
+			setCHIRON_KEY(prop.getProperty("key.chiron"));
+			setCHIRON_URL(prop.getProperty("url.chiron"));
+			setMINDUSTRY_URL(prop.getProperty("url.mindustry"));
+			setDATABASE_URL(prop.getProperty("url.database"));
+			setDATABASE_PASS(prop.getProperty("password.database"));
+			setDATABASE_USER(prop.getProperty("username.database"));
+			setENDER_KEY(prop.getProperty("key.ender"));
+			setENDER_URL(prop.getProperty("url.ender"));
 		}
 
 		if (!BotPath.exists()) {
@@ -146,10 +155,9 @@ public class GeekBot {
 
 		factory = new GsonFactory();
 		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
-		
 
 		YTClient = new YouTube.Builder(new HttpTransport() {
-			
+
 			@Override
 			protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
 				// TODO Auto-generated method stub
@@ -159,7 +167,6 @@ public class GeekBot {
 
 			@Override
 			public void initialize(HttpRequest request) throws IOException {
-
 			}
 		}).setApplicationName(botname).build();
 		YouTube.Search.List request = YTClient.search().list("id,snippet");
@@ -168,34 +175,11 @@ public class GeekBot {
 		request.buildHttpRequest();
 		log.info("request json content: {}", request.getJsonContent());
 
-		//log.info("Java Properties: " + System.getProperties());
-		
-		
-	
+		// result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" +
+		// "&channelId=" + getID() + "&key="
+		// + getYTApiKey());
 
-		for (final File entry : BotPath.listFiles()) {
-			try (BufferedReader data = Files.newBufferedReader(entry.toPath())) {
-
-				final JsonElement json = JsonParser.parseReader(data);
-
-				if (!json.isJsonObject()) {
-					throw new MalformedJsonException("Not a JsonObject");
-				}
-				//final ServerSettings guildsettings = gson.fromJson(json, ServerSettings.class);
-				//log.info("Guild settings loaded for {} from file Successfully", guildsettings.getName());
-
-				//ew GeekBot().settingsList.add(guildsettings);
-			} catch (Exception e) {
-				log.catching(Level.ERROR, e);
-			}
-		}
-
-//		result = get(getBaseurl() + "/search?" + "part=snippet" + "&order=date" + "&channelId=" + getID() + "&key="
-//				+ getYTApiKey());
-
-//		sr = gson.fromJson(result, SearchListResponse.class);
-
-	 
+		// sr = gson.fromJson(result, SearchListResponse.class);
 
 		// set discord events
 		builder.addEventListeners(new WelcomeEvent());
@@ -206,8 +190,8 @@ public class GeekBot {
 		commandBuilder.addCommand(new CmdContribute());
 		commandBuilder.addCommand(new CmdHug());
 		commandBuilder.addCommand(new CmdUserInfo());
-		
-		// commands not used  by the public
+
+		// commands not used by the public
 		commandBuilder.addCommand(new CmdStopBot());
 		commandBuilder.addCommand(new CmdStarboundRole());
 		commandBuilder.addCommand(new CmdStarBoundRestart());
@@ -215,6 +199,8 @@ public class GeekBot {
 		commandBuilder.addCommand(new CmdChironJob());
 		commandBuilder.addCommand(new CmdJoinVoice());
 		commandBuilder.addCommand(new CmdExitVoice());
+		commandBuilder.addCommand(new CmdEnderHistory());
+		commandBuilder.addCommand(new CmdEnderJob());
 
 		commandBuilder.setHelpWord("help");
 
@@ -223,7 +209,6 @@ public class GeekBot {
 		builder.addEventListeners(commandListener);
 		builder.enableIntents(intents);
 
-		
 		try {
 			DisClient = builder.build();
 			DisClient.setAutoReconnect(true);
@@ -231,8 +216,30 @@ public class GeekBot {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		
+		DisClient.getGuilds().forEach(action -> {
+			try {
+				final Connection conn = DriverManager.getConnection(getDATABASE_URL(), getDATABASE_USER(), getDATABASE_PASS());
+
+				conn.createStatement().execute("CREATE TABLE geek_bot;", Statement.RETURN_GENERATED_KEYS);
+				conn.createStatement().execute("SELECT * FROM geek_bot;", Statement.RETURN_GENERATED_KEYS);
+
+			} catch (SQLException e) {
+				log.catching(e);
+			}
+
+		});
+
 		log.info(result);
 		log.info("End Of Program");
+	}
+
+	/**
+	 * @return the MINDUSTRY_URL
+	 */
+	public static String getMINDUSTRY_URL() {
+		return MINDUSTRY_URL;
 	}
 
 	public static String getCHIRON_KEY() {
@@ -258,40 +265,40 @@ public class GeekBot {
 	public static void setLABUPDATE(String lABUPDATE) {
 		LABUPDATE = lABUPDATE;
 	}
-	
 
-//    public static void startGameById(String id) throws Exception
-//    {
-//        if (USE_STEAM_PROTOCOL)
-//        {
-//            Desktop desktop = Desktop.getDesktop();
-//            URI steamProtocol = new URI("steam://run/" + id);
-//            desktop.browse(steamProtocol);
-//        } else
-//        {
-//            startProcess("-applaunch", id);
-//        }
-//    }
-//    
-//    private static void startProcess(String... arguments) throws IOException
-//    {
-//        List<String> allArguments = new ArrayList<String>();
-//        allArguments.add(STEAM_INSTALLATION_PATH);
-//        List<String> argumentsList = Arrays.asList(arguments);
-//        allArguments.addAll(argumentsList);
-//        ProcessBuilder process = new ProcessBuilder(allArguments);
-//        steamProcess = process.start();
-//    }
-//    
-//    public static String getAppId(String searchTerm) throws IOException
-//    {
-//        String completeSearchURL = SEARCH_URL + URLEncoder.encode(searchTerm, StandardCharsets.UTF_8.name());
-//        URLConnection connection = new URL(completeSearchURL).openConnection();
-//        String document = connection.getContent().toString();
-//        val selectedElements = document.
-//        val anchorElement = selectedElements.get(0);
-//        return anchorElement.text();
-//    }
+	// public static void startGameById(String id) throws Exception
+	// {
+	// if (USE_STEAM_PROTOCOL)
+	// {
+	// Desktop desktop = Desktop.getDesktop();
+	// URI steamProtocol = new URI("steam://run/" + id);
+	// desktop.browse(steamProtocol);
+	// } else
+	// {
+	// startProcess("-applaunch", id);
+	// }
+	// }
+	//
+	// private static void startProcess(String... arguments) throws IOException
+	// {
+	// List<String> allArguments = new ArrayList<String>();
+	// allArguments.add(STEAM_INSTALLATION_PATH);
+	// List<String> argumentsList = Arrays.asList(arguments);
+	// allArguments.addAll(argumentsList);
+	// ProcessBuilder process = new ProcessBuilder(allArguments);
+	// steamProcess = process.start();
+	// }
+	//
+	// public static String getAppId(String searchTerm) throws IOException
+	// {
+	// String completeSearchURL = SEARCH_URL + URLEncoder.encode(searchTerm,
+	// StandardCharsets.UTF_8.name());
+	// URLConnection connection = new URL(completeSearchURL).openConnection();
+	// String document = connection.getContent().toString();
+	// val selectedElements = document.
+	// val anchorElement = selectedElements.get(0);
+	// return anchorElement.text();
+	// }
 
 	public static Configuration getConfig() {
 		return config;
@@ -333,12 +340,13 @@ public class GeekBot {
 		}
 		return null;
 	}
-	
+
 	public static String getOWNER_ID() {
 		return OWNER_ID;
 	}
 
-	public static String get(String url, String additionalPropertyKey, String additionalPropertyValue) throws IOException {
+	public static String get(String url, String additionalPropertyKey, String additionalPropertyValue)
+			throws IOException {
 		// URL declaration
 		URL obj = new URL(url);
 
@@ -371,20 +379,18 @@ public class GeekBot {
 		}
 		return null;
 	}
-	
-	public static int post(String hostUrl, String send) throws IOException{
+
+	public static int post(String hostUrl, String send) throws IOException {
 		URL obj = new URL(hostUrl);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
-		
-		try(OutputStream os = con.getOutputStream()){
+
+		try (OutputStream os = con.getOutputStream()) {
 			os.write(send.getBytes());
 		}
 		return con.getResponseCode();
 	}
-
-
 
 	// -----GETTERS-&-SETTERS----- //
 
@@ -396,9 +402,9 @@ public class GeekBot {
 		return BASEURL;
 	}
 
-//	public static EventDispatcher getDispatcher() {
-//		return dispatcher;
-//	}
+	// public static EventDispatcher getDispatcher() {
+	// return dispatcher;
+	// }
 
 	public static URL getUrl1() {
 		return url1;
@@ -441,5 +447,173 @@ public class GeekBot {
 		date.setHours(24);
 		date.setMinutes(0);
 		return date;
+	}
+
+	/**
+	 * @return the gOOGLE_API_KEY
+	 */
+	public static String getGOOGLE_API_KEY() {
+		return GOOGLE_API_KEY;
+	}
+
+	/**
+	 * @param gOOGLE_API_KEY the gOOGLE_API_KEY to set
+	 */
+	public static void setGOOGLE_API_KEY(String gOOGLE_API_KEY) {
+		GOOGLE_API_KEY = gOOGLE_API_KEY;
+	}
+
+	/**
+	 * @return the dISCORD_TOKEN
+	 */
+	public static String getDISCORD_TOKEN() {
+		return DISCORD_TOKEN;
+	}
+
+	/**
+	 * @param dISCORD_TOKEN the dISCORD_TOKEN to set
+	 */
+	public static void setDISCORD_TOKEN(String dISCORD_TOKEN) {
+		DISCORD_TOKEN = dISCORD_TOKEN;
+	}
+
+	/**
+	 * @return the dISCORD_ID
+	 */
+	public static String getDISCORD_ID() {
+		return DISCORD_ID;
+	}
+
+	/**
+	 * @param dISCORD_ID the dISCORD_ID to set
+	 */
+	public static void setDISCORD_ID(String dISCORD_ID) {
+		DISCORD_ID = dISCORD_ID;
+	}
+
+	/**
+	 * @return the dISCORD_SECRET
+	 */
+	public static String getDISCORD_SECRET() {
+		return DISCORD_SECRET;
+	}
+
+	/**
+	 * @param dISCORD_SECRET the dISCORD_SECRET to set
+	 */
+	public static void setDISCORD_SECRET(String dISCORD_SECRET) {
+		DISCORD_SECRET = dISCORD_SECRET;
+	}
+
+	/**
+	 * @return the yOUTUBE_ID
+	 */
+	public static String getYOUTUBE_ID() {
+		return YOUTUBE_ID;
+	}
+
+	/**
+	 * @param yOUTUBE_ID the yOUTUBE_ID to set
+	 */
+	public static void setYOUTUBE_ID(String yOUTUBE_ID) {
+		YOUTUBE_ID = yOUTUBE_ID;
+	}
+
+	/**
+	 * @param oWNER_ID the oWNER_ID to set
+	 */
+	public static void setOWNER_ID(String oWNER_ID) {
+		OWNER_ID = oWNER_ID;
+	}
+
+	/**
+	 * @param cHIRON_KEY the cHIRON_KEY to set
+	 */
+	public static void setCHIRON_KEY(String cHIRON_KEY) {
+		CHIRON_KEY = cHIRON_KEY;
+	}
+
+	/**
+	 * @param cHIRON_URL the cHIRON_URL to set
+	 */
+	public static void setCHIRON_URL(String cHIRON_URL) {
+		CHIRON_URL = cHIRON_URL;
+	}
+
+	/**
+	 * @param mINDUSTRY_URL the mINDUSTRY_URL to set
+	 */
+	public static void setMINDUSTRY_URL(String mINDUSTRY_URL) {
+		MINDUSTRY_URL = mINDUSTRY_URL;
+	}
+
+	/**
+	 * @return the dATABASE_URL
+	 */
+	public static String getDATABASE_URL() {
+		return DATABASE_URL;
+	}
+
+	/**
+	 * @param dATABASE_URL the dATABASE_URL to set
+	 */
+	public static void setDATABASE_URL(String dATABASE_URL) {
+		DATABASE_URL = dATABASE_URL;
+	}
+
+	/**
+	 * @return the dATABASE_USER
+	 */
+	public static String getDATABASE_USER() {
+		return DATABASE_USER;
+	}
+
+	/**
+	 * @param dATABASE_USER the dATABASE_USER to set
+	 */
+	public static void setDATABASE_USER(String dATABASE_USER) {
+		DATABASE_USER = dATABASE_USER;
+	}
+
+	/**
+	 * @return the dATABASE_PASS
+	 */
+	public static String getDATABASE_PASS() {
+		return DATABASE_PASS;
+	}
+
+	/**
+	 * @param dATABASE_PASS the dATABASE_PASS to set
+	 */
+	public static void setDATABASE_PASS(String dATABASE_PASS) {
+		DATABASE_PASS = dATABASE_PASS;
+	}
+
+	/**
+	 * @return the eNDER_KEY
+	 */
+	public static String getENDER_KEY() {
+		return ENDER_KEY;
+	}
+
+	/**
+	 * @param eNDER_KEY the eNDER_KEY to set
+	 */
+	public static void setENDER_KEY(String eNDER_KEY) {
+		ENDER_KEY = eNDER_KEY;
+	}
+
+	/**
+	 * @return the eNDER_URL
+	 */
+	public static String getENDER_URL() {
+		return ENDER_URL;
+	}
+
+	/**
+	 * @param eNDER_URL the eNDER_URL to set
+	 */
+	public static void setENDER_URL(String eNDER_URL) {
+		ENDER_URL = eNDER_URL;
 	}
 }
