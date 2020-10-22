@@ -61,7 +61,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class GeekBot {
-	private static boolean NeverEndingVariable = true;
 	private static String BASEURL = "https://www.googleapis.com/youtube/v3";
 	private static String GOOGLE_API_KEY;
 	private static String DISCORD_TOKEN;
@@ -265,40 +264,6 @@ public class GeekBot {
 	public static void setLABUPDATE(String lABUPDATE) {
 		LABUPDATE = lABUPDATE;
 	}
-
-	// public static void startGameById(String id) throws Exception
-	// {
-	// if (USE_STEAM_PROTOCOL)
-	// {
-	// Desktop desktop = Desktop.getDesktop();
-	// URI steamProtocol = new URI("steam://run/" + id);
-	// desktop.browse(steamProtocol);
-	// } else
-	// {
-	// startProcess("-applaunch", id);
-	// }
-	// }
-	//
-	// private static void startProcess(String... arguments) throws IOException
-	// {
-	// List<String> allArguments = new ArrayList<String>();
-	// allArguments.add(STEAM_INSTALLATION_PATH);
-	// List<String> argumentsList = Arrays.asList(arguments);
-	// allArguments.addAll(argumentsList);
-	// ProcessBuilder process = new ProcessBuilder(allArguments);
-	// steamProcess = process.start();
-	// }
-	//
-	// public static String getAppId(String searchTerm) throws IOException
-	// {
-	// String completeSearchURL = SEARCH_URL + URLEncoder.encode(searchTerm,
-	// StandardCharsets.UTF_8.name());
-	// URLConnection connection = new URL(completeSearchURL).openConnection();
-	// String document = connection.getContent().toString();
-	// val selectedElements = document.
-	// val anchorElement = selectedElements.get(0);
-	// return anchorElement.text();
-	// }
 
 	public static Configuration getConfig() {
 		return config;
