@@ -38,6 +38,7 @@ jobs:
         id: dockerhub_push
         uses: docker/build-push-action@v2
         with:
+          push: true
           repository: legendarygeek/geekbot
           tag_with_ref: true
   
