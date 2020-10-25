@@ -18,6 +18,8 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug
         
       - name: Builder instance name
         id: builder_name
