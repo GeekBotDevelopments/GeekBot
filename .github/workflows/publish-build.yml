@@ -39,6 +39,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tag: legendarygeek/geekbot
-          tag_with_ref: true
+          tags: legendarygeek/geekbot
   
