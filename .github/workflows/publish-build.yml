@@ -62,7 +62,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Package
-          path: build/lib
+          path: |
+            build/lib
+            build/distributions
             
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
