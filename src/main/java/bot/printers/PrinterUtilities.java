@@ -44,23 +44,35 @@ public class PrinterUtilities {
 			minutes = (estimatedPrintTime % 3600) / 60;
 		if (estimatedPrintTime != null)
 			seconds = estimatedPrintTime % 60;
-
+try{
 		if (info.getJob().getFile().getName() != null)
 			builder.addField("File name", info.getJob().getFile().getName(), true);
 
 		if (estimatedPrintTime != null)
 			builder.addField("Estimaed Print Time", String.format("%02d:%02d:%02d", hours, minutes, seconds), true);
 
-		if (info.getJob().getFilament().getLength() != null)
-			builder.addField("Filament Length", info.getJob().getFilament().getLength().toString(), true);
+		if (info.getJob().getFilament().getLength() != null){
+            builder.addField("Filament Length", info.getJob().getFilament().getLength().toString(), true);
+            builder.addField("Filament Price", String.format("%.2f", FilamentTypes.PLA.getPrice() * info.getJob().getFilament().getLength()), true);
+        }else{
+            builder.addField("Filament Length", info.getJob().getFilament().getTool0().getLength().toString(), true);
+            builder.addField("Filament Price", String.format("%.2f", FilamentTypes.PLA.getPrice() * info.getJob().getFilament().getTool0().getLength()) , true);
+        }
 
-		if ((Float)info.getJob().getFilament().getVolume() != null) 
-			builder.addField("Filament Volume", info.getJob().getFilament().getVolume().toString(), true);
+		if ((Float)info.getJob().getFilament().getVolume() != null){
+            builder.addField("Filament Volume", info.getJob().getFilament().getVolume().toString(), true);
+        }else{
+            builder.addField("Filament Volume", info.getJob().getFilament().getTool0().getVolume().toString(), true);
+        }
 
 		if ((Float)info.getProgress().getCompletion() != null)
-			builder.addField("Percent Done", info.getProgress().getCompletion().toString(), true);
+            builder.addField("Percent Done", info.getProgress().getCompletion().toString(), true);
 
-		builder.addField("Printer State", info.getState(), true);
+        builder.addField("Printer State", info.getState(), true);
+}catch(Exception e){
+    log.catching(e);
+    builder.addField("Error: ", e.getMessage().toString(), true);
+}
         return builder;
 	}
 	

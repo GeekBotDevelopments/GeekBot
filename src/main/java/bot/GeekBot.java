@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,6 +28,9 @@ import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.cloud.texttospeech.v1beta1.SsmlVoiceGender;
+import com.google.cloud.texttospeech.v1beta1.SynthesisInput;
+import com.google.cloud.texttospeech.v1beta1.Voice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -60,6 +64,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
 
 public class GeekBot {
 	private static String BASEURL = "https://www.googleapis.com/youtube/v3";
@@ -110,10 +115,15 @@ public class GeekBot {
 		intents.add(GatewayIntent.GUILD_MEMBERS);
 		intents.add(GatewayIntent.GUILD_MESSAGES);
 		intents.add(GatewayIntent.GUILD_MESSAGE_TYPING);
+		intents.add(GatewayIntent.GUILD_VOICE_STATES);
+		intents.add(GatewayIntent.GUILD_EMOJIS);
+		intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 	}
 
 	public static void main(String[] args) throws IOException {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		//com.codedisaster.steamworks.
 
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
@@ -152,12 +162,16 @@ public class GeekBot {
 			setDATABASE_USER(prop.getProperty("username.database"));
 			setENDER_KEY(prop.getProperty("key.ender"));
 			setENDER_URL(prop.getProperty("url.ender"));
+
+			log.info("Keys loaded");
 		}
 
+		
 
+		
 
 		factory = new GsonFactory();
-		builder = new JDABuilder(AccountType.BOT).setToken(DISCORD_TOKEN);
+		builder = JDABuilder.createDefault(getDiscordToken(), intents);
 
 		YTClient = new YouTube.Builder(new HttpTransport() {
 
@@ -209,6 +223,7 @@ public class GeekBot {
 
 		//timer.schedule(task, get24());
 		final CommandClient commandListener = commandBuilder.build();
+		builder.setChunkingFilter(ChunkingFilter.ALL);
 		builder.addEventListeners(commandListener);
 		builder.enableIntents(intents);
 
@@ -217,15 +232,15 @@ public class GeekBot {
 			DisClient.setAutoReconnect(true);
 			DisClient.getPresence().setActivity(Activity.watching("for !gb help"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.catching(e);
 		}
 
 		
-		DisClient.getGuilds().forEach(action -> {
+		//DisClient.getGuilds().forEach(action -> {
 
-		log.info(result);
-		log.info("End Of Program");
-	});
+		//log.info(result);
+		//log.info("End Of Program");
+	//});
 }
 
 	/**
