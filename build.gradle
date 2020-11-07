@@ -43,14 +43,14 @@ repositories {
     jcenter()
 	mavenCentral()
 	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-	maven { url 'https://csspeechstorage.blob.core.windows.net/maven/' }
+	//maven { url 'https://csspeechstorage.blob.core.windows.net/maven/' }
 }
 
 dependencies {
 	compile group: 'com.github.koraktor', name:'steam-condenser', version:'1.3.9'
 	compile group: 'edu.cmu.sphinx', name: 'sphinx4-core', version:'5prealpha-SNAPSHOT'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
-    compile group: 'com.microsoft.cognitiveservices.speech', name: 'client-sdk', version: '1.13.0'
+    //compile group: 'com.microsoft.cognitiveservices.speech', name: 'client-sdk', version: '1.13.0'
 	compile 'com.jagrosh:jda-utilities:3.0.4'
     compile 'net.dv8tion:JDA:4.2.0_214'
 	compile 'com.google.api-client:google-api-client:1.30.2'
@@ -60,10 +60,23 @@ dependencies {
 	compile 'com.google.http-client:google-http-client-gson:1.33.0'
 	compile 'org.apache.commons:commons-io:1.3.2'
 	compile 'com.google.guava:guava:28.2-jre'
+    compile 'com.google.cloud:google-cloud-texttospeech:1.2.2'
     compile 'ch.qos.logback:logback-classic:1.2.3'
 	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.1'
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
 	compile 'org.mariadb.jdbc:mariadb-java-client:2.7.0'
+
+    compile platform("org.lwjgl:lwjgl-bom:3.2.3")
+
+	compile "org.lwjgl:lwjgl"
+	compile "org.lwjgl:lwjgl-odbc"
+	compile "org.lwjgl:lwjgl-openal"
+	compile "org.lwjgl:lwjgl-openvr"
+	compile "org.lwjgl:lwjgl::natives-windows"
+	compile "org.lwjgl:lwjgl-openal::natives-windows"
+	compile "org.lwjgl:lwjgl-openvr::natives-windows"
+	compile "com.code-disaster.steamworks4j:steamworks4j:1.8.0"
+	compile "com.code-disaster.steamworks4j:steamworks4j-server:1.8.0"
 	
     testImplementation 'junit:junit:4.12'
 }
