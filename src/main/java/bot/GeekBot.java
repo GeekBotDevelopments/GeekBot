@@ -7,12 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
@@ -28,9 +23,6 @@ import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.cloud.texttospeech.v1beta1.SsmlVoiceGender;
-import com.google.cloud.texttospeech.v1beta1.SynthesisInput;
-import com.google.cloud.texttospeech.v1beta1.Voice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -40,6 +32,11 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import bot.commands.CmdChironHistory;
 import bot.commands.CmdChironJob;
@@ -51,7 +48,6 @@ import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdJoinVoice;
 import bot.commands.CmdPing;
-import bot.commands.CmdStarBoundRestart;
 import bot.commands.CmdStarboundRole;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
@@ -59,13 +55,14 @@ import bot.events.EventStarboudServerReset;
 import bot.events.WelcomeEvent;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 
+@SpringBootApplication
+@RestController
 public class GeekBot {
 	private static String BASEURL = "https://www.googleapis.com/youtube/v3";
 	private static String GOOGLE_API_KEY;
@@ -121,9 +118,8 @@ public class GeekBot {
 	}
 
 	public static void main(String[] args) throws IOException {
+		SpringApplication.run(GeekBot.class, args);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		//com.codedisaster.steamworks.
 
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
@@ -590,4 +586,10 @@ public class GeekBot {
 	public static void setENDER_URL(String eNDER_URL) {
 		ENDER_URL = eNDER_URL;
 	}
+
+	@GetMapping("/hello")
+	public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
+	return String.format("Hello %s!", name);
+	}
+
 }
