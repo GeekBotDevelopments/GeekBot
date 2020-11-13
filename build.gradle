@@ -7,16 +7,21 @@
  */
 
 // Apply the java-library plugin to add support for Java Library
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'visual-studio'
-apply plugin: 'application'
+plugins{
+id 'java'
+id 'eclipse'
+id 'idea'
+id 'visual-studio'
+id 'application'
+id 'org.springframework.boot' version '2.4.0'
+id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+}
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
-
 mainClassName = 'bot.GeekBot'
+group = 'LegendaryGeek'
+version = '0.1 - dev'
 
 eclipse.project {
   buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
@@ -77,6 +82,13 @@ dependencies {
 	compile "org.lwjgl:lwjgl-openvr::natives-windows"
 	compile "com.code-disaster.steamworks4j:steamworks4j:1.8.0"
 	compile "com.code-disaster.steamworks4j:steamworks4j-server:1.8.0"
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.session:spring-session-core'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
 	
     testImplementation 'junit:junit:4.12'
 }
