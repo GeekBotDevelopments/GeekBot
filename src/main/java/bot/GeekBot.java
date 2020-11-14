@@ -120,7 +120,7 @@ public class GeekBot {
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(GeekBot.class, args);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+		
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
 		config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
