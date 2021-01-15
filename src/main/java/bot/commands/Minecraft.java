@@ -19,8 +19,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import bot.json.models.ForgeMapping;
-import bot.json.models.MinecraftVersion;
+import bot.json.models.forge.ForgeMapping;
+import bot.json.models.mojang.MinecraftVersion;
 
 public class Minecraft {
 	static Logger log = LogManager.getLogger(Minecraft.class);

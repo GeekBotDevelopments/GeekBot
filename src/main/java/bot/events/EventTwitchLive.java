@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import bot.json.models.TwitchStreamChange;
+import bot.json.models.twitch.TwitchStreamChange;
 
 @Service
 @Controller

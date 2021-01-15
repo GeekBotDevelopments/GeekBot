@@ -1,4 +1,4 @@
-package bot.json.models;
+package bot.json.models.twitch;
 
 public class TwitchStreamChange {
     TwitchStreamNotification[] data;

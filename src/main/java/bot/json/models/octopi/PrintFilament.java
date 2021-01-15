@@ -1,4 +1,4 @@
-package bot.json.models;
+package bot.json.models.octopi;
 
 public class PrintFilament {
 	Integer length;

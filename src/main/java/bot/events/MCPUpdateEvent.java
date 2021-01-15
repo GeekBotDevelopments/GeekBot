@@ -13,9 +13,8 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import bot.GeekBot;
 import bot.commands.Minecraft;
-import bot.json.models.ForgeMapping;
+import bot.json.models.forge.ForgeMapping;
 
 public class MCPUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MCPUpdateEvent.class);
@@ -28,7 +27,7 @@ public class MCPUpdateEvent extends TimerTask {
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	File BotPath = new File("/GeekBot");
-	
+
 	File mcpVerionJson = new File("/GeekBot/MCPVersionManifest.json");
 
 	@Override

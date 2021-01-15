@@ -130,8 +130,6 @@ public class GeekBot extends SpringBootServletInitializer {
 		intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 	}
 
-
-
 	public static void main(String[] args) throws IOException {
 
 		geekbotContext = SpringApplication.run(GeekBot.class, args);
