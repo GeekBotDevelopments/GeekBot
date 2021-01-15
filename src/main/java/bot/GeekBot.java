@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -102,8 +103,8 @@ public class GeekBot extends SpringBootServletInitializer {
 	private static JsonElement serverSettings;
 	private static Logger log = LogManager.getLogger(GeekBot.class);
 
-	public static final String CONFIG_FOLDER_PATH = "./Config"; //TODO recode to use env variables
-	public static final String BOT_FOLDER_PATH = "./Config/ServerSettings";
+	public static final String CONFIG_FOLDER_PATH = "Config"; //TODO recode to use env variables
+	public static final String BOT_FOLDER_PATH = "Config/ServerSettings";
 	public static final String CONFIG_FILE_NAME = "Config.properties";
 
 	private static Timer timer = new Timer();
@@ -156,6 +157,9 @@ public class GeekBot extends SpringBootServletInitializer {
 		}
 		else if (!botConfigFolder.exists() && !botConfigFolder.mkdirs()) {
 			throw new RuntimeException("Failed to create bot config file");
+		}
+		else if(!configFile.exists()) {
+			throw new FileNotFoundException(configFile.getAbsolutePath());
 		}
 
 		//Load configs
