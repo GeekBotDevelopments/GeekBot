@@ -1,55 +1,5 @@
 package bot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executor;
-
-import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.LowLevelHttpRequest;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import bot.commands.CmdChironHistory;
 import bot.commands.CmdChironJob;
 import bot.commands.CmdContribute;
@@ -67,6 +17,19 @@ import bot.events.EventEnderJobDone;
 import bot.events.EventStarboudServerReset;
 import bot.events.EventTwitchLive;
 import bot.events.WelcomeEvent;
+import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.LowLevelHttpRequest;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.jagrosh.jdautilities.command.CommandClient;
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import net.dv8tion.jda.api.JDA;
@@ -74,6 +37,33 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SpringBootApplication
 @RestController
@@ -111,8 +101,11 @@ public class GeekBot extends SpringBootServletInitializer {
 	// public List<ServerSettings> settingsList = new ArrayList<>();
 	private static JsonElement serverSettings;
 	private static Logger log = LogManager.getLogger(GeekBot.class);
-	public static final File BotPath = new File("/GeekBot/ServerSettings");
-	public static final File ConfigPath = new File("/GeekBot/Config/Config.properties");
+
+	public static final String CONFIG_FOLDER_PATH = "./Config"; //TODO recode to use env variables
+	public static final String BOT_FOLDER_PATH = "./Config/ServerSettings";
+	public static final String CONFIG_FILE_NAME = "Config.properties";
+
 	private static Timer timer = new Timer();
 	private static Configuration config = new Configuration();
 	private static StreamSpeechRecognizer recog;
@@ -136,12 +129,12 @@ public class GeekBot extends SpringBootServletInitializer {
 		intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 	}
 
-	
+
 
 	public static void main(String[] args) throws IOException {
-		
+
 		geekbotContext = SpringApplication.run(GeekBot.class, args);
-		
+
 
 		//ApplicationContext ctx = new AnnotationConfigApplicationContext(BotConfig.class);
 
@@ -152,21 +145,28 @@ public class GeekBot extends SpringBootServletInitializer {
 
 		recog = new StreamSpeechRecognizer(config);
 
-		if (!BotPath.exists()) {
-			BotPath.mkdirs();
-			ConfigPath.mkdirs();
+		//File paths
+		final File botConfigFolder = new File(BOT_FOLDER_PATH);
+		final File configFolder = new File(CONFIG_FOLDER_PATH);
+		final File configFile = new File(configFolder, CONFIG_FILE_NAME);
+
+		//Create folders if missing
+		if (!configFolder.exists() && !configFolder.mkdirs()) {
+			throw new RuntimeException("Failed to create config file");
+		}
+		else if (!botConfigFolder.exists() && !botConfigFolder.mkdirs()) {
+			throw new RuntimeException("Failed to create bot config file");
 		}
 
-		try (InputStream input = FileUtils.openInputStream(ConfigPath)) {
+		//Load configs
+		try (InputStream input = FileUtils.openInputStream(configFile)) {
+			final Properties prop = new Properties();
 
-			Properties prop = new Properties();
-			if (input == null) {
-				log.error("unable to find Config.properties");
-				return;
-			}
-
+			//Load file
 			log.info("Loading keys");
 			prop.load(input);
+
+			//Read values
 			setGOOGLE_API_KEY(prop.getProperty("key.google"));
 			setCHIRON_KEY(prop.getProperty("id.discord"));
 			setDISCORD_SECRET(prop.getProperty("secret.discord"));
@@ -201,7 +201,7 @@ public class GeekBot extends SpringBootServletInitializer {
 		//EventEnderJobDone enderJob = (EventEnderJobDone) geekbotContext.getBean("eventEnderJobDone");
 		//enderJob.start();
 
-		
+
 
 		factory = new GsonFactory();
 		builder = JDABuilder.createDefault(getDiscordToken(), intents);
@@ -402,7 +402,7 @@ public class GeekBot extends SpringBootServletInitializer {
 	// -----GETTERS-&-SETTERS----- //
 
 	/**
-	 * 
+	 *
 	 * @return the YouTube Data API's Base URL as a string
 	 */
 	public static String getBaseurl() {
@@ -629,6 +629,6 @@ public class GeekBot extends SpringBootServletInitializer {
 		return String.format("Hello %s!", name);
 	}
 
- 
+
 
 }
