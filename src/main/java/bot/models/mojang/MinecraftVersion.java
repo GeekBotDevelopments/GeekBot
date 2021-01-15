@@ -1,4 +1,4 @@
-package bot.json.models.mojang;
+package bot.models.mojang;
 
 public class MinecraftVersion {
 

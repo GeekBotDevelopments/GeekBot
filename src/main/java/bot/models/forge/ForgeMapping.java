@@ -1,4 +1,4 @@
-package bot.json.models.forge;
+package bot.models.forge;
 
 public class ForgeMapping implements Comparable<ForgeMapping> {
 	String MCVersion = "";

@@ -1,4 +1,4 @@
-package bot.json.models.twitch;
+package bot.models.twitch;
 
 public class TwitchStreamNotification {
     String id;

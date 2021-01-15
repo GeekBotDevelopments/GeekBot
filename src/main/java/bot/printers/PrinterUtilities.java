@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bot.GeekBot;
-import bot.json.models.octopi.PrintJobInfo;
+import bot.models.octopi.PrintJobInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class PrinterUtilities {

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import bot.commands.Minecraft;
-import bot.json.models.forge.ForgeMapping;
+import bot.models.forge.ForgeMapping;
 
 public class MCPUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MCPUpdateEvent.class);
