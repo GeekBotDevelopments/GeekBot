@@ -5,32 +5,31 @@ import bot.GeekBot;
 //TODO replace with a config
 public enum PrinterEnum
 {
-    ENDER(GeekBot.getENDER_KEY(), GeekBot.getENDER_URL()),
-    CHIRION(GeekBot.getCHIRON_KEY(), GeekBot.getCHIRON_URL());
+    ENDER("ender5", GeekBot.getENDER_KEY(), GeekBot.getENDER_URL()),
+    CHIRION("chiron", GeekBot.getCHIRON_KEY(), GeekBot.getCHIRON_URL());
 
-    private String Key;
-    private String Url;
+    private final String name;
+    private final String apiKey;
+    private final String accessUrl;
 
-    PrinterEnum(String Key, String Url)
+    PrinterEnum(String name, String apiKey, String url)
     {
-        this.Key = Key;
-        this.Url = Url;
+        this.name = name;
+        this.apiKey = apiKey;
+        this.accessUrl = url;
     }
 
-    /**
-     * @return the key
-     */
+    public String getName() {
+        return this.name;
+    }
+
     public String getKey()
     {
-        return Key;
+        return apiKey;
     }
 
-    /**
-     * @return the url
-     */
     public String getUrl()
     {
-        return Url;
+        return accessUrl;
     }
-
 }

@@ -19,7 +19,7 @@ public class PrinterUtilities
     {
     }
 
-    public static EmbedBuilder PrinterJob(PrinterEnum printer)
+    public static EmbedBuilder createPrinterOutput(PrinterEnum printer)
     {
         JsonObject json = null;
         PrintJobInfo info = null;

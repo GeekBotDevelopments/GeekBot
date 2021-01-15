@@ -1,22 +1,22 @@
 package bot;
 
-import bot.modules.octopi.commands.CmdChironHistory;
-import bot.modules.octopi.commands.CmdChironJob;
 import bot.commands.CmdContribute;
-import bot.modules.octopi.commands.CmdEnderHistory;
-import bot.modules.octopi.commands.CmdEnderJob;
 import bot.commands.CmdExitVoice;
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdJoinVoice;
 import bot.commands.CmdPing;
-import bot.modules.starbound.CmdStarboundRole;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
-import bot.modules.octopi.events.EventEnderJobDone;
 import bot.events.EventStarboudServerReset;
 import bot.events.EventTwitchLive;
 import bot.events.WelcomeEvent;
+import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.commands.CmdChironHistory;
+import bot.modules.octopi.commands.CmdEnderHistory;
+import bot.modules.octopi.commands.CommandPrinterJob;
+import bot.modules.octopi.events.EventEnderJobDone;
+import bot.modules.starbound.CmdStarboundRole;
 import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -248,11 +248,11 @@ public class GeekBot extends SpringBootServletInitializer {
 		commandBuilder.addCommand(new CmdStarboundRole());
 		// commandBuilder.addCommand(new CmdStarBoundRestart());
 		commandBuilder.addCommand(new CmdChironHistory());
-		commandBuilder.addCommand(new CmdChironJob());
 		commandBuilder.addCommand(new CmdJoinVoice());
 		commandBuilder.addCommand(new CmdExitVoice());
 		commandBuilder.addCommand(new CmdEnderHistory());
-		commandBuilder.addCommand(new CmdEnderJob());
+		commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.CHIRION));
+		commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.ENDER));
 
 		commandBuilder.setHelpWord("help");
 

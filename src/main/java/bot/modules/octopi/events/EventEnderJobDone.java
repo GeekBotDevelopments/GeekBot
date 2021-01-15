@@ -50,7 +50,7 @@ public class EventEnderJobDone extends Thread {
             if (currentState.equals("Opertional") && previousState.equals("Printing")) {
                 log.info("Printer Done");
                 GeekBot.getClient().getTextChannelById(763350428296413215l).sendMessage("Printer Finished")
-                        .embed(PrinterUtilities.PrinterJob(PrinterEnum.ENDER).build()).submit();
+                        .embed(PrinterUtilities.createPrinterOutput(PrinterEnum.ENDER).build()).submit();
             }
 
             try {
