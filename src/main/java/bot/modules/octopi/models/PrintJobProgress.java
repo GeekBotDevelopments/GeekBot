@@ -1,6 +1,7 @@
 package bot.modules.octopi.models;
 
-public class PrintProgress {
+public class PrintJobProgress
+{
 	Float completion;
 	Integer filepos;
 	Integer printTime;
@@ -27,7 +28,7 @@ public class PrintProgress {
 		return printTimeLeftOrigin;
 	}
 
-	public PrintProgress() {
+	public PrintJobProgress() {
 		// TODO Auto-generated constructor stub
 	}
 

@@ -1,16 +1,18 @@
 package bot.modules.octopi.models;
 
 public class PrintJob {
-	PrintFile file;
+
+	PrintJobFile file;
+	PrintJobFilament filament;
+
 	Integer estimatedPrintTime;
 	Integer lastPrintTime;
-	PrintFilament filament;
 
 	public PrintJob() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PrintFile getFile() {
+	public PrintJobFile getFile() {
 		return file;
 	}
 
@@ -22,7 +24,7 @@ public class PrintJob {
 		return lastPrintTime;
 	}
 
-	public PrintFilament getFilament() {
+	public PrintJobFilament getFilament() {
 		return filament;
 	}
 

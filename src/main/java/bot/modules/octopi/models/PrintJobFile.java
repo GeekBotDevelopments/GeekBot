@@ -1,6 +1,7 @@
 package bot.modules.octopi.models;
 
-public class PrintFile {
+public class PrintJobFile
+{
 	String name;
 	String display;
 	String path;
@@ -27,7 +28,7 @@ public class PrintFile {
 		return typePath;
 	}
 
-	public PrintFile() {
+	public PrintJobFile() {
 		// TODO Auto-generated constructor stub
 	}
 

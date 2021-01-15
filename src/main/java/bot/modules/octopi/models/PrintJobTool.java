@@ -1,8 +1,11 @@
 package bot.modules.octopi.models;
 
-public class PrintTool0 {
+public class PrintJobTool
+{
     Integer length;
 	Float volume;
+
+	public PrintJobTool(){}
 
 	public Integer getLength() {
 		return length;
@@ -11,5 +14,4 @@ public class PrintTool0 {
 	public Float getVolume() {
 		return volume;
     }
-    public PrintTool0(){}
 }

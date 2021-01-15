@@ -2,14 +2,14 @@ package bot.modules.octopi.models;
 
 public class PrintJobInfo {
 	PrintJob job;
-	PrintProgress progress;
+	PrintJobProgress progress;
 	String state;
 
 	public PrintJob getJob() {
 		return job;
 	}
 
-	public PrintProgress getProgress() {
+	public PrintJobProgress getProgress() {
 		return progress;
 	}
 

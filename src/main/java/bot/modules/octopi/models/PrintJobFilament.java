@@ -1,18 +1,20 @@
 package bot.modules.octopi.models;
 
-public class PrintFilament {
+public class PrintJobFilament
+{
+	PrintJobTool tool0;
+
 	Integer length;
 	Float volume;
-	PrintTool0 tool0;
 
-	public PrintFilament() {
+	public PrintJobFilament() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @return the tool0
 	 */
-	public PrintTool0 getTool0() {
+	public PrintJobTool getTool0() {
 		return tool0;
 	}
 
