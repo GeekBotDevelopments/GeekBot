@@ -1,4 +1,4 @@
-package bot.models.octopi;
+package bot.modules.octopi.models;
 
 public class PrintFile {
 	String name;

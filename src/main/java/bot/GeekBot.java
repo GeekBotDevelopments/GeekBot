@@ -1,19 +1,19 @@
 package bot;
 
-import bot.commands.CmdChironHistory;
-import bot.commands.CmdChironJob;
+import bot.modules.octopi.commands.CmdChironHistory;
+import bot.modules.octopi.commands.CmdChironJob;
 import bot.commands.CmdContribute;
-import bot.commands.CmdEnderHistory;
-import bot.commands.CmdEnderJob;
+import bot.modules.octopi.commands.CmdEnderHistory;
+import bot.modules.octopi.commands.CmdEnderJob;
 import bot.commands.CmdExitVoice;
 import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdJoinVoice;
 import bot.commands.CmdPing;
-import bot.commands.CmdStarboundRole;
+import bot.modules.starbound.CmdStarboundRole;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
-import bot.events.EventEnderJobDone;
+import bot.modules.octopi.events.EventEnderJobDone;
 import bot.events.EventStarboudServerReset;
 import bot.events.EventTwitchLive;
 import bot.events.WelcomeEvent;

@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.modules.starbound;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;

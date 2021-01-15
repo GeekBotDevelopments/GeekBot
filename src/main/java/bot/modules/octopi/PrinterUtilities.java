@@ -1,25 +1,26 @@
-package bot.printers;
+package bot.modules.octopi;
 
+import bot.GeekBot;
+import bot.modules.octopi.models.PrintJobInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bot.GeekBot;
-import bot.models.octopi.PrintJobInfo;
-import net.dv8tion.jda.api.EmbedBuilder;
-
-public class PrinterUtilities {
+public class PrinterUtilities
+{
 
     static Gson gson = new Gson();
     private static Logger log = LogManager.getLogger();
 
-    private PrinterUtilities() {
+    private PrinterUtilities()
+    {
     }
 
-    public static EmbedBuilder PrinterJob(Printer printer) {
+    public static EmbedBuilder PrinterJob(PrinterEnum printer)
+    {
         JsonObject json = null;
         PrintJobInfo info = null;
         Integer estimatedPrintTime = null;
@@ -28,35 +29,52 @@ public class PrinterUtilities {
         int seconds = 0;
         EmbedBuilder builder = new EmbedBuilder();
 
-        try {
+        try
+        {
             json = JsonParser.parseString(GeekBot.get(printer.getUrl() + "/job?apikey=" + printer.getKey()))
                     .getAsJsonObject();
             info = gson.fromJson(json, PrintJobInfo.class);
             estimatedPrintTime = info.getJob().getEstimatedPrintTime();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             log.catching(e);
         }
 
         if (estimatedPrintTime != null)
+        {
             hours = estimatedPrintTime / 3600;
+        }
         if (estimatedPrintTime != null)
+        {
             minutes = (estimatedPrintTime % 3600) / 60;
+        }
         if (estimatedPrintTime != null)
+        {
             seconds = estimatedPrintTime % 60;
-        try {
+        }
+        try
+        {
             if (info.getJob().getFile().getName() != null)
+            {
                 builder.addField("File name", info.getJob().getFile().getName(), true);
+            }
 
             if (estimatedPrintTime != null)
+            {
                 builder.addField("Estimaed Print Time", String.format("%02d:%02d:%02d", hours, minutes, seconds), true);
+            }
 
-            if (info.getJob().getFilament().getLength() != null) {
+            if (info.getJob().getFilament().getLength() != null)
+            {
                 builder.addField("Filament Length", info.getJob().getFilament().getLength().toString(), true);
                 builder.addField("Filament Price",
                         String.format("%.2f", FilamentTypes.PLA.getPrice() * info.getJob().getFilament().getLength()),
                         true);
-            } else {
+            }
+            else
+            {
                 builder.addField("Filament Length", info.getJob().getFilament().getTool0().getLength().toString(),
                         true);
                 builder.addField("Filament Price",
@@ -65,25 +83,33 @@ public class PrinterUtilities {
                         true);
             }
 
-            if ((Float) info.getJob().getFilament().getVolume() != null) {
+            if ((Float) info.getJob().getFilament().getVolume() != null)
+            {
                 builder.addField("Filament Volume", info.getJob().getFilament().getVolume().toString(), true);
-            } else {
+            }
+            else
+            {
                 builder.addField("Filament Volume", info.getJob().getFilament().getTool0().getVolume().toString(),
                         true);
             }
 
             if ((Float) info.getProgress().getCompletion() != null)
+            {
                 builder.addField("Percent Done", info.getProgress().getCompletion().toString(), true);
+            }
 
             builder.addField("Printer State", info.getState(), true);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             log.catching(e);
             builder.addField("Error: ", e.getMessage().toString(), true);
         }
         return builder;
     }
 
-    public static double fillamentPricePerLength(double diameter, double mass, double pricePerMass, double density) {
+    public static double fillamentPricePerLength(double diameter, double mass, double pricePerMass, double density)
+    {
         // Parameters:
         // diameter: Fillament diameter, in millimeters (mm).
         // mass: Spool net mass/weight, in kilograms (kg).
@@ -98,16 +124,20 @@ public class PrinterUtilities {
         // Output is cost per millimetre, in the same unit as input (Dollars = dollars,
         // Cents = cents)
 
-        if (diameter <= 0) {
+        if (diameter <= 0)
+        {
             throw new java.lang.IllegalArgumentException("diameter must be positive");
         }
-        if (mass <= 0) {
+        if (mass <= 0)
+        {
             throw new java.lang.IllegalArgumentException("mass must be positive");
         }
-        if (density <= 0) {
+        if (density <= 0)
+        {
             throw new java.lang.IllegalArgumentException("density must be positive");
         }
-        if (pricePerMass <= 0) {
+        if (pricePerMass <= 0)
+        {
             throw new java.lang.IllegalArgumentException("pricePerMass must be positive");
         }
 

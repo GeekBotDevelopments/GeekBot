@@ -1,4 +1,4 @@
-package bot.models.octopi;
+package bot.modules.octopi.models;
 
 public class PrintTool0 {
     Integer length;

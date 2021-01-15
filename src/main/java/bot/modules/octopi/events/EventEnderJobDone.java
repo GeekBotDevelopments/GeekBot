@@ -1,6 +1,4 @@
-package bot.events;
-
-import java.util.TimerTask;
+package bot.modules.octopi.events;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -11,11 +9,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import bot.GeekBot;
-import bot.printers.Printer;
-import bot.printers.PrinterUtilities;
+import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.PrinterUtilities;
 
 @Component
 @Scope("prototype")
@@ -43,7 +40,7 @@ public class EventEnderJobDone extends Thread {
 
             try {
                 json = JsonParser
-                        .parseString(GeekBot.get(Printer.ENDER.getUrl() + "/job?apikey=" + Printer.ENDER.getKey()))
+                        .parseString(GeekBot.get(PrinterEnum.ENDER.getUrl() + "/job?apikey=" + PrinterEnum.ENDER.getKey()))
                         .getAsJsonObject();
 
             } catch (Exception e) {
@@ -53,7 +50,7 @@ public class EventEnderJobDone extends Thread {
             if (currentState.equals("Opertional") && previousState.equals("Printing")) {
                 log.info("Printer Done");
                 GeekBot.getClient().getTextChannelById(763350428296413215l).sendMessage("Printer Finished")
-                        .embed(PrinterUtilities.PrinterJob(Printer.ENDER).build()).submit();
+                        .embed(PrinterUtilities.PrinterJob(PrinterEnum.ENDER).build()).submit();
             }
 
             try {

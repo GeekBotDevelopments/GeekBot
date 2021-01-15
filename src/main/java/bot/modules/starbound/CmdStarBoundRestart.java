@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.modules.starbound;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +11,7 @@ import bot.events.EventStarboudServerReset;
 
 public class CmdStarBoundRestart extends Command {
 	private static Logger log = LogManager.getLogger();
-	
+
 	public CmdStarBoundRestart() {
 		name = "starset";
 		hidden = true;

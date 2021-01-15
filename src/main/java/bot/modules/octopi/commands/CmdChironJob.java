@@ -1,7 +1,7 @@
-package bot.commands;
+package bot.modules.octopi.commands;
 
-import bot.printers.Printer;
-import bot.printers.PrinterUtilities;
+import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.PrinterUtilities;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -13,6 +13,6 @@ public class CmdChironJob extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		event.getChannel().sendMessage(PrinterUtilities.PrinterJob(Printer.CHIRION).build()).submit();
+		event.getChannel().sendMessage(PrinterUtilities.PrinterJob(PrinterEnum.CHIRION).build()).submit();
 	}
 }

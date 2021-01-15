@@ -1,15 +1,18 @@
-package bot.printers;
+package bot.modules.octopi;
 
 import bot.GeekBot;
 
-public enum Printer {
-    ENDER(GeekBot.getENDER_KEY(), GeekBot.getENDER_URL()), 
+//TODO replace with a config
+public enum PrinterEnum
+{
+    ENDER(GeekBot.getENDER_KEY(), GeekBot.getENDER_URL()),
     CHIRION(GeekBot.getCHIRON_KEY(), GeekBot.getCHIRON_URL());
 
     private String Key;
     private String Url;
 
-    Printer(String Key, String Url) {
+    PrinterEnum(String Key, String Url)
+    {
         this.Key = Key;
         this.Url = Url;
     }
@@ -17,14 +20,16 @@ public enum Printer {
     /**
      * @return the key
      */
-    public String getKey() {
+    public String getKey()
+    {
         return Key;
     }
 
     /**
      * @return the url
      */
-    public String getUrl() {
+    public String getUrl()
+    {
         return Url;
     }
 
