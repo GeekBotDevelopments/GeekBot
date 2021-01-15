@@ -21,8 +21,8 @@ public class CmdEnderJob extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		event.getChannel().sendMessage(PrinterUtilities.PrinterJob(event, Printer.ENDER).build()).submit();
-		
+		event.getChannel().sendMessage(PrinterUtilities.PrinterJob(Printer.ENDER).build()).submit();
+
 	}
 
 }

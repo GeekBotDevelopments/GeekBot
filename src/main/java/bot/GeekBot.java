@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
 
 import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
 import com.google.api.client.http.HttpRequest;
@@ -34,6 +35,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +63,9 @@ import bot.commands.CmdPing;
 import bot.commands.CmdStarboundRole;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
+import bot.events.EventEnderJobDone;
 import bot.events.EventStarboudServerReset;
+import bot.events.EventTwitchLive;
 import bot.events.WelcomeEvent;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
@@ -63,7 +77,8 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 
 @SpringBootApplication
 @RestController
-public class GeekBot {
+@EnableAsync
+public class GeekBot extends SpringBootServletInitializer {
 	private static String BASEURL = "https://www.googleapis.com/youtube/v3";
 	private static String GOOGLE_API_KEY;
 	private static String DISCORD_TOKEN;
@@ -103,6 +118,10 @@ public class GeekBot {
 	private static StreamSpeechRecognizer recog;
 	public static TimerTask task = new EventStarboudServerReset();
 	public static SourceServer starboundServer;
+	public static ConfigurableApplicationContext geekbotContext;
+
+	private static EventTwitchLive twitchThread;
+	private static EventEnderJobDone enderThread;
 
 	private static Set<GatewayIntent> intents = new HashSet<>();
 
@@ -117,10 +136,16 @@ public class GeekBot {
 		intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 	}
 
+	
+
 	public static void main(String[] args) throws IOException {
-		SpringApplication.run(GeekBot.class, args);
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		
+		geekbotContext = SpringApplication.run(GeekBot.class, args);
+		
+
+		//ApplicationContext ctx = new AnnotationConfigApplicationContext(BotConfig.class);
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
 		config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
@@ -162,7 +187,19 @@ public class GeekBot {
 			log.info("Keys loaded");
 		}
 
-		
+		twitchThread = new EventTwitchLive(args);
+		enderThread = new EventEnderJobDone();
+
+		//TimerTask PrinterTask = enderThread;
+
+		//Timer enderTimer = new Timer("EnderTimer");
+		//enderTimer.scheduleAtFixedRate(PrinterTask, 0, 60);
+
+		// twitchThread.run();
+		// enderThread.run();
+
+		//EventEnderJobDone enderJob = (EventEnderJobDone) geekbotContext.getBean("eventEnderJobDone");
+		//enderJob.start();
 
 		
 
@@ -207,7 +244,7 @@ public class GeekBot {
 		// commands not used by the public
 		commandBuilder.addCommand(new CmdStopBot());
 		commandBuilder.addCommand(new CmdStarboundRole());
-		//commandBuilder.addCommand(new CmdStarBoundRestart());
+		// commandBuilder.addCommand(new CmdStarBoundRestart());
 		commandBuilder.addCommand(new CmdChironHistory());
 		commandBuilder.addCommand(new CmdChironJob());
 		commandBuilder.addCommand(new CmdJoinVoice());
@@ -217,7 +254,7 @@ public class GeekBot {
 
 		commandBuilder.setHelpWord("help");
 
-		//timer.schedule(task, get24());
+		// timer.schedule(task, get24());
 		final CommandClient commandListener = commandBuilder.build();
 		builder.setChunkingFilter(ChunkingFilter.ALL);
 		builder.addEventListeners(commandListener);
@@ -231,13 +268,12 @@ public class GeekBot {
 			log.catching(e);
 		}
 
-		
-		//DisClient.getGuilds().forEach(action -> {
+		// DisClient.getGuilds().forEach(action -> {
 
-		//log.info(result);
-		//log.info("End Of Program");
-	//});
-}
+		// log.info(result);
+		// log.info("End Of Program");
+		// });
+	}
 
 	/**
 	 * @return the MINDUSTRY_URL
@@ -278,6 +314,7 @@ public class GeekBot {
 		return recog;
 	}
 
+	@Async
 	public static String get(String url) throws IOException {
 		// URL declaration
 		URL obj = new URL(url);
@@ -290,7 +327,7 @@ public class GeekBot {
 		con.setRequestProperty("User-Agent", "Mozilla/5.0");
 		// check response code for an okay
 		int responseCode = con.getResponseCode();
-		log.info("GET Response Code: " + responseCode);
+		// log.info("GET Response Code: " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
 			// Read the Response from the site
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -589,7 +626,9 @@ public class GeekBot {
 
 	@GetMapping("/hello")
 	public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
-	return String.format("Hello %s!", name);
+		return String.format("Hello %s!", name);
 	}
+
+ 
 
 }
