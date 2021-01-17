@@ -134,9 +134,6 @@ public class GeekBot extends SpringBootServletInitializer {
 
 		geekbotContext = SpringApplication.run(GeekBot.class, args);
 
-
-		//ApplicationContext ctx = new AnnotationConfigApplicationContext(BotConfig.class);
-
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
