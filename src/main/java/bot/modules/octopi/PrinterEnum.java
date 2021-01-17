@@ -1,12 +1,12 @@
 package bot.modules.octopi;
 
-import bot.GeekBot;
+import bot.modules.configs.MainConfig;
 
 //TODO replace with a config
 public enum PrinterEnum
 {
-    ENDER("ender5", GeekBot.getENDER_KEY(), GeekBot.getENDER_URL()),
-    CHIRION("chiron", GeekBot.getCHIRON_KEY(), GeekBot.getCHIRON_URL());
+    ENDER("ender5", MainConfig.getENDER_KEY(), MainConfig.getENDER_URL()),
+    CHIRION("chiron", MainConfig.getCHIRON_KEY(), MainConfig.getCHIRON_URL());
 
     private final String name;
     private final String apiKey;

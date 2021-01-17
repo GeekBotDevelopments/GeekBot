@@ -1,5 +1,6 @@
 package bot.modules.octopi.events;
 
+import bot.modules.rest.RestUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -40,7 +41,7 @@ public class EventEnderJobDone extends Thread {
 
             try {
                 json = JsonParser
-                        .parseString(GeekBot.get(PrinterEnum.ENDER.getUrl() + "/job?apikey=" + PrinterEnum.ENDER.getKey()))
+                        .parseString(RestUtil.get(PrinterEnum.ENDER.getUrl() + "/job?apikey=" + PrinterEnum.ENDER.getKey()))
                         .getAsJsonObject();
 
             } catch (Exception e) {

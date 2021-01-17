@@ -1,7 +1,7 @@
 package bot.modules.octopi;
 
-import bot.GeekBot;
 import bot.modules.octopi.models.PrintJobInfo;
+import bot.modules.rest.RestUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -31,7 +31,7 @@ public class PrinterUtilities
 
         try
         {
-            json = JsonParser.parseString(GeekBot.get(printer.getUrl() + "/job?apikey=" + printer.getKey()))
+            json = JsonParser.parseString(RestUtil.get(printer.getUrl() + "/job?apikey=" + printer.getKey()))
                     .getAsJsonObject();
             info = gson.fromJson(json, PrintJobInfo.class);
             estimatedPrintTime = info.getJob().getEstimatedPrintTime();

@@ -1,6 +1,6 @@
 package bot.modules.octopi.commands;
 
-import bot.GeekBot;
+import bot.modules.configs.MainConfig;
 import com.google.common.io.Files;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,7 +23,7 @@ public class CmdChironHistory extends Command {
 	protected void execute(CommandEvent event) {
 		log.info("chiron activated");
 		File file;
-		String url = GeekBot.getCHIRON_URL() + "/printer?history=true&apikey=" + GeekBot.getCHIRON_KEY();
+		String url = MainConfig.getCHIRON_URL() + "/printer?history=true&apikey=" + MainConfig.getCHIRON_KEY();
 		try {
 			 Files.createTempDir();
 			file = File.createTempFile("chironHistory", ".json");

@@ -1,6 +1,6 @@
 package bot.modules.octopi.commands;
 
-import bot.GeekBot;
+import bot.modules.configs.MainConfig;
 import com.google.common.io.Files;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,7 +23,7 @@ public class CmdEnderHistory extends Command {
 	protected void execute(CommandEvent event) {
 		log.info("ender activated");
 		File file;
-		String url = GeekBot.getENDER_URL() + "/printer?history=true&apikey=" + GeekBot.getENDER_KEY();
+		String url = MainConfig.getENDER_URL() + "/printer?history=true&apikey=" + MainConfig.getENDER_KEY();
 		try {
 			 Files.createTempDir();
 			file = File.createTempFile("EnderHistory", ".json");

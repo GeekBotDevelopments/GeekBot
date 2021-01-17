@@ -1,19 +1,16 @@
 package bot.events;
 
+import bot.GeekBot;
+import bot.modules.configs.MainConfig;
+import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
+import net.dv8tion.jda.api.entities.Role;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TimerTask;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.github.koraktor.steamcondenser.steam.packets.rcon.RCONPacket;
-import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
-import com.github.koraktor.steamcondenser.steam.sockets.RCONSocket;
-
-import bot.GeekBot;
-import net.dv8tion.jda.api.entities.Role;
 
 public class EventStarboudServerReset extends TimerTask {
 	private static Logger log = LogManager.getLogger();
@@ -30,9 +27,9 @@ public class EventStarboudServerReset extends TimerTask {
 	public synchronized void starbound_reset() {
 
 		log.info("restarting Server");
-		Role starbound = GeekBot.getClient().getGuildById(GeekBot.getLABRINTH_ID()).getRoleById(755597397710733352l);
-		Path serverPath = Paths.get("E:\\Games\\Steam\\steamapps\\common\\Starbound_Dedicated_Server\\win64\\");
-		GeekBot.getClient().getTextChannelById(GeekBot.getLABUPDATE())
+		Role starbound = GeekBot.getClient().getGuildById(MainConfig.getLABRINTH_ID()).getRoleById(755597397710733352l);
+		Path serverPath = Paths.get("E:\\Games\\Steam\\steamapps\\common\\Starbound_Dedicated_Server\\win64\\"); //TODO config
+		GeekBot.getClient().getTextChannelById(MainConfig.getLABUPDATE())
 				.sendMessage(starbound.getAsMention() + " server restart").submit();
 		try {
 			log.info("Waiting 5 minutes");

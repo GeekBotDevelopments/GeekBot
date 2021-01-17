@@ -11,10 +11,6 @@ public class EventVoiceStuff extends Thread {
 
 	public EventVoiceStuff() {
 		config = GeekBot.getConfig();
-		speech = GeekBot.getRecog();
-		
+		speech = GeekBot.getSpeechRecognizer();
 	}
-
-
-
 }
