@@ -1,19 +1,17 @@
 package bot.modules.octopi.events;
 
+import bot.GeekBot;
+import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.PrinterUtilities;
 import bot.modules.rest.RestUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import bot.GeekBot;
-import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.PrinterUtilities;
 
 @Component
 @Scope("prototype")

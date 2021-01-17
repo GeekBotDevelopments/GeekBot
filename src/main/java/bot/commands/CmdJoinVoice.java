@@ -1,20 +1,11 @@
 package bot.commands;
 
-import com.google.cloud.texttospeech.v1.TextToSpeechClient;
-import com.google.cloud.texttospeech.v1beta1.AudioConfig;
-import com.google.cloud.texttospeech.v1beta1.AudioEncoding;
-import com.google.cloud.texttospeech.v1beta1.SsmlVoiceGender;
-import com.google.cloud.texttospeech.v1beta1.SynthesisInput;
-import com.google.cloud.texttospeech.v1beta1.Voice;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CmdJoinVoice extends Command {
 	private static Logger log = LogManager.getLogger();

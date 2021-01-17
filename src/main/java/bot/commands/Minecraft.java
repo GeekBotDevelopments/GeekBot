@@ -1,5 +1,16 @@
 package bot.commands;
 
+import bot.models.forge.ForgeMapping;
+import bot.models.mojang.MinecraftVersion;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,19 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import bot.models.forge.ForgeMapping;
-import bot.models.mojang.MinecraftVersion;
 
 public class Minecraft {
 	static Logger log = LogManager.getLogger(Minecraft.class);

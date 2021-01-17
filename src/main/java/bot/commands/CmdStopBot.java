@@ -1,20 +1,17 @@
 package bot.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.util.log.Log;
-
+import bot.GeekBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-
-import bot.GeekBot;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CmdStopBot extends Command {
 	private static Logger log = LogManager.getLogger();
-	
+
 	public CmdStopBot(){
 		name = "stop";
-		hidden = true; 
+		hidden = true;
 	}
 
 	@Override

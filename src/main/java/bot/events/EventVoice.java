@@ -1,21 +1,21 @@
 package bot.events;
 
-import java.nio.ByteBuffer;
-
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+import java.nio.ByteBuffer;
+
 public class EventVoice extends Thread {
-	
+
 	AudioManager manager;
 	AudioSendHandler handy = new AudioSendHandler() {
-		
+
 		@Override
 		public ByteBuffer provide20MsAudio() {
-			
+
 			return null;
 		}
-		
+
 		@Override
 		public boolean canProvide() {
 			// TODO Auto-generated method stub
@@ -27,7 +27,7 @@ public class EventVoice extends Thread {
 		this.manager = manager;
 		this.start();
 	}
-	
+
 	public void say(String message) {
 		manager.setSendingHandler(handy);
 	}

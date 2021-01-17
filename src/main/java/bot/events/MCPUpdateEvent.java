@@ -1,20 +1,18 @@
 package bot.events;
 
+import bot.commands.Minecraft;
+import bot.models.forge.ForgeMapping;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.TimerTask;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import bot.commands.Minecraft;
-import bot.models.forge.ForgeMapping;
 
 public class MCPUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MCPUpdateEvent.class);

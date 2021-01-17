@@ -2,7 +2,6 @@ package bot.modules.starbound;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-
 import net.dv8tion.jda.api.entities.Role;
 
 public class CmdStarboundRole extends Command {

@@ -11,8 +11,12 @@ import java.net.URL;
 /**
  * Created by Dark(DarkGuardsman, Robert) on 1/17/2021.
  */
-public class RestUtil
+public final class RestUtil
 {
+    private RestUtil()
+    {
+    }
+
     @Async
     public static String get(String url) throws IOException
     {
@@ -28,14 +32,16 @@ public class RestUtil
         // check response code for an okay
         int responseCode = con.getResponseCode();
         // log.info("GET Response Code: " + responseCode);
-        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+        if (responseCode == HttpURLConnection.HTTP_OK)
+        { // success
             // Read the Response from the site
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
 
             // Generate a response to return
-            while ((inputLine = in.readLine()) != null) {
+            while ((inputLine = in.readLine()) != null)
+            {
                 response.append(inputLine);
             }
             // Close Reader

@@ -1,5 +1,18 @@
 package bot.events;
 
+import bot.commands.Minecraft;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
+import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -7,22 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.TimerTask;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.MalformedJsonException;
-
-import bot.GeekBot;
-import bot.commands.Minecraft;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 public class MinecraftUpdateEvent extends TimerTask {
 	static Logger log = LogManager.getLogger(MinecraftUpdateEvent.class);
