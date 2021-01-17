@@ -57,7 +57,7 @@ dependencies {
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
 
 	compile 'com.jagrosh:jda-utilities:3.0.4'
-    compile 'net.dv8tion:JDA:4.2.0_214'
+    compile 'net.dv8tion:JDA:4.2.0_227'
 
 	compile 'com.google.api-client:google-api-client:1.30.2'
 	compile 'com.google.oauth-client:google-oauth-client-jetty:1.30.4'
