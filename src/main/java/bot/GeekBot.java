@@ -14,6 +14,7 @@ import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.commands.CmdChironHistory;
 import bot.modules.octopi.commands.CmdEnderHistory;
 import bot.modules.octopi.commands.CommandPrinterJob;
+import bot.modules.octopi.events.ThreadPrinterStateMonitor;
 import bot.modules.starbound.CmdStarboundRole;
 import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -54,6 +55,8 @@ public class GeekBot extends SpringBootServletInitializer
     public static SourceServer starboundServer;
     public static ConfigurableApplicationContext springApplicationContext;
     private static StreamSpeechRecognizer speechRecognizer;
+
+    public static ThreadPrinterStateMonitor printerStateMonitor;
 
     public static void main(String[] args) throws IOException
     {
@@ -99,6 +102,10 @@ public class GeekBot extends SpringBootServletInitializer
         {
             MAIN_LOG.catching(e);
         }
+
+        //Kick off thread
+        printerStateMonitor = new ThreadPrinterStateMonitor();
+        printerStateMonitor.start();
     }
 
     private static void registerEvents(@Nonnull JDABuilder builder)

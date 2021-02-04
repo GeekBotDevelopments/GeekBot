@@ -49,6 +49,8 @@ public class ThreadPrinterStateMonitor extends Thread
     @Async
     public void run()
     {
+        logger.info("Printer state monitor thread started");
+
         //Run until killed, will sleep between runs
         while (running)
         {
@@ -92,6 +94,8 @@ public class ThreadPrinterStateMonitor extends Thread
                 logger.catching(e);
             }
         }
+
+        logger.info("Printer state monitor thread stopped");
     }
 
     /**
