@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Thread to monitor status of Octopi-print servers to see if the printer has completed it's job
@@ -39,7 +40,7 @@ public class ThreadPrinterStateMonitor extends Thread
 
     public boolean running = true;
 
-    private final HashMap<PrinterEnum, String> printerState = new HashMap();
+    public final Map<PrinterEnum, String> printerState = new HashMap();
 
     public ThreadPrinterStateMonitor()
     {

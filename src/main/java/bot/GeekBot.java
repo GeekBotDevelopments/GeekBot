@@ -14,6 +14,7 @@ import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.commands.CmdChironHistory;
 import bot.modules.octopi.commands.CmdEnderHistory;
 import bot.modules.octopi.commands.CommandPrinterJob;
+import bot.modules.octopi.commands.CommandPrinterStatus;
 import bot.modules.octopi.events.ThreadPrinterStateMonitor;
 import bot.modules.starbound.CmdStarboundRole;
 import com.github.koraktor.steamcondenser.steam.servers.SourceServer;
@@ -141,6 +142,7 @@ public class GeekBot extends SpringBootServletInitializer
         commandBuilder.addCommand(new CmdEnderHistory());
         commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.CHIRION));
         commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.ENDER));
+        commandBuilder.addCommand(new CommandPrinterStatus());
     }
 
     public static Configuration getConfig()
