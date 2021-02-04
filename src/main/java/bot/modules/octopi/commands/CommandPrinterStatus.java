@@ -2,6 +2,9 @@ package bot.modules.octopi.commands;
 
 import bot.GeekBot;
 import bot.modules.octopi.PrinterEnum;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed.Field;
+
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -19,8 +22,10 @@ public class CommandPrinterStatus extends Command
     protected void execute(CommandEvent event)
     {
         final Map<PrinterEnum, String> stateMap = GeekBot.printerStateMonitor.printerState;
-        final StringBuilder builder = new StringBuilder();
+        EmbedBuilder build = new EmbedBuilder();
+        final StringBuilder builder = build.getDescriptionBuilder();
         builder.append("PrinterStatus for all printers: \n");
+        
         for(PrinterEnum printerEnum : PrinterEnum.values()) {
             builder.append(" [");
             builder.append(printerEnum.ordinal());
@@ -30,6 +35,7 @@ public class CommandPrinterStatus extends Command
             builder.append(stateMap.get(printerEnum));
             builder.append("\n");
         }
-        event.getChannel().sendMessage(builder.toString()).submit();
+        
+        event.getChannel().sendMessage(build.build()).submit();
     }
 }
