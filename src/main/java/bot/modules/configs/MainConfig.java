@@ -1,5 +1,6 @@
 package bot.modules.configs;
 
+import bot.GeekBot;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,8 +44,11 @@ public class MainConfig
     public static void load() throws IOException
     {
         final String ENV_PATH = System.getenv("main_config");
-        final File configFile = new File(StringUtil.isEmpty(ENV_PATH) ? DEFAULT_PATH : ENV_PATH);
+        final String DEFAULT_FILE = System.getProperty("user.dir") + "/" + DEFAULT_PATH + "/Config.properties";
+        final File configFile = new File(StringUtil.isEmpty(ENV_PATH) ? DEFAULT_FILE : ENV_PATH);
         final File configFolder = configFile.getParentFile();
+
+        GeekBot.MAIN_LOG.info(configFile);
 
         //Create folders if missing
         if (!configFolder.exists() && !configFolder.mkdirs()) {
