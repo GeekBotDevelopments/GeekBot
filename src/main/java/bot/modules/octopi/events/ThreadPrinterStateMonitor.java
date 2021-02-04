@@ -60,7 +60,7 @@ public class ThreadPrinterStateMonitor extends Thread
             for (final PrinterEnum printer : PrinterEnum.values())
             {
                 final String newState = gatherPrinterState(printer);
-                final String lastState = printerState.get(printer);
+                final String lastState = printerState.getOrDefault(printer, "unknown");
 
                 //If we go from printing to operation then we are done
                 if (newState.equals(JSON_OPERATIONAL_VALUE) && lastState.equals(JSON_PRINTING_VALUE))
@@ -117,7 +117,7 @@ public class ThreadPrinterStateMonitor extends Thread
                 final JsonObject json = JsonParser.parseString(response).getAsJsonObject();
                 return json.get(JSON_STATE_KEY).getAsString();
             }
-            return "null";
+            return "no-response";
         }
         catch (UnknownHostException e1)
         {
