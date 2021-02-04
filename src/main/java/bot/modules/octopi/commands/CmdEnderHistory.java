@@ -23,7 +23,7 @@ public class CmdEnderHistory extends Command {
 	protected void execute(CommandEvent event) {
 		log.info("ender activated");
 		File file;
-		String url = MainConfig.getENDER_URL() + "/printer?history=true&apikey=" + MainConfig.getENDER_KEY();
+		String url = MainConfig.getENDER_URL() + "/api/printer?history=true&apikey=" + MainConfig.getENDER_KEY();
 		try {
 			 Files.createTempDir();
 			file = File.createTempFile("EnderHistory", ".json");

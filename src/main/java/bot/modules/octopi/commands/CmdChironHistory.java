@@ -23,7 +23,7 @@ public class CmdChironHistory extends Command {
 	protected void execute(CommandEvent event) {
 		log.info("chiron activated");
 		File file;
-		String url = MainConfig.getCHIRON_URL() + "/printer?history=true&apikey=" + MainConfig.getCHIRON_KEY();
+		String url = MainConfig.getCHIRON_URL() + "/api/printer?history=true&apikey=" + MainConfig.getCHIRON_KEY();
 		try {
 			 Files.createTempDir();
 			file = File.createTempFile("chironHistory", ".json");

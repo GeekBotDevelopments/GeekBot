@@ -31,7 +31,7 @@ public class PrinterUtilities
 
         try
         {
-            json = JsonParser.parseString(RestUtil.get(printer.getUrl() + "/job?apikey=" + printer.getKey()))
+            json = JsonParser.parseString(RestUtil.get(printer.getUrl() + "/api/job?apikey=" + printer.getKey()))
                     .getAsJsonObject();
             info = gson.fromJson(json, PrintJobInfo.class);
             estimatedPrintTime = info.getJob().getEstimatedPrintTime();
