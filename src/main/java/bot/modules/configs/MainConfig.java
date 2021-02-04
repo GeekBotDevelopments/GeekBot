@@ -48,7 +48,8 @@ public class MainConfig
         final File configFile = new File(StringUtil.isEmpty(ENV_PATH) ? DEFAULT_FILE : ENV_PATH);
         final File configFolder = configFile.getParentFile();
 
-        GeekBot.MAIN_LOG.info(configFile);
+        //Output file location
+        GeekBot.MAIN_LOG.info(String.format("Config File Location: %s", configFile.getAbsolutePath()));
 
         //Create folders if missing
         if (!configFolder.exists() && !configFolder.mkdirs()) {
