@@ -34,7 +34,7 @@ public class ThreadPrinterStateMonitor extends Thread
     private static final String JSON_OPERATIONAL_VALUE = "Operational";
     private static final String JSON_PRINTING_VALUE = "Printing";
 
-    private static final String CHANNEL_OUTPUT = "@Condo printer %s is completed it's job";    //TODO move to a config
+    private static final String CHANNEL_OUTPUT = "<@&763351250711740416> printer %s is completed it's job";    //TODO move to a config
     private static final long OUTPUT_CHANNEL_ID = 763350428296413215l; //TODO move to a config
     private static final long REFRESH_TIMER = 10000; //TODO move to a config
 
