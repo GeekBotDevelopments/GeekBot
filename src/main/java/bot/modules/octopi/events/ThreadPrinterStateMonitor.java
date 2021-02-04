@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 
 /**
@@ -116,6 +117,10 @@ public class ThreadPrinterStateMonitor extends Thread
                 return json.get(JSON_STATE_KEY).getAsString();
             }
             return "null";
+        }
+        catch (UnknownHostException e1)
+        {
+            return "offline";
         }
         catch (Exception e)
         {
