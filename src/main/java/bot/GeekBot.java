@@ -11,7 +11,7 @@ import bot.commands.CmdUserInfo;
 import bot.events.WelcomeEvent;
 import bot.modules.configs.MainConfig;
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.commands.CmdPrinterHistory;
+import bot.modules.octopi.commands.CommandPrinterHistory;
 import bot.modules.octopi.commands.CommandPrinterJob;
 import bot.modules.octopi.commands.CommandPrinterStatus;
 import bot.modules.octopi.events.ThreadPrinterStateMonitor;
@@ -137,8 +137,8 @@ public class GeekBot extends SpringBootServletInitializer
         commandBuilder.addCommand(new CmdExitVoice());
 
         //Octoprint commands
-        commandBuilder.addCommand(new CmdPrinterHistory(PrinterEnum.CHIRION));
-        commandBuilder.addCommand(new CmdPrinterHistory(PrinterEnum.ENDER));
+        commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.CHIRION));
+        commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.ENDER));
         commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.CHIRION));
         commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.ENDER));
         commandBuilder.addCommand(new CommandPrinterStatus());

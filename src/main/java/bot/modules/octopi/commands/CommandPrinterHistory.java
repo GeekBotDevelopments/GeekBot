@@ -9,11 +9,11 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 
-public class CmdPrinterHistory extends Command {
+public class CommandPrinterHistory extends Command {
 
 	private final String url;
 
-	public CmdPrinterHistory(PrinterEnum printerEnum)
+	public CommandPrinterHistory(PrinterEnum printerEnum)
 	{
 		this.name = printerEnum.getName() + "-history";
 		this.hidden = true;
