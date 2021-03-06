@@ -73,7 +73,7 @@ public class ThreadPrinterStateMonitor extends Thread
                     if (channel != null)
                     {
                         channel.sendMessage(formattedOutput)
-                                .embed(PrinterUtilities.createPrinterOutput(PrinterEnum.ENDER).build())
+                                .embed(PrinterUtilities.createPrinterOutput(printer).build())
                                 .submit();
                     }
                     else
