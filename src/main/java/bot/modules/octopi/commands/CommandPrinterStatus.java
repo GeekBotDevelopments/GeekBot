@@ -6,8 +6,6 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.Map;
-
 public class CommandPrinterStatus extends Command
 {
     public CommandPrinterStatus()
@@ -19,18 +17,23 @@ public class CommandPrinterStatus extends Command
     @Override
     protected void execute(CommandEvent event)
     {
-        final Map<PrinterEnum, String> stateMap = GeekBot.printerStateMonitor.printerState;
-        EmbedBuilder build = new EmbedBuilder();
+        final EmbedBuilder build = new EmbedBuilder();
         final StringBuilder builder = build.getDescriptionBuilder();
-        builder.append("PrinterStatus for all printers: \n");
 
+        //Create title
+        builder.append("Printer Status: \n");
+
+        //Create body
         for(PrinterEnum printerEnum : PrinterEnum.values()) {
+
+            final String status = GeekBot.printerStateMonitor.printerState.get(printerEnum);
+
             builder.append(" [");
             builder.append(printerEnum.ordinal());
             builder.append("] ");
             builder.append(printerEnum.getName());
             builder.append(": ");
-            builder.append(stateMap.get(printerEnum));
+            builder.append(status);
             builder.append("\n");
         }
 

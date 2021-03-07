@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Thread to monitor status of Octopi-print servers to see if the printer has completed it's job
@@ -57,34 +58,7 @@ public class ThreadPrinterStateMonitor extends Thread
         while (running)
         {
             //Loop all printers
-            for (final PrinterEnum printer : PrinterEnum.values())
-            {
-                final String newState = gatherPrinterState(printer);
-                final String lastState = printerState.getOrDefault(printer, "unknown");
-
-                //If we go from printing to operation then we are done
-                if (newState.equals(JSON_OPERATIONAL_VALUE) && lastState.equals(JSON_PRINTING_VALUE))
-                {
-                    //Format output message
-                    final String formattedOutput = String.format(CHANNEL_OUTPUT, printer);
-
-                    //Send message to defined channel
-                    final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
-                    if (channel != null)
-                    {
-                        channel.sendMessage(formattedOutput)
-                                .embed(PrinterUtilities.createPrinterOutput(PrinterEnum.ENDER).build())
-                                .submit();
-                    }
-                    else
-                    {
-                        logger.error("Failed to get channel for printer output");
-                    }
-                }
-
-                //Store current state for next iteration
-                printerState.put(printer, newState);
-            }
+            Stream.of(PrinterEnum.values()).forEach(this::checkPrinter);
 
             //Busy-wait
             try
@@ -98,6 +72,38 @@ public class ThreadPrinterStateMonitor extends Thread
         }
 
         logger.info("Printer state monitor thread stopped");
+    }
+
+    private void checkPrinter(PrinterEnum printer) {
+        final String newState = gatherPrinterState(printer);
+        final String lastState = printerState.getOrDefault(printer, "unknown");
+
+        //If we go from printing to operation then we are done
+        if (newState.equals(JSON_OPERATIONAL_VALUE) && lastState.equals(JSON_PRINTING_VALUE))
+        {
+            sendMessage(printer);
+        }
+
+        //Store current state for next iteration
+        printerState.put(printer, newState);
+    }
+
+    private void sendMessage(PrinterEnum printer) {
+        //Format output message
+        final String formattedOutput = String.format(CHANNEL_OUTPUT, printer);
+
+        //Send message to defined channel
+        final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
+        if (channel != null)
+        {
+            channel.sendMessage(formattedOutput)
+                    .embed(PrinterUtilities.createPrinterOutput(printer).build())
+                    .submit();
+        }
+        else
+        {
+            logger.error("Failed to get channel for printer output");
+        }
     }
 
     /**
