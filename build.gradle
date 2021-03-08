@@ -57,7 +57,7 @@ dependencies {
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
 
 	compile 'com.jagrosh:jda-utilities:3.0.4'
-    compile 'net.dv8tion:JDA:4.2.0_227'
+    compile 'net.dv8tion:JDA:+'
 
 	compile 'com.google.api-client:google-api-client:1.30.2'
 	compile 'com.google.oauth-client:google-oauth-client-jetty:1.30.4'
@@ -100,6 +100,7 @@ dependencies {
 	implementation 'org.webjars:stomp-websocket:2.3.3'
 	implementation 'org.webjars:bootstrap:3.3.7'
 	implementation 'org.webjars:jquery:3.1.1-1'
+    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.4'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
