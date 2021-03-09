@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import java.net.ConnectException;
 
 /**
  * Thread to monitor status of Octopi-print servers to see if the printer has completed it's job
@@ -125,7 +126,7 @@ public class ThreadPrinterStateMonitor extends Thread
             }
             return "no-response";
         }
-        catch (UnknownHostException e1)
+        catch (UnknownHostException | ConnectException e1)
         {
             return "offline";
         }
