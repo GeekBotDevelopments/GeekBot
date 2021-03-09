@@ -39,7 +39,7 @@ public class MainConfig
     private static String ENDER_KEY;
     private static String ENDER_URL;
 
-    private static String BotPrefix = "!gb";
+    private static String BOT_PREFIX;
 
     public static void load() throws IOException
     {
@@ -68,6 +68,7 @@ public class MainConfig
             prop.load(input);
 
             //Read values
+            BOT_PREFIX = prop.getProperty("bot.prefix");
             setGOOGLE_API_KEY(prop.getProperty("key.google"));
             setCHIRON_KEY(prop.getProperty("id.discord"));
             setDISCORD_SECRET(prop.getProperty("secret.discord"));
@@ -110,7 +111,7 @@ public class MainConfig
     }
 
     public static String getBotPrefix() {
-        return BotPrefix;
+        return BOT_PREFIX;
     }
 
     public static Date get24() {
