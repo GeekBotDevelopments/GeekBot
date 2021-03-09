@@ -10,6 +10,7 @@ import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
 import bot.events.WelcomeEvent;
 import bot.modules.configs.MainConfig;
+import bot.modules.minecraft.forge.CommandForgeVersion;
 import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.commands.CommandPrinterHistory;
 import bot.modules.octopi.commands.CommandPrinterJob;
@@ -126,6 +127,9 @@ public class GeekBot extends SpringBootServletInitializer
         commandBuilder.addCommand(new CmdHug());
         commandBuilder.addCommand(new CmdUserInfo());
         commandBuilder.addCommand(new CmdStopBot());
+
+        //Forge commands
+        commandBuilder.addCommand(new CommandForgeVersion());
 
         //Starbound commands
         commandBuilder.addCommand(new CmdStarboundRole());
