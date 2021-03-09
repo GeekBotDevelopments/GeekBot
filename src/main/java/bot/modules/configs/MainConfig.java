@@ -68,7 +68,7 @@ public class MainConfig
             prop.load(input);
 
             //Read values
-            BOT_PREFIX = prop.getProperty("bot.prefix");
+            setBOT_PREFIX(prop.getProperty("bot.prefix"));
             setGOOGLE_API_KEY(prop.getProperty("key.google"));
             setCHIRON_KEY(prop.getProperty("id.discord"));
             setDISCORD_SECRET(prop.getProperty("secret.discord"));
@@ -90,49 +90,11 @@ public class MainConfig
         }
     }
 
-
-
-    // -----GETTERS-&-SETTERS----- //
-
-    public static String getID() {
-        return YOUTUBE_ID;
-    }
-
-    public static String getDiscordToken() {
-        return DISCORD_TOKEN;
-    }
-
-    public static String getDiscordId() {
-        return DISCORD_ID;
-    }
-
-    public static String getDiscordSecret() {
-        return DISCORD_SECRET;
-    }
-
-    public static String getBotPrefix() {
-        return BOT_PREFIX;
-    }
-
-    public static Date get24() {
-        Date date = new Date();
-        date.setHours(24);
-        date.setMinutes(0);
-        return date;
-    }
-
     /**
      * @return the gOOGLE_API_KEY
      */
     public static String getGOOGLE_API_KEY() {
         return GOOGLE_API_KEY;
-    }
-
-    /**
-     * @param gOOGLE_API_KEY the gOOGLE_API_KEY to set
-     */
-    public static void setGOOGLE_API_KEY(String gOOGLE_API_KEY) {
-        GOOGLE_API_KEY = gOOGLE_API_KEY;
     }
 
     /**
@@ -143,24 +105,10 @@ public class MainConfig
     }
 
     /**
-     * @param dISCORD_TOKEN the dISCORD_TOKEN to set
-     */
-    public static void setDISCORD_TOKEN(String dISCORD_TOKEN) {
-        DISCORD_TOKEN = dISCORD_TOKEN;
-    }
-
-    /**
      * @return the dISCORD_ID
      */
     public static String getDISCORD_ID() {
         return DISCORD_ID;
-    }
-
-    /**
-     * @param dISCORD_ID the dISCORD_ID to set
-     */
-    public static void setDISCORD_ID(String dISCORD_ID) {
-        DISCORD_ID = dISCORD_ID;
     }
 
     /**
@@ -171,13 +119,6 @@ public class MainConfig
     }
 
     /**
-     * @param dISCORD_SECRET the dISCORD_SECRET to set
-     */
-    public static void setDISCORD_SECRET(String dISCORD_SECRET) {
-        DISCORD_SECRET = dISCORD_SECRET;
-    }
-
-    /**
      * @return the yOUTUBE_ID
      */
     public static String getYOUTUBE_ID() {
@@ -185,38 +126,45 @@ public class MainConfig
     }
 
     /**
-     * @param yOUTUBE_ID the yOUTUBE_ID to set
+     * @return the oWNER_ID
      */
-    public static void setYOUTUBE_ID(String yOUTUBE_ID) {
-        YOUTUBE_ID = yOUTUBE_ID;
+    public static String getOWNER_ID() {
+        return OWNER_ID;
     }
 
     /**
-     * @param oWNER_ID the oWNER_ID to set
+     * @return the lABRINTH_ID
      */
-    public static void setOWNER_ID(String oWNER_ID) {
-        OWNER_ID = oWNER_ID;
+    public static String getLABRINTH_ID() {
+        return LABRINTH_ID;
     }
 
     /**
-     * @param cHIRON_KEY the cHIRON_KEY to set
+     * @return the lABUPDATE
      */
-    public static void setCHIRON_KEY(String cHIRON_KEY) {
-        CHIRON_KEY = cHIRON_KEY;
+    public static String getLABUPDATE() {
+        return LABUPDATE;
     }
 
     /**
-     * @param cHIRON_URL the cHIRON_URL to set
+     * @return the cHIRON_KEY
      */
-    public static void setCHIRON_URL(String cHIRON_URL) {
-        CHIRON_URL = cHIRON_URL;
+    public static String getCHIRON_KEY() {
+        return CHIRON_KEY;
     }
 
     /**
-     * @param mINDUSTRY_URL the mINDUSTRY_URL to set
+     * @return the cHIRON_URL
      */
-    public static void setMINDUSTRY_URL(String mINDUSTRY_URL) {
-        MINDUSTRY_URL = mINDUSTRY_URL;
+    public static String getCHIRON_URL() {
+        return CHIRON_URL;
+    }
+
+    /**
+     * @return the mINDUSTRY_URL
+     */
+    public static String getMINDUSTRY_URL() {
+        return MINDUSTRY_URL;
     }
 
     /**
@@ -227,24 +175,10 @@ public class MainConfig
     }
 
     /**
-     * @param dATABASE_URL the dATABASE_URL to set
-     */
-    public static void setDATABASE_URL(String dATABASE_URL) {
-        DATABASE_URL = dATABASE_URL;
-    }
-
-    /**
      * @return the dATABASE_USER
      */
     public static String getDATABASE_USER() {
         return DATABASE_USER;
-    }
-
-    /**
-     * @param dATABASE_USER the dATABASE_USER to set
-     */
-    public static void setDATABASE_USER(String dATABASE_USER) {
-        DATABASE_USER = dATABASE_USER;
     }
 
     /**
@@ -255,24 +189,10 @@ public class MainConfig
     }
 
     /**
-     * @param dATABASE_PASS the dATABASE_PASS to set
-     */
-    public static void setDATABASE_PASS(String dATABASE_PASS) {
-        DATABASE_PASS = dATABASE_PASS;
-    }
-
-    /**
      * @return the eNDER_KEY
      */
     public static String getENDER_KEY() {
         return ENDER_KEY;
-    }
-
-    /**
-     * @param eNDER_KEY the eNDER_KEY to set
-     */
-    public static void setENDER_KEY(String eNDER_KEY) {
-        ENDER_KEY = eNDER_KEY;
     }
 
     /**
@@ -283,47 +203,9 @@ public class MainConfig
     }
 
     /**
-     * @param eNDER_URL the eNDER_URL to set
+     * @return the bOT_PREFIX
      */
-    public static void setENDER_URL(String eNDER_URL) {
-        ENDER_URL = eNDER_URL;
-    }
-
-
-
-    /**
-     * @return the MINDUSTRY_URL
-     */
-    public static String getMINDUSTRY_URL() {
-        return MINDUSTRY_URL;
-    }
-
-    public static String getCHIRON_KEY() {
-        return CHIRON_KEY;
-    }
-
-    public static String getCHIRON_URL() {
-        return CHIRON_URL;
-    }
-
-    public static String getLABRINTH_ID() {
-        return LABRINTH_ID;
-    }
-
-    public static void setLABRINTH_ID(String lABRINTH_ID) {
-        LABRINTH_ID = lABRINTH_ID;
-    }
-
-    public static String getLABUPDATE() {
-        return LABUPDATE;
-    }
-
-    public static void setLABUPDATE(String lABUPDATE) {
-        LABUPDATE = lABUPDATE;
-    }
-
-
-    public static String getOWNER_ID() {
-        return OWNER_ID;
+    public static String getBOT_PREFIX() {
+        return BOT_PREFIX;
     }
 }
