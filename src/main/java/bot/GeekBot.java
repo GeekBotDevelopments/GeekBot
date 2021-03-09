@@ -23,7 +23,6 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import org.apache.logging.log4j.LogManager;
@@ -96,7 +95,7 @@ public class GeekBot extends SpringBootServletInitializer
         {
             discordClient = builder.build();
             discordClient.setAutoReconnect(true);
-            discordClient.getPresence().setActivity(Activity.watching("for !gb help"));
+            //discordClient.getPresence().setActivity(Activity.watching("for " + MainConfig.getBotPrefix() + " help"));
         }
         catch (Exception e)
         {
@@ -116,8 +115,8 @@ public class GeekBot extends SpringBootServletInitializer
     private static void registerCommands(@Nonnull CommandClientBuilder commandBuilder)
     {
         //Commands Settings
-        commandBuilder.setPrefix("!gb ");
-        commandBuilder.setHelpWord("help");
+        commandBuilder.setPrefix(MainConfig.getBotPrefix());
+        commandBuilder.setHelpWord(" help");
         commandBuilder.setOwnerId(MainConfig.getOWNER_ID());
 
         //Main commands
