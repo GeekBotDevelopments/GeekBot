@@ -105,7 +105,7 @@ public class MainConfig
         return DISCORD_ID;
     }
 
-    public static String getDisordSecret() {
+    public static String getDiscordSecret() {
         return DISCORD_SECRET;
     }
 
