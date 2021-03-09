@@ -115,7 +115,7 @@ public class GeekBot extends SpringBootServletInitializer
     private static void registerCommands(@Nonnull CommandClientBuilder commandBuilder)
     {
         //Commands Settings
-        commandBuilder.setPrefix(MainConfig.getBotPrefix() + " "); //Space is required by library for status to show correctly
+        commandBuilder.setPrefix(MainConfig.getBOT_PREFIX() + " "); //Space is required by library for status to show correctly
         commandBuilder.setHelpWord("help");
         commandBuilder.setOwnerId(MainConfig.getOWNER_ID());
 
