@@ -68,23 +68,23 @@ public class MainConfig
             prop.load(input);
 
             //Read values
-            setBOT_PREFIX(prop.getProperty("bot.prefix"));
-            setGOOGLE_API_KEY(prop.getProperty("key.google"));
-            setCHIRON_KEY(prop.getProperty("id.discord"));
-            setDISCORD_SECRET(prop.getProperty("secret.discord"));
-            setDISCORD_TOKEN(prop.getProperty("token.discord"));
-            setYOUTUBE_ID(prop.getProperty("id.youtube"));
-            setOWNER_ID(prop.getProperty("id.owner"));
-            setLABRINTH_ID(prop.getProperty("id.labrinth"));
-            setLABUPDATE(prop.getProperty("id.labupdate"));
-            setCHIRON_KEY(prop.getProperty("key.chiron"));
-            setCHIRON_URL(prop.getProperty("url.chiron"));
-            setMINDUSTRY_URL(prop.getProperty("url.mindustry"));
-            setDATABASE_URL(prop.getProperty("url.database"));
-            setDATABASE_PASS(prop.getProperty("password.database"));
-            setDATABASE_USER(prop.getProperty("username.database"));
-            setENDER_KEY(prop.getProperty("key.ender"));
-            setENDER_URL(prop.getProperty("url.ender"));
+            BOT_PREFIX = (prop.getProperty("bot.prefix"));
+            GOOGLE_API_KEY = (prop.getProperty("key.google"));
+            CHIRON_KEY = (prop.getProperty("id.discord"));
+            DISCORD_SECRET = (prop.getProperty("secret.discord"));
+            DISCORD_TOKEN = (prop.getProperty("token.discord"));
+            YOUTUBE_ID = (prop.getProperty("id.youtube"));
+            OWNER_ID = (prop.getProperty("id.owner"));
+            LABRINTH_ID = (prop.getProperty("id.labrinth"));
+            LABUPDATE = (prop.getProperty("id.labupdate"));
+            CHIRON_KEY = (prop.getProperty("key.chiron"));
+            CHIRON_URL = (prop.getProperty("url.chiron"));
+            MINDUSTRY_URL = (prop.getProperty("url.mindustry"));
+            DATABASE_URL = (prop.getProperty("url.database"));
+            DATABASE_PASS = (prop.getProperty("password.database"));
+            DATABASE_USER = (prop.getProperty("username.database"));
+            ENDER_KEY = (prop.getProperty("key.ender"));
+            ENDER_URL = (prop.getProperty("url.ender"));
 
             LOGGER.info("Keys loaded");
         }
