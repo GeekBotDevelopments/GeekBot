@@ -1,24 +1,23 @@
 package bot.modules.minecraft.forge;
 
 import bot.models.SemVer;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data
 @EqualsAndHashCode
 @NoArgsConstructor
 public class ForgeVersion implements Comparable<ForgeVersion>
 {
-    private SemVer minecraft;
-    private SemVer forge;
-    private boolean latest;
+    private final SemVer minecraft;
+    private final SemVer forge;
+    private final boolean latest;
 
     public ForgeVersion(String mcString, String forgeString) {
         final String[] split = mcString.split("-");
         minecraft = new SemVer(split[0]);
         latest = "latest".equalsIgnoreCase(split[1]);
         forge = new SemVer(forgeString);
+
     }
 
     @Override
