@@ -80,7 +80,7 @@ public class GeekBot extends SpringBootServletInitializer
         intents.add(GatewayIntent.GUILD_EMOJIS);
         intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 
-        final JDABuilder builder = JDABuilder.createDefault(MainConfig.getDiscordToken(), intents);
+        final JDABuilder builder = JDABuilder.createDefault(MainConfig.getDISCORD_TOKEN(), intents);
         final CommandClientBuilder commandBuilder = new CommandClientBuilder();
 
         registerEvents(builder);
