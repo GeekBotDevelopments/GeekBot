@@ -52,7 +52,7 @@ public class WelcomeEvent extends ListenerAdapter
             final String memberName = member != null ? member.getEffectiveName() : user.getName();
 
             //Output to channel
-            final String output = String.format("member %s has left", memberName);
+            final String output = String.format("member **%s** has left", memberName);
             channel.sendMessage(output).submit();
         }
         else
