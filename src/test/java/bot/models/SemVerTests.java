@@ -79,4 +79,33 @@ class SemVerTests
     void testVersionEquals(SemVer a, SemVer b, boolean shouldMatch) {
         Assertions.assertEquals(shouldMatch, a.equals(b));
     }
+
+    static Stream<Arguments> versionCompareData() {
+        return Stream.of(
+                //All equal
+                Arguments.of(new SemVer(1, 2, 3, 4), new SemVer(1, 2, 3, 4), 0),
+
+                //Build Delta
+                Arguments.of(new SemVer(1, 2, 3, 5), new SemVer(1, 2, 3, 6), -1),
+                Arguments.of(new SemVer(1, 2, 3, 5), new SemVer(1, 2, 3, 4), 1),
+
+                //Patch Delta
+                Arguments.of(new SemVer(1, 2, 3, 5), new SemVer(1, 2, 4, 5), -1),
+                Arguments.of(new SemVer(1, 7, 3, 5), new SemVer(1, 7, 2, 5), 1),
+
+                //Minor
+                Arguments.of(new SemVer(1, 2, 3, 5), new SemVer(1, 3, 3, 5), -1),
+                Arguments.of(new SemVer(7, 2, 3, 5), new SemVer(7, 1, 3, 5), 1),
+
+                //Major
+                Arguments.of(new SemVer(0, 2, 3, 5), new SemVer(1, 2, 3, 5), -1),
+                Arguments.of(new SemVer(1, 2, 3, 5), new SemVer(0, 2, 3, 5), 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("versionCompareData")
+    void testVersionCompare(SemVer a, SemVer b, int result) {
+        Assertions.assertEquals(result, a.compareTo(b));
+    }
 }
