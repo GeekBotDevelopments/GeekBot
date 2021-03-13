@@ -1,20 +1,20 @@
 package bot.models;
 
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Dark(DarkGuardsman, Robert) on 3/8/2021.
  */
-@EqualsAndHashCode
+@Data
 public class SemVer implements Comparable<SemVer>
 {
-    public final int major;
-    public final int minor;
-    public final int patch;
+    private final int major;
+    private final int minor;
+    private final int patch;
 
     /** Extra bit for versions with build numbers */
-    public final int build;
+    private final int build;
 
     public SemVer(String version)
     {

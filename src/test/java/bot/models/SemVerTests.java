@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 /**
  * Created by Dark(DarkGuardsman, Robert) on 3/8/2021.
  */
-public class SemVerTests
+class SemVerTests
 {
 
     static Stream<Arguments> versionParsingData() {
@@ -35,10 +35,10 @@ public class SemVerTests
         final SemVer version = new SemVer(input);
 
         //Test that we read each value as expected
-        Assertions.assertEquals(major, version.major);
-        Assertions.assertEquals(minor, version.minor);
-        Assertions.assertEquals(patch, version.patch);
-        Assertions.assertEquals(build, version.build);
+        Assertions.assertEquals(major, version.getMajor());
+        Assertions.assertEquals(minor, version.getMinor());
+        Assertions.assertEquals(patch, version.getPatch());
+        Assertions.assertEquals(build, version.getBuild());
     }
 
     static Stream<Arguments> versionToStringData() {
@@ -59,5 +59,24 @@ public class SemVerTests
     @MethodSource("versionToStringData")
     void testVersionToString(SemVer version, String output) {
         Assertions.assertEquals(version.toString(), output);
+    }
+
+    static Stream<Arguments> versionEqualsData() {
+        return Stream.of(
+                //Not equals
+                Arguments.of(new SemVer(1, 1, 0), new SemVer(1, 1, 1), false),
+                Arguments.of(new SemVer(1, 1, 0), new SemVer(1, 0, 0), false),
+                Arguments.of(new SemVer(1, 1, 0), new SemVer(2, 1, 0), false),
+                Arguments.of(new SemVer(1, 1, 0, 0), new SemVer(1, 1, 0, 1), false),
+                //Equals
+                Arguments.of(new SemVer(1, 1, 0), new SemVer(1, 1, 0), true),
+                Arguments.of(new SemVer(1, 1, 0, 1), new SemVer(1, 1, 0, 1), true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("versionEqualsData")
+    void testVersionEquals(SemVer a, SemVer b, boolean shouldMatch) {
+        Assertions.assertEquals(shouldMatch, a.equals(b));
     }
 }
