@@ -1,16 +1,17 @@
 package bot.modules.minecraft.forge;
 
 import bot.models.SemVer;
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 
-@EqualsAndHashCode
+@Data
 public class ForgeVersion implements Comparable<ForgeVersion>
 {
-    public final SemVer minecraft;
-    public final SemVer forge;
-    public final boolean latest;
+    private final SemVer minecraft;
+    private final SemVer forge;
+    private final boolean latest;
 
-    public ForgeVersion(String mcString, String forgeString) {
+    public ForgeVersion(String mcString, String forgeString)
+    {
         final String[] split = mcString.split("-");
         minecraft = new SemVer(split[0]);
         latest = "latest".equalsIgnoreCase(split[1]);
@@ -21,10 +22,10 @@ public class ForgeVersion implements Comparable<ForgeVersion>
     public int compareTo(ForgeVersion other)
     {
         final int minecraftCompare = minecraft.compareTo(other.minecraft);
-		if (minecraftCompare != 0)
-		{
-			return minecraftCompare;
-		}
+        if (minecraftCompare != 0)
+        {
+            return minecraftCompare;
+        }
         final int forgeCompare = forge.compareTo(other.forge);
         if (forgeCompare != 0)
         {
@@ -34,9 +35,8 @@ public class ForgeVersion implements Comparable<ForgeVersion>
     }
 
     @Override
-    public String toString() {
-        return minecraft.toString()
-                + (latest ? "latest" : "recommended")
-                + forge.toString();
+    public String toString()
+    {
+        return String.format("%s-%s%s", minecraft, forge, (latest ? "L" : "R"));
     }
 }
