@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
 /**
  * Created by Dark(DarkGuardsman, Robert) on 3/8/2021.
  */
-public class ForgeVersions
+public class ForgeVersionUtil
 {
-    private static Pattern versionKeyPattern = Pattern.compile("([0-9]+)-\\w+");
-    private static final String VERSION_URL = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json";
+    private static final Pattern versionKeyPattern = Pattern.compile("([0-9]+)-\\w+");
+    public static final String VERSION_URL = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json";
 
-    public static void forgeVersions(Consumer<String> consumer) {
+    public static void fetchForgeVersions(Consumer<ForgeVersion> consumer) {
         try
         {
             //Get Json data
@@ -28,12 +28,11 @@ public class ForgeVersions
             final JsonObject promos = json.getAsJsonObject("promos");
 
             promos.entrySet().forEach(entry -> {
-
+                //Filtering out bad data.... because LEX
                 final Matcher matcher = versionKeyPattern.matcher(entry.getKey());
                 if(matcher.find())
                 {
-                    final ForgeVersion version = new ForgeVersion(entry.getKey(), entry.getValue().toString());
-                    consumer.accept(version.toString());
+                    consumer.accept(new ForgeVersion(entry.getKey(), entry.getValue().getAsString()));
                 }
             });
         }

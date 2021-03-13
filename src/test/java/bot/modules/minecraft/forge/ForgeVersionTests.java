@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * Created by Robin Seifert on 3/12/2021.
  */
-public class ForgeVersionTests
+class ForgeVersionTests
 {
     static Stream<Arguments> versionParsingData() {
         return Stream.of(

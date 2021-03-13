@@ -1,7 +1,5 @@
 package bot.modules.rest;
 
-import org.springframework.scheduling.annotation.Async;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Dark(DarkGuardsman, Robert) on 1/17/2021.
+ * Created by Robin Seifert on 1/17/2021.
  */
 public final class RestUtil
 {
@@ -17,7 +15,6 @@ public final class RestUtil
     {
     }
 
-    @Async
     public static String get(String url) throws IOException
     {
         // URL declaration
