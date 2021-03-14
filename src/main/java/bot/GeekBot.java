@@ -6,6 +6,7 @@ import bot.commands.CmdHug;
 import bot.commands.CmdInvite;
 import bot.commands.CmdJoinVoice;
 import bot.commands.CmdPing;
+import bot.commands.CmdRssCheck;
 import bot.commands.CmdStopBot;
 import bot.commands.CmdUserInfo;
 import bot.events.WelcomeEvent;
@@ -22,6 +23,10 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import javax.annotation.Nonnull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -37,134 +42,130 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 @SpringBootApplication
 @RestController
 @EnableAsync
-public class GeekBot extends SpringBootServletInitializer
-{
+public class GeekBot extends SpringBootServletInitializer {
 
-    public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
-    private static final Configuration config = new Configuration();
+  public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
+  private static final Configuration config = new Configuration();
 
-    public static JDA discordClient;
-    public static SourceServer starboundServer;
-    public static ConfigurableApplicationContext springApplicationContext;
-    private static StreamSpeechRecognizer speechRecognizer;
+  public static JDA discordClient;
+  public static SourceServer starboundServer;
+  public static ConfigurableApplicationContext springApplicationContext;
+  private static StreamSpeechRecognizer speechRecognizer;
 
-    public static ThreadPrinterStateMonitor printerStateMonitor;
+  public static ThreadPrinterStateMonitor printerStateMonitor;
 
-    public static void main(String[] args) throws IOException
-    {
-        springApplicationContext = SpringApplication.run(GeekBot.class, args);
+  public static void main(String[] args) throws IOException {
+    springApplicationContext = SpringApplication.run(GeekBot.class, args);
 
-        config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
-        config.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        config.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+    config.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+    config.setDictionaryPath(
+      "resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict"
+    );
+    config.setLanguageModelPath(
+      "resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin"
+    );
 
-        speechRecognizer = new StreamSpeechRecognizer(config);
+    speechRecognizer = new StreamSpeechRecognizer(config);
 
-        MainConfig.load();
+    MainConfig.load();
 
-        final Set<GatewayIntent> intents = new HashSet<>();
-        intents.add(GatewayIntent.DIRECT_MESSAGES);
-        intents.add(GatewayIntent.DIRECT_MESSAGE_TYPING);
-        intents.add(GatewayIntent.GUILD_MEMBERS);
-        intents.add(GatewayIntent.GUILD_MESSAGES);
-        intents.add(GatewayIntent.GUILD_MESSAGE_TYPING);
-        intents.add(GatewayIntent.GUILD_VOICE_STATES);
-        intents.add(GatewayIntent.GUILD_EMOJIS);
-        intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
+    final Set<GatewayIntent> intents = new HashSet<>();
+    intents.add(GatewayIntent.DIRECT_MESSAGES);
+    intents.add(GatewayIntent.DIRECT_MESSAGE_TYPING);
+    intents.add(GatewayIntent.GUILD_MEMBERS);
+    intents.add(GatewayIntent.GUILD_MESSAGES);
+    intents.add(GatewayIntent.GUILD_MESSAGE_TYPING);
+    intents.add(GatewayIntent.GUILD_VOICE_STATES);
+    intents.add(GatewayIntent.GUILD_EMOJIS);
+    intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
 
-        final JDABuilder builder = JDABuilder.createDefault(MainConfig.getDISCORD_TOKEN(), intents);
-        final CommandClientBuilder commandBuilder = new CommandClientBuilder();
+    final JDABuilder builder = JDABuilder.createDefault(
+      MainConfig.getDISCORD_TOKEN(),
+      intents
+    );
+    final CommandClientBuilder commandBuilder = new CommandClientBuilder();
 
-        registerEvents(builder);
-        registerCommands(commandBuilder);
+    registerEvents(builder);
+    registerCommands(commandBuilder);
 
-        //TODO document
-        final CommandClient commandListener = commandBuilder.build();
-        builder.setChunkingFilter(ChunkingFilter.ALL);
-        builder.addEventListeners(commandListener);
-        builder.enableIntents(intents);
+    //TODO document
+    final CommandClient commandListener = commandBuilder.build();
+    builder.setChunkingFilter(ChunkingFilter.ALL);
+    builder.addEventListeners(commandListener);
+    builder.enableIntents(intents);
 
-        try
-        {
-            discordClient = builder.build();
-            discordClient.setAutoReconnect(true);
-            //discordClient.getPresence().setActivity(Activity.watching("for " + MainConfig.getBotPrefix() + " help"));
-        }
-        catch (Exception e)
-        {
-            MAIN_LOG.catching(e);
-        }
-
-        //Kick off thread
-        printerStateMonitor = new ThreadPrinterStateMonitor();
-        printerStateMonitor.start();
+    try {
+      discordClient = builder.build();
+      discordClient.setAutoReconnect(true);
+      //discordClient.getPresence().setActivity(Activity.watching("for " + MainConfig.getBotPrefix() + " help"));
+    } catch (Exception e) {
+      MAIN_LOG.catching(e);
     }
 
-    private static void registerEvents(@Nonnull JDABuilder builder)
-    {
-        builder.addEventListeners(new WelcomeEvent());
-    }
+    //Kick off thread
+    printerStateMonitor = new ThreadPrinterStateMonitor();
+    printerStateMonitor.start();
+  }
 
-    private static void registerCommands(@Nonnull CommandClientBuilder commandBuilder)
-    {
-        //Commands Settings
-        commandBuilder.setPrefix(MainConfig.getBOT_PREFIX() + " "); //Space is required by library for status to show correctly
-        commandBuilder.setHelpWord("help");
-        commandBuilder.setOwnerId(MainConfig.getOWNER_ID());
+  private static void registerEvents(@Nonnull JDABuilder builder) {
+    builder.addEventListeners(new WelcomeEvent());
+  }
 
-        //Main commands
-        commandBuilder.addCommand(new CmdPing());
-        commandBuilder.addCommand(new CmdInvite());
-        commandBuilder.addCommand(new CmdContribute());
-        commandBuilder.addCommand(new CmdHug());
-        commandBuilder.addCommand(new CmdUserInfo());
-        commandBuilder.addCommand(new CmdStopBot());
+  private static void registerCommands(
+    @Nonnull CommandClientBuilder commandBuilder
+  ) {
+    //Commands Settings
+    commandBuilder.setPrefix(MainConfig.getBOT_PREFIX() + " "); //Space is required by library for status to show correctly
+    commandBuilder.setHelpWord("help");
+    commandBuilder.setOwnerId(MainConfig.getOWNER_ID());
 
-        //Forge commands
-        commandBuilder.addCommand(new CommandForgeVersion());
+    //Main commands
+    commandBuilder.addCommand(new CmdPing());
+    commandBuilder.addCommand(new CmdInvite());
+    commandBuilder.addCommand(new CmdContribute());
+    commandBuilder.addCommand(new CmdHug());
+    commandBuilder.addCommand(new CmdUserInfo());
+    commandBuilder.addCommand(new CmdStopBot());
+    commandBuilder.addCommand(new CmdRssCheck());
 
-        //Starbound commands
-        commandBuilder.addCommand(new CmdStarboundRole());
-        // commandBuilder.addCommand(new CmdStarBoundRestart());
+    //Forge commands
+    commandBuilder.addCommand(new CommandForgeVersion());
 
-        //Voice commands
-        commandBuilder.addCommand(new CmdJoinVoice());
-        commandBuilder.addCommand(new CmdExitVoice());
+    //Starbound commands
+    commandBuilder.addCommand(new CmdStarboundRole());
+    // commandBuilder.addCommand(new CmdStarBoundRestart());
 
-        //Octoprint commands
-        commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.CHIRION));
-        commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.ENDER));
-        commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.CHIRION));
-        commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.ENDER));
-        commandBuilder.addCommand(new CommandPrinterStatus());
-    }
+    //Voice commands
+    commandBuilder.addCommand(new CmdJoinVoice());
+    commandBuilder.addCommand(new CmdExitVoice());
 
-    public static Configuration getConfig()
-    {
-        return config;
-    }
+    //Octoprint commands
+    commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.CHIRION));
+    commandBuilder.addCommand(new CommandPrinterHistory(PrinterEnum.ENDER));
+    commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.CHIRION));
+    commandBuilder.addCommand(new CommandPrinterJob(PrinterEnum.ENDER));
+    commandBuilder.addCommand(new CommandPrinterStatus());
+  }
 
-    public static StreamSpeechRecognizer getSpeechRecognizer()
-    {
-        return speechRecognizer;
-    }
+  public static Configuration getConfig() {
+    return config;
+  }
 
-    public static JDA getClient()
-    {
-        return discordClient;
-    }
+  public static StreamSpeechRecognizer getSpeechRecognizer() {
+    return speechRecognizer;
+  }
 
-    @GetMapping("/hello")
-    public String hello(@RequestParam(value = "name", defaultValue = "World") String name)
-    {
-        return String.format("Hello %s!", name);
-    }
+  public static JDA getClient() {
+    return discordClient;
+  }
+
+  @GetMapping("/hello")
+  public String hello(
+    @RequestParam(value = "name", defaultValue = "World") String name
+  ) {
+    return String.format("Hello %s!", name);
+  }
 }
