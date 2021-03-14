@@ -10,24 +10,28 @@ public class CmdRssCheck extends Command {
 
   public CmdRssCheck() {
     name = "rss-check";
-    hidden = true;
+    //hidden = true;
     arguments = "url - url of the rss feed to check";
   }
 
   @Override
   protected void execute(CommandEvent event) {
     String[] message = event.getMessage().getContentRaw().split(" ");
+    EmbedBuilder builder = new EmbedBuilder();
     RSSFeedParser feedParser = new RSSFeedParser(message[message.length - 1]);
     Feed feed = feedParser.readFeed();
+    feed
+      .getMessages()
+      .forEach(
+        messagefeed -> {
+          builder
+            .setTitle(messagefeed.getTitle())
+            .setAuthor(messagefeed.getAuthor())
+            .setDescription(messagefeed.getDescription().toString())
+            .addField("Link", messagefeed.getLink(), false);
 
-    EmbedBuilder builder = new EmbedBuilder();
-    builder
-      .setTitle(feed.getTitle())
-      .setAuthor(feed.getCopyright())
-      .setDescription(feed.getDescription())
-      .addField("Link", feed.getLink(), true)
-      .addField("published", feed.getPubDate(), true);
-
-    event.getChannel().sendMessage(builder.build()).submit();
+          event.getChannel().sendMessage(builder.build()).submit();
+        }
+      );
   }
 }
