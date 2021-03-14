@@ -27,5 +27,7 @@ public class CmdRssCheck extends Command {
       .setDescription(feed.getDescription())
       .addField("Link", feed.getLink(), true)
       .addField("published", feed.getPubDate(), true);
+
+    event.getChannel().sendMessage(builder.build()).submit();
   }
 }
