@@ -1,10 +1,12 @@
 package bot.modules.rest;
 
-import java.io.BufferedReader;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.GetRequest;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Created by Robin Seifert on 1/17/2021.
@@ -15,38 +17,36 @@ public final class RestUtil
     {
     }
 
-    public static String get(String url) throws IOException
+    public static GetRequest getRequest(String url)
     {
-        // URL declaration
-        URL obj = new URL(url);
+        return Unirest.get(url)
+                .header("accept", "application/json")
+                //TODO pull version from code
+                //TODO get web URL for bot
+                .header("User-Agent", "Mozilla/5.0 (compatible; GeekBot/1.0; +https://github.com/LegendaryGeek/GeekBot");
+    }
 
-        // URL connection
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    public static String getString(String url) throws IOException
+    {
+        try
+        {
+            final HttpResponse<String> httpResponse = getRequest(url).asString();
 
-        // Request Settings
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        // check response code for an okay
-        int responseCode = con.getResponseCode();
-        // log.info("GET Response Code: " + responseCode);
-        if (responseCode == HttpURLConnection.HTTP_OK)
-        { // success
-            // Read the Response from the site
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            // Generate a response to return
-            while ((inputLine = in.readLine()) != null)
+            if (httpResponse.getStatus() == HttpURLConnection.HTTP_OK)
             {
-                response.append(inputLine);
+                return httpResponse.getBody();
             }
-            // Close Reader
-            in.close();
-            con.disconnect();
-
-            // print result
-            return response.toString();
+        }
+        catch (UnirestException e)
+        {
+            if (e.getCause() instanceof IOException)
+            {
+                throw (IOException) e.getCause();
+            }
+            else
+            {
+                throw new RuntimeException(e.getCause());
+            }
         }
         return null;
     }
