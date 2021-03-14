@@ -15,8 +15,8 @@ class ForgeVersionTests
 {
     static Stream<Arguments> versionParsingData() {
         return Stream.of(
-                Arguments.of("1.1-latest", "1.3.2.6", new SemVer(1, 1, 0, -1), new SemVer(1, 3, 2, 6), true),
-                Arguments.of("1.1-recommended", "1.3.2.6", new SemVer(1, 1, 0, -1), new SemVer(1, 3, 2, 6), false),
+                Arguments.of("1.1-latest", "1.3.2.6", new SemVer(1, 1, -1, -1), new SemVer(1, 3, 2, 6), true),
+                Arguments.of("1.1-recommended", "1.3.2.6", new SemVer(1, 1, -1, -1), new SemVer(1, 3, 2, 6), false),
                 Arguments.of("1.1.1-latest", "1.3.2.6", new SemVer(1, 1, 1, -1), new SemVer(1, 3, 2, 6), true)
         );
     }
@@ -40,14 +40,14 @@ class ForgeVersionTests
 
     static Stream<Arguments> versionToStringData() {
         return Stream.of(
-                Arguments.of(new ForgeVersion("1.1-recommended", "1.3.2.6"), "1.1.0-1.3.2.6R"),
-                Arguments.of(new ForgeVersion("1.1-latest", "1.3.2.6"), "1.1.0-1.3.2.6L")
+                Arguments.of(new ForgeVersion("1.1-recommended", "1.3.2.6"), "1.1-1.3.2.6R"),
+                Arguments.of(new ForgeVersion("1.1-latest", "1.3.2.6"), "1.1-1.3.2.6L")
         );
     }
 
     @ParameterizedTest
     @MethodSource("versionToStringData")
-    void testVersionParsing(ForgeVersion version, String output) {
+    void testVersionToString(ForgeVersion version, String output) {
         Assertions.assertEquals(version.toString(), output);
     }
 
