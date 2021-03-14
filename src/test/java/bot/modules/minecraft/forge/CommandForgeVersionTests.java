@@ -42,7 +42,7 @@ class CommandForgeVersionTests
 
         try (MockedStatic mocked = Mockito.mockStatic(RestUtil.class))
         {
-            mocked.when(() -> RestUtil.get(ForgeVersionUtil.VERSION_URL)).thenReturn(promotionSlimJson);
+            mocked.when(() -> RestUtil.getString(ForgeVersionUtil.VERSION_URL)).thenReturn(promotionSlimJson);
 
             //Make call
             CommandForgeVersion commandForgeVersion = new CommandForgeVersion();

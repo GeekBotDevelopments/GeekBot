@@ -7,6 +7,7 @@ import bot.modules.rest.RestUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -14,11 +15,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import java.net.ConnectException;
 
 /**
  * Thread to monitor status of Octopi-print servers to see if the printer has completed it's job
@@ -118,7 +119,7 @@ public class ThreadPrinterStateMonitor extends Thread
     {
         try
         {
-            final String response = RestUtil.get(printer.getUrl() + "/api/job?apikey=" + printer.getKey());
+            final String response = RestUtil.getString(printer.getUrl() + "/api/job?apikey=" + printer.getKey());
             if (response != null)
             {
                 final JsonObject json = JsonParser.parseString(response).getAsJsonObject();
@@ -126,7 +127,7 @@ public class ThreadPrinterStateMonitor extends Thread
             }
             return "no-response";
         }
-        catch (UnknownHostException | ConnectException e1)
+        catch (UnknownHostException | ConnectTimeoutException | ConnectException e1)
         {
             return "offline";
         }

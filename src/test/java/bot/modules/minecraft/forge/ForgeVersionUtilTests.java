@@ -26,7 +26,7 @@ class ForgeVersionUtilTests
         //Mock web call
         try (MockedStatic mocked = Mockito.mockStatic(RestUtil.class))
         {
-            mocked.when(() -> RestUtil.get(ForgeVersionUtil.VERSION_URL)).thenReturn(promotionSlimJson);
+            mocked.when(() -> RestUtil.getString(ForgeVersionUtil.VERSION_URL)).thenReturn(promotionSlimJson);
 
             //Create data
             ArrayList<ForgeVersion> versionCheck = new ArrayList();
@@ -39,7 +39,7 @@ class ForgeVersionUtilTests
             ForgeVersionUtil.fetchForgeVersions((version) -> versions.add(version));
 
             //Verify we called the web url
-            mocked.verify(Mockito.times(1), () -> RestUtil.get(ForgeVersionUtil.VERSION_URL));
+            mocked.verify(Mockito.times(1), () -> RestUtil.getString(ForgeVersionUtil.VERSION_URL));
 
             //Validate data
             Assertions.assertIterableEquals(versionCheck, versions);

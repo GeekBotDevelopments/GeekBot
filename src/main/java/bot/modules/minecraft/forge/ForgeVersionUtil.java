@@ -17,11 +17,12 @@ public class ForgeVersionUtil
     private static final Pattern versionKeyPattern = Pattern.compile("([0-9]+)-\\w+");
     public static final String VERSION_URL = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json";
 
-    public static void fetchForgeVersions(Consumer<ForgeVersion> consumer) {
+    public static void fetchForgeVersions(Consumer<ForgeVersion> consumer)
+    {
         try
         {
             //Get Json data
-            final String response = RestUtil.get(VERSION_URL);
+            final String response = RestUtil.getString(VERSION_URL);
             final JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 
             //Gather promos
@@ -30,13 +31,14 @@ public class ForgeVersionUtil
             promos.entrySet().forEach(entry -> {
                 //Filtering out bad data.... because LEX
                 final Matcher matcher = versionKeyPattern.matcher(entry.getKey());
-                if(matcher.find())
+                if (matcher.find())
                 {
                     consumer.accept(new ForgeVersion(entry.getKey(), entry.getValue().getAsString()));
                 }
             });
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             GeekBot.MAIN_LOG.error(e);
         }
     }
