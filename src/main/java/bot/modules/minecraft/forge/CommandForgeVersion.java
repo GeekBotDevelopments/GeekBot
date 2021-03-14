@@ -5,37 +5,51 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CommandForgeVersion extends Command
 {
-	public CommandForgeVersion()
-	{
-		this.name = "forge-version";
-	}
+    public CommandForgeVersion()
+    {
+        this.name = "forge-version";
+    }
 
-	@Override
-	protected void execute(CommandEvent event)
-	{
-		final EmbedBuilder build = new EmbedBuilder();
-		final StringBuilder builder = build.getDescriptionBuilder();
+    @Override
+    protected void execute(CommandEvent event)
+    {
+        final EmbedBuilder embedBuilder = new EmbedBuilder();
 
-		//Create title
-		builder.append("Versions:");
+        embedBuilder.setTitle("Forge Versions", "http://files.minecraftforge.net/");
+        generateList(embedBuilder);
 
-		final ArrayList<ForgeVersion> versions = new ArrayList();
-		ForgeVersionUtil.fetchForgeVersions(versions::add);
-		versions.sort(ForgeVersion::compareTo);
+        //Build and submit
+        event.getChannel().sendMessage(embedBuilder.build()).submit();
+    }
 
-		versions.forEach(version -> {
-			builder.append("\n- M:");
-			builder.append(version.getMinecraft());
-			builder.append("  F:");
-			builder.append(version.getForge());
-		});
+    private void generateList(EmbedBuilder embedBuilder)
+    {
+        final ArrayList<ForgeVersion> versions = new ArrayList<>();
+        ForgeVersionUtil.fetchForgeVersions(versions::add);
 
-		//TODO get versions for last 5 MC versions
-		//TODO show version, date released, url
+        //Sort list by version then reverse so latest is at front
+        versions.sort(ForgeVersion::compareTo);
+        Collections.reverse(versions);
 
-		event.getChannel().sendMessage(build.build()).submit();
-	}
+        //Trim to latest 5 versions
+        final List<ForgeVersion> last = versions.subList(0, Math.min(6, versions.size()));
+
+        //Generate list
+        last.forEach(version -> {
+            final String versionString = String.format("%s-%s", version.getMinecraft(), version.getForge());
+            final String url = String.format(
+                    "%s: [%s](https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/forge-%s-installer.jar)",
+                    version.getForge().toString(),
+					(version.isLatest() ? "Latest" : "Recommended"),
+                    versionString,
+                    versionString
+            );
+            embedBuilder.addField(version.getMinecraft().toString(), url, true);
+        });
+    }
 }
