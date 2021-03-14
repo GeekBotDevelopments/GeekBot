@@ -15,8 +15,8 @@ class SemVerTests
 
     static Stream<Arguments> versionParsingData() {
         return Stream.of(
-                Arguments.of("1.0", 1, 0, 0, -1),
-                Arguments.of("1.1", 1, 1, 0, -1),
+                Arguments.of("1.0", 1, 0, -1, -1),
+                Arguments.of("1.1", 1, 1, -1, -1),
                 Arguments.of("1.1.1", 1, 1, 1, -1),
                 Arguments.of("1.1.1.1", 1, 1, 1, 1),
                 Arguments.of("10.1.1.1", 10, 1, 1, 1),

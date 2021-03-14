@@ -51,11 +51,20 @@ class CommandForgeVersionTests
             //Validate data
             final MessageEmbed message = embed.get();
             Assertions.assertNotNull(message);
-            Assertions.assertEquals(
-                    "Versions:\n" +
-                    "- M:1.1.0  F:1.3.2.6\n" +
-                    "- M:1.10.0  F:12.18.0.2000",
-                    message.getDescription());
+            Assertions.assertEquals("Forge Versions", message.getTitle());
+            Assertions.assertEquals("http://files.minecraftforge.net/", message.getUrl());
+
+            //Expect 2 entries only
+            Assertions.assertEquals(2, message.getFields().size());
+
+            //Expect field 1 to match
+            Assertions.assertEquals("1.1", message.getFields().get(1).getName());
+            Assertions.assertEquals("1.3.2.6: [Latest](https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.1-1.3.2.6/forge-1.1-1.3.2.6-installer.jar)", message.getFields().get(1).getValue());
+
+            //Expect field 0 to match
+            Assertions.assertEquals("1.10", message.getFields().get(0).getName());
+            Assertions.assertEquals("12.18.0.2000: [Latest](https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.10-12.18.0.2000/forge-1.10-12.18.0.2000-installer.jar)", message.getFields().get(0).getValue());
+
 
             //Validate we sent the message
             Mockito.verify(messageAction).submit();

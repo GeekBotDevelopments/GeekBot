@@ -22,7 +22,7 @@ public class SemVer implements Comparable<SemVer>
 
         major = Integer.parseInt(dots[0]);
         minor = Integer.parseInt(dots[1]);
-        patch = dots.length > 2 ? Integer.parseInt(dots[2]) : 0;
+        patch = dots.length > 2 ? Integer.parseInt(dots[2]) : -1;
         build = dots.length > 3 ? Integer.parseInt(dots[3]) : -1;
     }
 
@@ -64,10 +64,14 @@ public class SemVer implements Comparable<SemVer>
     @Override
     public String toString()
     {
-        if (build != -1)
+        if (patch != -1)
         {
-            return String.format("%d.%d.%d.%d", major, minor, patch, build);
+            if (build != -1)
+            {
+                return String.format("%d.%d.%d.%d", major, minor, patch, build);
+            }
+            return String.format("%d.%d.%d", major, minor, patch);
         }
-        return String.format("%d.%d.%d", major, minor, patch);
+        return String.format("%d.%d", major, minor);
     }
 }
