@@ -4,7 +4,6 @@ import bot.models.RssFeed.Feed;
 import bot.models.RssFeed.FeedMessage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.XMLConstants;
@@ -13,7 +12,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
-import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -138,6 +136,9 @@ public class RSSFeedParser {
     if (event instanceof Characters) {
       result = event.asCharacters().getData();
     }
+    LOGGER.info("xml output: {}", result);
+    LOGGER.info("event: {}", event);
+    LOGGER.info("event.toSting : {}", event.toString());
     return result;
   }
 
