@@ -1,7 +1,7 @@
 package bot.commands;
 
 import bot.models.RssFeed.Feed;
-import bot.modules.rssUtil.RSSFeedParser;
+import bot.modules.rss.RSSFeedParser;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
