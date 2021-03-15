@@ -17,13 +17,14 @@ public class CmdRssCheck extends Command {
   @Override
   protected void execute(CommandEvent event) {
     String[] message = event.getMessage().getContentRaw().split(" ");
-    EmbedBuilder builder = new EmbedBuilder();
+
     RSSFeedParser feedParser = new RSSFeedParser(message[message.length - 1]);
     Feed feed = feedParser.readFeed();
     feed
       .getMessages()
       .forEach(
         messagefeed -> {
+          EmbedBuilder builder = new EmbedBuilder();
           builder
             .setTitle(messagefeed.getTitle())
             .setAuthor(messagefeed.getAuthor())
