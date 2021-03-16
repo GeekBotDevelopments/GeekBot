@@ -111,7 +111,7 @@ public class RSSFeedParser {
               LOGGER.error("Could not parse element \" {} \"", localPart);
           }
         } else if (event.isEndElement()) {
-          if (event.asEndElement().getName().getLocalPart() == (ITEM)) {
+          if (event.asEndElement().getName().getLocalPart().equals(ITEM)) {
             FeedMessage message = new FeedMessage();
             message.setAuthor(author);
             message.setDescription(description);
@@ -120,7 +120,6 @@ public class RSSFeedParser {
             message.setTitle(title);
             feed.getMessages().add(message);
             event = eventReader.nextEvent();
-            continue;
           }
         }
       }

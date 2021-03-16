@@ -3,7 +3,6 @@ package bot.events;
 import bot.models.twitch.TwitchStreamChange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class EventTwitchLive {
         this.args = args;
     }
 
-    @MessageMapping("/twitch")
+    //@MessageMapping("/twitch")
     public void TwitchLive(TwitchStreamChange data) {
         this.run();
     }
