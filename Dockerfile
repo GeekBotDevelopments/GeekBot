@@ -1,13 +1,14 @@
-FROM gradle:4.7.0-jdk8-alpine AS build
+FROM gradle:jre15 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle clean build --no-daemon 
+RUN gradle build --no-daemon
 
 FROM openjdk:8-jre-slim
 
-COPY --from=build /home/gradle/src/build/distributions/GeekBot.tar /app/
+EXPOSE 8080
 
-WORKDIR /app
-RUN tar -xvf GeekBot.tar
+RUN mkdir /app
 
-ENTRYPOINT ["java","-jar","/app/GeekBot/lib/GeekBot.jar"]
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]

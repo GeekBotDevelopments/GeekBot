@@ -4,3 +4,9 @@ services:
   geekbot:
     image: geekbot
     build: .
+    shm_size: '1gb'
+    volumes:
+      - configs:/var/lib/mysql/data
+
+volumes:
+  configs:
