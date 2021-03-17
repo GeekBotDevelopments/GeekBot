@@ -1,7 +1,7 @@
 package bot.modules.rss;
 
-import bot.models.RssFeed.Feed;
-import bot.models.RssFeed.FeedMessage;
+import bot.modules.rss.models.Feed;
+import bot.modules.rss.models.FeedMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;

@@ -1,6 +1,6 @@
-package bot.events;
+package bot.modules.twitch;
 
-import bot.models.twitch.TwitchStreamChange;
+import bot.modules.twitch.models.TwitchStreamChange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;

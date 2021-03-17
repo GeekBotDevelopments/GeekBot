@@ -1,4 +1,4 @@
-package bot.events;
+package bot.modules.starbound;
 
 public class EventStarboundLog extends Thread{
 //	private static Logger log = LogManager.getLogger();

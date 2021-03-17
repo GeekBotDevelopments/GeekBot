@@ -1,4 +1,4 @@
-package bot.models.RssFeed;
+package bot.modules.rss.models;
 
 import java.util.ArrayList;
 import java.util.List;

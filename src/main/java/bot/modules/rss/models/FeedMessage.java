@@ -1,4 +1,4 @@
-package bot.models.RssFeed;
+package bot.modules.rss.models;
 /*
  * Represents one RSS message
  */

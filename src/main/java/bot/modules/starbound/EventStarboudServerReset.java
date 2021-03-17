@@ -1,4 +1,4 @@
-package bot.events;
+package bot.modules.starbound;
 
 public class EventStarboudServerReset //extends TimerTask
 {
