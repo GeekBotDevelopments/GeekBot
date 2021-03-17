@@ -1,4 +1,4 @@
-package bot.modules.commands;
+package bot.modules.rss;
 
 public class CmdRssCheck //extends Command
 {
