@@ -1,6 +1,7 @@
 package bot;
 
 import bot.modules.configs.MainConfig;
+import bot.modules.discord.DiscordModule;
 import bot.modules.octopi.OctopiModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ public class GeekBot extends SpringBootServletInitializer
         springApplicationContext = SpringApplication.run(GeekBot.class, args);
 
         MainConfig.load();
+        DiscordModule.load();
         //StarboundModule.load();
         //VoiceModule.load();
         OctopiModule.load();
