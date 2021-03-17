@@ -51,7 +51,7 @@ public enum FilamentTypes
     }
 
     public double getPrice()
-    {
-        return PrinterUtilities.fillamentPricePerLength(diameter, mass, pricePerMass, density);
+    {return 0;
+        //return PrinterUtilities.fillamentPricePerLength(diameter, mass, pricePerMass, density);
     }
 }

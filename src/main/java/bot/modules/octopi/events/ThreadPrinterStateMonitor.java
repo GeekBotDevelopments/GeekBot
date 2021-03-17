@@ -1,12 +1,9 @@
 package bot.modules.octopi.events;
 
-import bot.GeekBot;
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.PrinterUtilities;
 import bot.modules.rest.RestUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,17 +92,17 @@ public class ThreadPrinterStateMonitor extends Thread
         final String formattedOutput = String.format(CHANNEL_OUTPUT, printer);
 
         //Send message to defined channel
-        final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
-        if (channel != null)
-        {
-            channel.sendMessage(formattedOutput)
-                    .embed(PrinterUtilities.createPrinterOutput(printer).build())
-                    .submit();
-        }
-        else
-        {
-            logger.error("Failed to get channel for printer output");
-        }
+//        final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
+//        if (channel != null)
+//        {
+//            channel.sendMessage(formattedOutput)
+//                    .embed(PrinterUtilities.createPrinterOutput(printer).build())
+//                    .submit();
+//        }
+//        else
+//        {
+//            logger.error("Failed to get channel for printer output");
+//        }
     }
 
     /**

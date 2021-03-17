@@ -1,24 +1,32 @@
 package bot.modules.minecraft.forge;
 
 import bot.modules.rest.RestUtil;
-import com.adelean.inject.resources.junit.jupiter.GivenTextResource;
-import com.adelean.inject.resources.junit.jupiter.TestWithResources;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
  * Created by Robin Seifert on 3/13/2021.
  */
-@TestWithResources
 class ForgeVersionUtilTests
 {
-    @GivenTextResource("promotions_slim.json")
     String promotionSlimJson;
+
+    @BeforeAll
+    void beforeAll() throws IOException
+    {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final Path path = Paths.get(classLoader.getResource("promotions_slim.json").getFile());
+        promotionSlimJson = String.join("", Files.readAllLines(path));
+    }
 
     @Test
     void testFetchForgeVersions() throws IOException

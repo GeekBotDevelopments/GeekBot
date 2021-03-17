@@ -27,11 +27,7 @@ idea.module {
 }
 
 repositories {
-	flatDir {
-		dirs 'libs'
-	}
 	mavenCentral()
-	jcenter()
 	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
@@ -42,14 +38,11 @@ dependencies {
     implementation group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
 
 	//discord
-    //implementation 'net.dv8tion:JDA:4.2.0_168'
-	implementation name:'JDA-4.2.0_168'
-	implementation 'com.jagrosh:jda-utilities:3.0.4'
-	implementation group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
-	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+	implementation 'com.discord4j:discord4j-core:3.1.3'
 
 	//General libs
 	implementation 'org.apache.commons:commons-io:1.3.2'
+	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 	implementation 'com.google.code.gson:gson:2.8.6'
 	implementation 'com.google.guava:guava:28.2-jre'
 
@@ -57,9 +50,6 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.1'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
-
-	//Twitch integration
-    implementation group: 'com.github.twitch4j', name: 'twitch4j', version: '1.1.2'
 
 	//Simple rest calls
 	implementation "com.mashape.unirest:unirest-java:1.4.9"
@@ -77,8 +67,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
 	//Junit resource injection
-	testCompile group: 'com.adelean', name: 'inject-resources-core', version: '0.1.0'
-	testCompile group: 'com.adelean', name: 'inject-resources-junit-jupiter', version: '0.1.0'
+	//testCompile group: 'com.adelean', name: 'inject-resources-core', version: '0.2.0'
+	//testCompile group: 'com.adelean', name: 'inject-resources-junit-jupiter', version: '0.2.0'
 
 }
 

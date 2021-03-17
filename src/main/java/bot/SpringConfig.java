@@ -11,7 +11,8 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @ComponentScan(basePackages="bot.events")
-public class BotConfig {
+public class SpringConfig
+{
     @Bean
 	public ServletWebServerFactory servletWebServerFactory() {
 		return new TomcatServletWebServerFactory();

@@ -1,7 +1,8 @@
 package bot.models;
 
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Dark(DarkGuardsman, Robert) on 3/8/2021.
@@ -41,7 +42,7 @@ public class SemVer implements Comparable<SemVer>
     }
 
     @Override
-    public int compareTo(@NotNull SemVer other)
+    public int compareTo(@Nonnull SemVer other)
     {
         final int majorCompare = Integer.compare(major, other.major);
         if (majorCompare != 0)
