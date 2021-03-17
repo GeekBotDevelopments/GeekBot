@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.modules.voice;
 
 public class CmdJoinVoice //extends Command
 {

@@ -1,5 +1,6 @@
 package bot;
 
+import bot.modules.commands.CommandsModule;
 import bot.modules.configs.MainConfig;
 import bot.modules.discord.DiscordModule;
 import bot.modules.octopi.OctopiModule;
@@ -30,10 +31,13 @@ public class GeekBot extends SpringBootServletInitializer
         springApplicationContext = SpringApplication.run(GeekBot.class, args);
 
         MainConfig.load();
-        DiscordModule.load();
+        CommandsModule.load();
         //StarboundModule.load();
         //VoiceModule.load();
         OctopiModule.load();
+
+        //Load last as this blocks the thread in a wait
+        DiscordModule.load();
     }
 
     @GetMapping("/hello") //TODO move to it's own controller class

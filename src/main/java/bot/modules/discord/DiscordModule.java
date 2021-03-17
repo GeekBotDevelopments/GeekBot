@@ -24,7 +24,7 @@ import java.util.function.BiFunction;
  */
 public final class DiscordModule
 {
-    private static CaseInsensitiveMap<String, BiFunction<Message, List<String>, Mono<Message>>> commandMap = new CaseInsensitiveMap<>();
+    private static final CaseInsensitiveMap<String, BiFunction<Message, List<String>, Mono<Message>>> commandMap = new CaseInsensitiveMap<>();
 
     private DiscordModule() {}
 
@@ -69,24 +69,27 @@ public final class DiscordModule
                     );
 
                     //Break command into string parts
-                    final List<String> split = new ArrayList<>(Arrays.asList(messageContents.split("\\s+")));
+                    final List<String> args = new ArrayList<>(Arrays.asList(messageContents.split("\\s+")));
 
 
-                    if (split.size() == 1)
+                    if (args.size() == 1)
                     {
                         //TODO ping user
                         return message.getChannel().flatMap(messageChannel -> messageChannel.createMessage("No command given"));
                     }
 
-                    //Remove first index
-                    split.remove(0);
+                    //Remove first index "!bot command arg1" -> "command arg1"
+                    args.remove(0);
 
-                    final String rootCommand = split.get(0);
+                    final String rootCommand = args.get(0);
 
                     if (commandMap.containsKey(rootCommand))
                     {
+                        //Remove second index "command arg1" -> "arg1"
+                        args.remove(0);
+
                         //Let command handle call
-                        return commandMap.get(rootCommand).apply(message, split);
+                        return commandMap.get(rootCommand).apply(message, args);
                     }
                     //TODO check for more complex commands that may contain english phrases
                     //      Example: "Wake me up at 10am" -> "Alarm add 10am"
@@ -99,5 +102,11 @@ public final class DiscordModule
                 .subscribe();
 
         client.onDisconnect().block();
+    }
+
+    public static void register(Command command)
+    {
+        GeekBot.MAIN_LOG.info("Registering command: {}", command.root);
+        commandMap.put(command.root, command);
     }
 }

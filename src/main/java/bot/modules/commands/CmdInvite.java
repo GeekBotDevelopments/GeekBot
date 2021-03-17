@@ -1,4 +1,4 @@
-package bot.commands;
+package bot.modules.commands;
 
 public class CmdInvite //extends Command
 {
