@@ -1,19 +1,25 @@
 package bot.modules.commands;
 
-public class CmdInvite //extends Command
+import bot.modules.discord.Command;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+public class CmdInvite extends Command
 {
+	//TODO move to config
+	public static final String link = "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=426722296816861184&scope=bot";
 
-//	public CmdInvite() {
-//		name = "invite-bot";
-//		help = "An invite link to invite the bot to you server";
-//
-//	}
-//
-//	@Override
-//	protected void execute(CommandEvent event) {
-//		event.getChannel().sendMessage("have an invite link to invite the bot to your server: "
-//				+ "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=426722296816861184&scope=bot").submit();
-//
-//	}
+	public CmdInvite() {
+		super("invite-bot");
 
+	}
+
+	@Override
+	public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+	{
+		return channel.createMessage("have an invite link to invite the bot to your server: " + link);
+	}
 }

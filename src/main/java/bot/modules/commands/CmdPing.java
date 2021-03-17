@@ -1,16 +1,21 @@
 package bot.modules.commands;
 
-public class CmdPing //extends Command
+import bot.modules.discord.Command;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+public class CmdPing extends Command
 {
+	public CmdPing() {
+	    super("ping");
+	}
 
-//	public CmdPing() {
-//		name = "ping";
-//		help = "ping pong ping pong";
-//	}
-//
-//	@Override
-//	protected void execute(CommandEvent event) {
-//		event.getChannel().sendMessage("pong!").submit();
-//	}
-
+    @Override
+    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    {
+        return channel.createMessage("pong!");
+    }
 }

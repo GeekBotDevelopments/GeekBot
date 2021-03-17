@@ -1,40 +1,38 @@
 package bot.modules.commands;
 
-public class CmdUserInfo //extends Command
+import bot.modules.discord.Command;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.Role;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.discordjson.json.UserData;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CmdUserInfo extends Command
 {
+	public CmdUserInfo() {
+	    super("WhatAboutMe?!");
+	}
 
-//	public CmdUserInfo() {
-//		name = "WhatAboutMe?!";
-//		help = "displays information about the user";
-//	}
-//
-//	@Override
-//	protected void execute(CommandEvent event) {
-//		EmbedBuilder build = new EmbedBuilder();
-//		Member member = event.getMember();
-//		User user = member.getUser();
-//
-//
-//		build.addField("Username", user.getName().toString(), true);
-//		build.addField("Nickname", member.getNickname().toString(), true);
-//		build.addField("User ID", user.getId().toString(), true);
-//		build.addField("Highest Role", this.getHighestRole(member), true);
-//		build.setImage(user.getEffectiveAvatarUrl());
-//
-//		event.getChannel().sendMessage(build.build()).submit();
-//	}
-//
-//	public String getHighestRole(Member member) {
-//
-//		String role;
-//
-//		if(member.getRoles().size() != 0) {
-//			role = member.getRoles().get(0).toString();
-//			}else{
-//				role = "user has no roles";
-//				}
-//
-//		return role;
-//	}
+    @Override
+    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    {
+        return channel.createEmbed(embed -> {
+            final Member member = message.getAuthorAsMember().block();
+            final UserData userData = message.getUserData();
 
+            embed.addField("Username", member.getDisplayName(), true);
+            embed.addField("Nickname", member.getNickname().get(), true);
+            embed.addField("User ID", userData.id(), true);
+            embed.addField("Highest Role", this.getHighestRole(member), true);
+            embed.setImage(member.getAvatarUrl());
+        });
+    }
+
+	public String getHighestRole(Member member) {
+		return member.getRoles().map(Role::getName).toStream().collect(Collectors.joining(", "));
+	}
 }
