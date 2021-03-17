@@ -2,24 +2,24 @@ package bot.modules.rss;
 
 import bot.models.RssFeed.Feed;
 import bot.models.RssFeed.FeedMessage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RSSFeedParser {
 
   private static final Logger LOGGER = LogManager.getLogger();
 
+  private static final String RSS = "rss";
   private static final String TITLE = "title";
   private static final String DESCRIPTION = "description";
   private static final String CHANNEL = "channel";
@@ -46,6 +46,8 @@ public class RSSFeedParser {
     try {
       boolean isFeedHeader = true;
       // Set header values intial to the empty string
+      String rss = "";
+      String channel = "";
       String description = "";
       String title = "";
       String link = "";
@@ -73,6 +75,8 @@ public class RSSFeedParser {
                 isFeedHeader = false;
                 feed =
                   new Feed(
+                    rss,
+                    channel,
                     title,
                     link,
                     description,
@@ -106,6 +110,12 @@ public class RSSFeedParser {
               break;
             case COPYRIGHT:
               copyright = getCharacterData(event, eventReader);
+              break;
+            case RSS:
+              rss = getCharacterData(event, eventReader);
+              break;
+            case CHANNEL:
+              channel = getCharacterData(event, eventReader);
               break;
             default:
               LOGGER.error("Could not parse element \" {} \"", localPart);
