@@ -10,7 +10,7 @@ import java.util.List;
 public class CmdInvite extends Command
 {
 	//TODO move to config
-	public static final String link = "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=426722296816861184&scope=bot";
+	public static final String LINK = "https://discordapp.com/api/oauth2/authorize?client_id=426722296816861184&permissions=426722296816861184&scope=bot";
 
 	public CmdInvite() {
 		super("invite-bot");
@@ -18,8 +18,8 @@ public class CmdInvite extends Command
 	}
 
 	@Override
-	public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+	public void handle(Message message, MessageChannel channel, List<String> strings)
 	{
-		return channel.createMessage("have an invite link to invite the bot to your server: " + link);
+		channel.createMessage("have an invite link to invite the bot to your server: " + LINK).block();
 	}
 }

@@ -29,7 +29,7 @@ public abstract class Command implements BiFunction<Message, List<String>, Mono<
      * @param message sent by the user
      * @param channel the message was from
      * @param strings arguments for the command
-     * @return message for output
+     * @return nothing, so we can do commands that require no message output
      */
-    public abstract Mono<Message> handle(Message message, MessageChannel channel, List<String> strings);
+    public abstract void handle(Message message, MessageChannel channel, List<String> strings);
 }

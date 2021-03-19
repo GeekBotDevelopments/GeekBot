@@ -18,9 +18,9 @@ public class CmdUserInfo extends Command
 	}
 
     @Override
-    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    public void handle(Message message, MessageChannel channel, List<String> strings)
     {
-        return channel.createEmbed(embed -> {
+        channel.createEmbed(embed -> {
             final Member member = message.getAuthorAsMember().block();
             final UserData userData = message.getUserData();
 
@@ -29,7 +29,7 @@ public class CmdUserInfo extends Command
             embed.addField("User ID", userData.id(), true);
             embed.addField("Highest Role", this.getHighestRole(member), true);
             embed.setImage(member.getAvatarUrl());
-        });
+        }).block();
     }
 
 	public String getHighestRole(Member member) {
