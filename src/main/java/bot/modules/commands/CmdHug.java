@@ -16,7 +16,7 @@ public class CmdHug extends Command {
   }
 
 @Override
-public void handle(Message message, MessageChannel channel, List<String> strings) {
+public boolean handle(Message message, MessageChannel channel, List<String> strings) {
     String rawPing = strings.get(0);
     
 
@@ -36,7 +36,9 @@ public void handle(Message message, MessageChannel channel, List<String> strings
   
 
     channel.createMessage("i hug you, " + userPinged.getMention()).block();
+    return true;
   }
+
 }
 
 //
