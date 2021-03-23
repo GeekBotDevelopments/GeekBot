@@ -1,7 +1,19 @@
 package bot.modules.octopi.events;
 
+import bot.modules.configs.MainConfig;
+import bot.modules.discord.DiscordModule;
 import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.PrinterUtilities;
 import bot.modules.rest.RestUtil;
+import discord4j.common.util.Snowflake;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.core.object.entity.channel.GuildChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.discordjson.json.MessageCreateRequest;
+import discord4j.rest.util.MultipartRequest;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -35,6 +47,7 @@ public class ThreadPrinterStateMonitor extends Thread
     private static final String JSON_PRINTING_VALUE = "Printing";
 
     private static final String CHANNEL_OUTPUT = " <@&807485697841299457> printer %s is completed it's job";    //TODO move to a config
+    private static final Guild labrinth = DiscordModule.client.getGuildById(Snowflake.of(MainConfig.getLABRINTH_ID())).block(); //Output Guild
     private static final long OUTPUT_CHANNEL_ID = 763350428296413215l; //TODO move to a config
     private static final long REFRESH_TIMER = 10000; //TODO move to a config
 
@@ -91,18 +104,22 @@ public class ThreadPrinterStateMonitor extends Thread
         //Format output message
         final String formattedOutput = String.format(CHANNEL_OUTPUT, printer);
 
+        
         //Send message to defined channel
-//        final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
-//        if (channel != null)
-//        {
-//            channel.sendMessage(formattedOutput)
-//                    .embed(PrinterUtilities.createPrinterOutput(printer).build())
-//                    .submit();
-//        }
-//        else
-//        {
-//            logger.error("Failed to get channel for printer output");
-//        }
+        //final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
+        Channel channel = labrinth.getChannelById(Snowflake.of(this.OUTPUT_CHANNEL_ID)).block();
+        if (channel != null)
+        {
+            /*channel.sendMessage(formattedOutput)
+                    .embed(PrinterUtilities.createPrinterOutput(printer).build())
+                    .submit();*/
+                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterUtilities.createPrinterOutput(printer).asRequest()).content(CHANNEL_OUTPUT).build();
+                   channel.getRestChannel().createMessage(request).block();
+        }
+        else
+        {
+            logger.error("Failed to get channel for printer output");
+        }
     }
 
     /**
