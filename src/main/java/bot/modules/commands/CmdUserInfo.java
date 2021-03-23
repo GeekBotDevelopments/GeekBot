@@ -18,7 +18,7 @@ public class CmdUserInfo extends Command
 	}
 
     @Override
-    public void handle(Message message, MessageChannel channel, List<String> strings)
+    public boolean handle(Message message, MessageChannel channel, List<String> strings)
     {
         channel.createEmbed(embed -> {
             final Member member = message.getAuthorAsMember().block();
@@ -30,6 +30,7 @@ public class CmdUserInfo extends Command
             embed.addField("Highest Role", this.getHighestRole(member), true);
             embed.setImage(member.getAvatarUrl());
         }).block();
+        return true;
     }
 
 	public String getHighestRole(Member member) {
