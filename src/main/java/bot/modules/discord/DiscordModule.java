@@ -24,7 +24,8 @@ import java.util.function.BiFunction;
  */
 public final class DiscordModule
 {
-    private static final CaseInsensitiveMap<String, BiFunction<Message, List<String>, Mono<Message>>> commandMap = new CaseInsensitiveMap<>();
+    private static final CaseInsensitiveMap<String, Command> commandMap = new CaseInsensitiveMap<>();
+    public static GatewayDiscordClient client;
 
     private DiscordModule() {}
 
@@ -32,7 +33,7 @@ public final class DiscordModule
     {
         final String discordToken = MainConfig.getDISCORD_TOKEN();
 
-        GatewayDiscordClient client = DiscordClientBuilder.create(discordToken)
+        client = DiscordClientBuilder.create(discordToken)
                 .build()
                 .login()
                 .block();
@@ -54,7 +55,8 @@ public final class DiscordModule
                 //Only respond to prefix commands TODO add @name as well
                 .filter(message -> message.getContent().toLowerCase().startsWith(MainConfig.getBOT_PREFIX() + " ")
                         || message.getContent().equalsIgnoreCase(MainConfig.getBOT_PREFIX())
-                )
+                        || message.getUserMentionIds().equals(message.getGuild().block().getSelfMember().block().getId()))
+                
                 //Consume message
                 .flatMap((message) -> {
                     final User author = message.getAuthor().get();
@@ -91,6 +93,7 @@ public final class DiscordModule
                         //Let command handle call
                         return commandMap.get(rootCommand).apply(message, args);
                     }
+
                     //TODO check for more complex commands that may contain english phrases
                     //      Example: "Wake me up at 10am" -> "Alarm add 10am"
                     //      Example: "I need up at 10am" -> "Alarm add 10am"
@@ -106,7 +109,10 @@ public final class DiscordModule
 
     public static void register(Command command)
     {
-        GeekBot.MAIN_LOG.info("Registering command: {}", command.root);
-        commandMap.put(command.root, command);
+        GeekBot.MAIN_LOG.info("Registering command: {}", command.name);
+        commandMap.put(command.name, command);
     }
+
+    
+
 }
