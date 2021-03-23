@@ -10,15 +10,17 @@ import java.util.function.BiFunction;
 /**
  * Created by Robin Seifert on 3/16/2021.
  */
-public abstract class Command implements BiFunction<Message, List<String>, Mono<Message>>
+public abstract class Command implements BiFunction<Message, List<String>, Mono<Object>>
 {
-    public final String root;
+    final String name;
+    final Boolean ownerOnly;
 
     public Command(String root) {
-        this.root = root;
+        this.name = root;
+        this.ownerOnly = false;
     }
     @Override
-    public Mono<Message> apply(Message message, List<String> strings)
+    public Mono<Object> apply(Message message, List<String> strings)
     {
         return message.getChannel().flatMap(messageChannel -> handle(message, messageChannel, strings));
     }
@@ -29,7 +31,7 @@ public abstract class Command implements BiFunction<Message, List<String>, Mono<
      * @param message sent by the user
      * @param channel the message was from
      * @param strings arguments for the command
-     * @return nothing, so we can do commands that require no message output
+     * @return weather or not the command was able to successfully execute
      */
-    public abstract void handle(Message message, MessageChannel channel, List<String> strings);
+    public abstract boolean handle(Message message, MessageChannel channel, List<String> strings);
 }
