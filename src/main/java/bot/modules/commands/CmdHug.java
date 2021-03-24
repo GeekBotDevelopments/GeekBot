@@ -1,12 +1,12 @@
 package bot.modules.commands;
 
-import java.util.List;
-
 import bot.modules.discord.Command;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public class CmdHug extends Command {
   private Member userPinged;
@@ -16,16 +16,16 @@ public class CmdHug extends Command {
   }
 
 @Override
-public boolean handle(Message message, MessageChannel channel, List<String> strings) {
+public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings) {
     String rawPing = strings.get(0);
-    
+
 
   if(rawPing.startsWith("<@")){
     message.getGuild().block().getMembers().toStream().forEach(action -> {
       if(action.getId().asString() == rawPing.substring(3, 21)){
         userPinged = action;
       }
-     }); 
+     });
     }else{
       message.getGuild().block().getMembers().toStream().forEach(action2 ->{
         if(action2.getId().asString() == rawPing){
@@ -33,10 +33,9 @@ public boolean handle(Message message, MessageChannel channel, List<String> stri
         }
       });
     }
-  
 
-    channel.createMessage("i hug you, " + userPinged.getMention()).block();
-    return true;
+
+    return channel.createMessage("i hug you, " + userPinged.getMention());
   }
 
 }

@@ -14,9 +14,8 @@ public class CmdPing extends Command
 	}
 
     @Override
-    public boolean handle(Message message, MessageChannel channel, List<String> strings)
+    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
     {
-        channel.createMessage("pong!").block();
-        return true;
+        return channel.createMessage("pong!");
     }
 }

@@ -18,9 +18,8 @@ public class CmdInvite extends Command
 	}
 
 	@Override
-	public boolean handle(Message message, MessageChannel channel, List<String> strings)
+	public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
 	{
-		channel.createMessage("have an invite link to invite the bot to your server: " + LINK).block();
-		return true;
+		return channel.createMessage("have an invite link to invite the bot to your server: " + LINK);
 	}
 }

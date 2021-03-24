@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 /**
  * Created by Robin Seifert on 3/16/2021.
  */
-public abstract class Command implements BiFunction<Message, List<String>, Mono<Object>>
+public abstract class Command implements BiFunction<Message, List<String>, Mono<Message>>
 {
     final String name;
     final Boolean ownerOnly;
@@ -20,7 +20,7 @@ public abstract class Command implements BiFunction<Message, List<String>, Mono<
         this.ownerOnly = false;
     }
     @Override
-    public Mono<Object> apply(Message message, List<String> strings)
+    public Mono<Message> apply(Message message, List<String> strings)
     {
         return message.getChannel().flatMap(messageChannel -> handle(message, messageChannel, strings));
     }
@@ -33,5 +33,5 @@ public abstract class Command implements BiFunction<Message, List<String>, Mono<
      * @param strings arguments for the command
      * @return weather or not the command was able to successfully execute
      */
-    public abstract boolean handle(Message message, MessageChannel channel, List<String> strings);
+    public abstract Mono<Message> handle(Message message, MessageChannel channel, List<String> strings);
 }

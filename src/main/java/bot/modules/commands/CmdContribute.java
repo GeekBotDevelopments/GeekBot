@@ -15,11 +15,10 @@ public class CmdContribute extends Command
 	}
 
 	@Override
-	public boolean handle(Message message, MessageChannel channel, List<String> strings)
+	public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
 	{
-		channel.createMessage("to contribute to the bot, or get help with commands, visit the bots dev server here"
+		return channel.createMessage("to contribute to the bot, or get help with commands, visit the bots dev server here"
 				+ " https://discord.gg/ADrTFRZ or create an issue on our github instead here issue on our github instead here"
-				+ " <https://github.com/LegendaryGeek/GeekBot/issues>").block();
-				return true;
+				+ " <https://github.com/LegendaryGeek/GeekBot/issues>");
 	}
 }
