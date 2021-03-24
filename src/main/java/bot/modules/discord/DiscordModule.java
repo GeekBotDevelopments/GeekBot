@@ -3,6 +3,8 @@ package bot.modules.discord;
 import bot.GeekBot;
 import bot.modules.configs.MainConfig;
 import bot.modules.octopi.events.ThreadPrinterStateMonitor;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
@@ -37,7 +39,6 @@ public final class DiscordModule
                 .build()
                 .login()
                 .block();
-
 
 
         //Output what we logged in as
@@ -92,11 +93,8 @@ public final class DiscordModule
 
                     if (commandMap.containsKey(rootCommand))
                     {
-                        //Remove second index "command arg1" -> "arg1"
-                        args.remove(0);
-
                         //Let command handle call
-                        return commandMap.get(rootCommand).apply(message, args);
+                        return commandMap.get(rootCommand).apply(message, removeFirstArg(args));
                     }
 
                     //TODO check for more complex commands that may contain english phrases
@@ -116,6 +114,16 @@ public final class DiscordModule
         commandMap.put(command.name, command);
     }
 
-
+    public static ImmutableList<String> removeFirstArg(List<String> args)
+    {
+        if (args.size() <= 1)
+        {
+            return ImmutableList.of();
+        }
+        return ImmutableList.copyOf(Collections2.filter(args, s -> {
+                    return s != args.get(0);//NOSONAR
+                }
+        ));
+    }
 
 }

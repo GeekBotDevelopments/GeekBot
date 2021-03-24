@@ -3,12 +3,11 @@ package bot.modules.commands;
 import bot.GeekBot;
 import bot.modules.discord.Command;
 import bot.modules.discord.DiscordModule;
+import com.google.common.collect.ImmutableList;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.reaction.ReactionEmoji;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public class CmdStopBot extends Command
 {
@@ -18,7 +17,7 @@ public class CmdStopBot extends Command
     }
 
     @Override
-    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> strings)
     {
         //React to user
         message.addReaction(ReactionEmoji.of(null, "\u2705", false).asUnicodeEmoji().get()).block();
