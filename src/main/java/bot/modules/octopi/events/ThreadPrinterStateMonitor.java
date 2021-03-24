@@ -1,21 +1,14 @@
 package bot.modules.octopi.events;
 
-import bot.modules.configs.MainConfig;
-import bot.modules.discord.DiscordModule;
 import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.PrinterUtilities;
 import bot.modules.rest.RestUtil;
-import discord4j.common.util.Snowflake;
-import discord4j.core.object.entity.Guild;
-import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.Channel;
-import discord4j.core.object.entity.channel.GuildChannel;
-import discord4j.core.object.entity.channel.MessageChannel;
-import discord4j.discordjson.json.MessageCreateRequest;
-import discord4j.rest.util.MultipartRequest;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import discord4j.common.util.Snowflake;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.discordjson.json.MessageCreateRequest;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -47,13 +40,16 @@ public class ThreadPrinterStateMonitor extends Thread
     private static final String JSON_PRINTING_VALUE = "Printing";
 
     private static final String CHANNEL_OUTPUT = " <@&807485697841299457> printer %s is completed it's job";    //TODO move to a config
-    private static final Guild labrinth = DiscordModule.client.getGuildById(Snowflake.of(MainConfig.getLABRINTH_ID())).block(); //Output Guild
+
     private static final long OUTPUT_CHANNEL_ID = 763350428296413215l; //TODO move to a config
     private static final long REFRESH_TIMER = 10000; //TODO move to a config
 
+    /** Discord guild to output chat commands in */
+    public static Guild outputServer; //TODO make this a map of printer -> server(s)
+
     public boolean running = true;
 
-    public final Map<PrinterEnum, String> printerState = new HashMap();
+    public final Map<PrinterEnum, String> printerState = new EnumMap<PrinterEnum, String>(PrinterEnum.class);
 
     public ThreadPrinterStateMonitor()
     {
@@ -104,10 +100,10 @@ public class ThreadPrinterStateMonitor extends Thread
         //Format output message
         final String formattedOutput = String.format(CHANNEL_OUTPUT, printer);
 
-        
+
         //Send message to defined channel
         //final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
-        Channel channel = labrinth.getChannelById(Snowflake.of(this.OUTPUT_CHANNEL_ID)).block();
+        Channel channel = outputServer.getChannelById(Snowflake.of(this.OUTPUT_CHANNEL_ID)).block();
         if (channel != null)
         {
             /*channel.sendMessage(formattedOutput)

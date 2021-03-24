@@ -2,19 +2,18 @@ package bot.modules.discord;
 
 import bot.GeekBot;
 import bot.modules.configs.MainConfig;
+import bot.modules.octopi.events.ThreadPrinterStateMonitor;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  * Handles loading the discord module. Other modules will interact with this module to provide commands.
@@ -38,6 +37,8 @@ public final class DiscordModule
                 .login()
                 .block();
 
+
+
         //Output what we logged in as
         client.getEventDispatcher().on(ReadyEvent.class)
                 .subscribe(event -> {
@@ -45,6 +46,9 @@ public final class DiscordModule
                     GeekBot.MAIN_LOG.info(String.format(
                             "Logged in as %s#%s", self.getUsername(), self.getDiscriminator()
                     ));
+
+                    //Get channels for printer
+                    ThreadPrinterStateMonitor.outputServer = event.getClient().getGuildById(Snowflake.of(MainConfig.getLABRINTH_ID())).block();
                 });
 
         //Handle messages
@@ -56,7 +60,7 @@ public final class DiscordModule
                 .filter(message -> message.getContent().toLowerCase().startsWith(MainConfig.getBOT_PREFIX() + " ")
                         || message.getContent().equalsIgnoreCase(MainConfig.getBOT_PREFIX())
                         || message.getUserMentionIds().equals(message.getGuild().block().getSelfMember().block().getId()))
-                
+
                 //Consume message
                 .flatMap((message) -> {
                     final User author = message.getAuthor().get();
@@ -103,8 +107,6 @@ public final class DiscordModule
                     return message.getChannel().flatMap(messageChannel -> messageChannel.createMessage(String.format("Unknown command `%s`", rootCommand)));
                 })
                 .subscribe();
-
-        client.onDisconnect().block();
     }
 
     public static void register(Command command)
@@ -113,6 +115,6 @@ public final class DiscordModule
         commandMap.put(command.name, command);
     }
 
-    
+
 
 }
