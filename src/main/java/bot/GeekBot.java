@@ -3,6 +3,7 @@ package bot;
 import bot.modules.commands.CommandsModule;
 import bot.modules.configs.MainConfig;
 import bot.modules.discord.DiscordModule;
+import bot.modules.minecraft.forge.ForgeModule;
 import bot.modules.octopi.OctopiModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ public class GeekBot extends SpringBootServletInitializer
         //StarboundModule.load();
         //VoiceModule.load();
         OctopiModule.load();
+        ForgeModule.load();
 
         //Load last as this blocks the thread in a wait
         DiscordModule.load();
