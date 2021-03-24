@@ -9,6 +9,8 @@ import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 import java.util.ArrayList;
@@ -21,12 +23,11 @@ import java.util.List;
  * <p>
  * Created by Robin Seifert on 3/16/2021.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DiscordModule
 {
     private static final CaseInsensitiveMap<String, Command> commandMap = new CaseInsensitiveMap<>();
     public static GatewayDiscordClient client;
-
-    private DiscordModule() {}
 
     public static void load()
     {
