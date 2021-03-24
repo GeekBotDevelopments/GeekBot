@@ -1,48 +1,37 @@
 package bot.modules.commands;
 
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import bot.GeekBot;
 import bot.modules.discord.Command;
 import bot.modules.discord.DiscordModule;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.reaction.ReactionEmoji;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public class CmdStopBot extends Command
 {
-    private static Logger log = LogManager.getLogger();
-
-    public CmdStopBot(String root) {
+    public CmdStopBot()
+    {
         super("stop");
     }
 
     @Override
-    public boolean handle(Message message, MessageChannel channel, List<String> strings) {
-		log.info("Shutting down");
-		DiscordModule.client.logout();
-		log.info("Shutdown");
-		System.exit(0);
-		log.info("Should not see thisss");
-        return false;
-    }
-//	private static Logger log = LogManager.getLogger();
-//
-//	public CmdStopBot(){
-//		name = "stop";
-//		hidden = true;
-//	}
-//
-//	@Override
-//	protected void execute(CommandEvent event) {
-//		log.info("Shutting down");
-//		GeekBot.getClient().cancelRequests();
-//		GeekBot.getClient().shutdown();
-//		log.info("Shutdown");
-//		System.exit(0);
-//		log.info("Should not see thisss");
-//	}
+    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    {
+        //React to user
+        message.addReaction(ReactionEmoji.of(null, "\u2705", false).asUnicodeEmoji().get()).block();
 
+        //Close discord client
+        DiscordModule.client.logout().block();
+
+        //Close spring client
+        GeekBot.springApplicationContext.close();
+
+        //Kill application
+        System.exit(0);
+
+        return Mono.empty();
+    }
 }
