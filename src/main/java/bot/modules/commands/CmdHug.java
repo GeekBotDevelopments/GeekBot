@@ -1,12 +1,11 @@
 package bot.modules.commands;
 
 import bot.modules.discord.Command;
+import com.google.common.collect.ImmutableList;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public class CmdHug extends Command {
   private Member userPinged;
@@ -16,7 +15,7 @@ public class CmdHug extends Command {
   }
 
 @Override
-public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings) {
+public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> strings) {
     String rawPing = strings.get(0);
 
 

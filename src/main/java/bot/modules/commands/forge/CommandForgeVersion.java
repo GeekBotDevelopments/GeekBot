@@ -3,6 +3,7 @@ package bot.modules.commands.forge;
 import bot.modules.discord.Command;
 import bot.modules.minecraft.forge.ForgeVersion;
 import bot.modules.minecraft.forge.ForgeVersionUtil;
+import com.google.common.collect.ImmutableList;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -16,15 +17,14 @@ public class CommandForgeVersion extends Command
 {
     public CommandForgeVersion()
     {
-        super("forge-version");
+        super("version");
     }
 
     @Override
-    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings)
+    public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> strings)
     {
         return channel.createEmbed(embedCreateSpec -> {
             embedCreateSpec.setTitle("Forge Versions").setUrl("http://files.minecraftforge.net/");
-
             generateList(embedCreateSpec);
         });
     }
