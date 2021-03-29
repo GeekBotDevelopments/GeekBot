@@ -1,4 +1,4 @@
-package bot.modules.starbound;
+package bot.modules.commands.starbound;
 
 public class CmdStarBoundRestart //extends Command
 {

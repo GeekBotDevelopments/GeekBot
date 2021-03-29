@@ -1,4 +1,4 @@
-package bot.modules.starbound;
+package bot.modules.commands.starbound;
 
 public class CmdStarboundRole //extends Command
 {

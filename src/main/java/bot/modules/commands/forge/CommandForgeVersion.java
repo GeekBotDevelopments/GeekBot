@@ -1,6 +1,8 @@
-package bot.modules.minecraft.forge;
+package bot.modules.commands.forge;
 
 import bot.modules.discord.Command;
+import bot.modules.minecraft.forge.ForgeVersion;
+import bot.modules.minecraft.forge.ForgeVersionUtil;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.EmbedCreateSpec;

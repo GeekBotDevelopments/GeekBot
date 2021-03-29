@@ -12,13 +12,19 @@ import java.util.function.BiFunction;
  */
 public abstract class Command implements BiFunction<Message, List<String>, Mono<Message>>
 {
-    final String name;
-    final Boolean ownerOnly;
+    public String name;
+    public Boolean ownerOnly;
 
     public Command(String root) {
         this.name = root;
         this.ownerOnly = false;
     }
+
+    public Command(){
+        this.name = "<{[disabled]}>";
+        this.ownerOnly = false;
+    }
+
     @Override
     public Mono<Message> apply(Message message, List<String> strings)
     {
