@@ -1,5 +1,6 @@
 package bot.modules.minecraft.forge;
 
+import bot.modules.commands.forge.CommandForgeVersion;
 import bot.modules.discord.CommandRoot;
 import bot.modules.discord.DiscordModule;
 import lombok.AccessLevel;

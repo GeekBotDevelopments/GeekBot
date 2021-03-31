@@ -1,12 +1,12 @@
 package bot.modules.commands.octopi;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FileUtils;
 
@@ -29,34 +29,36 @@ public class CommandPrinterHistory extends Command
 	}
 
     @Override
-    public Mono<Message> handle(Message message, MessageChannel channel, List<String> strings) {
-		File file;
-		//InputStream stream;
+    public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> strings) {
 		
-
-		try(InputStream stream = FileUtils.openInputStream(file)) {
-			
-
+		final File file;
+		try {
 			//Create temp file
 			file = File.createTempFile("printer_history_" + System.currentTimeMillis(), ".json");
-			//stream = FileUtils.openInputStream(file);
 
-			//Copy URL output to file
-			FileUtils.copyURLToFile(new URL(url), file);
-
-			//Post file to channel
-            channel.createMessage(action -> new MessageCreateSpec().addFile(file.getName(), stream)).block();
-
+			try(InputStream stream = FileUtils.openInputStream(file)) {
 			
-			//Delete file when done
-			Files.delete(file.toPath());
-		} catch (Exception e) {
-            channel.createMessage("Error processing command").block();//TODO ping admin
-			
-		} finally {
-			stream.close();
+	
+				//Copy URL output to file
+				FileUtils.copyURLToFile(new URL(url), file);
+	
+				//Post file to channel
+				channel.createMessage(action -> new MessageCreateSpec().addFile(file.getName(), stream)).block();
+	
+				
+				//Delete file when done
+				Files.delete(file.toPath());
+				
+			} catch (Exception e) {
+				channel.createMessage("Error processing command").block();//TODO ping admin
+			} 
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
+		
         return Mono.empty();
     }
-
 }

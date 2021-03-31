@@ -6,6 +6,9 @@ import bot.modules.octopi.PrinterUtilities;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import reactor.core.publisher.Mono;
 
 public class CommandPrinterJob extends Command {
@@ -18,15 +21,12 @@ public class CommandPrinterJob extends Command {
   }
 
   @Override
-  public Mono<Message> handle(
-    Message message,
-    MessageChannel channel,
-    List<String> strings
-  ) {
+  public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> args) {
     channel
       .getRestChannel()
       .createMessage(PrinterUtilities.createPrinterOutput(printer).asRequest())
       .block();
     return Mono.empty();
   }
+
 }
