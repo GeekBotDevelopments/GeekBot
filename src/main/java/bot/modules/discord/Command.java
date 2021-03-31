@@ -14,18 +14,13 @@ import java.util.function.BiFunction;
 @Data
 public abstract class Command implements BiFunction<Message, ImmutableList<String>, Mono<Message>>
 {
-    public String name;
+    public final String name;
     public Boolean ownerOnly;
 
     private CommandRoot rootCommand;
 
-    public Command(String root) {
+    protected Command(String root) {
         this.name = root;
-        this.ownerOnly = false;
-    }
-
-    public Command(){
-        this.name = "<{[disabled]}>";
         this.ownerOnly = false;
     }
 
