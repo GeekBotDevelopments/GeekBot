@@ -5,23 +5,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 /**
  * Created by Robin Seifert on 3/13/2021.
  */
 class CommandForgeVersionTests
 {
-    String promotionSlimJson;
+    static String promotionSlimJson;
 
     @BeforeAll
-    void beforeAll() throws IOException
+    static void beforeAll() throws IOException, URISyntaxException
     {
-        final ClassLoader classLoader = getClass().getClassLoader();
-        final Path path = Paths.get(classLoader.getResource("promotions_slim.json").getFile());
-        promotionSlimJson = String.join("", Files.readAllLines(path));
+        ClassLoader loader = ClassLoader.getSystemClassLoader();
+        promotionSlimJson = Files.lines(Paths.get(loader.getResource("promotions_slim.json").toURI()))
+                .parallel()
+                .collect(Collectors.joining());
     }
 
     @Test
