@@ -16,6 +16,8 @@ Optionally an env variable `main_config` can be set to point the app towards the
 
 ## Docker
 
+https://hub.docker.com/repository/docker/legendarygeek/geekbot
+
 Run the following commands locally
 
 Build: `docker build . -t geekbot:local --rm` will build the image
