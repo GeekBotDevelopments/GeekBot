@@ -44,6 +44,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: package
+          path: ./build/libs
         
       - name: Set up QEMU
         id: qemu
