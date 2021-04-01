@@ -16,6 +16,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
+ * Command to interact with OctoPrint version endpoint
+ *
+ * @see <a href="https://docs.octoprint.org/en/master/api/version.html">OctoPrint Version API</a>
+ *
  * Created by Robin Seifert on 3/31/2021.
  */
 public class CommandVersion extends Command
