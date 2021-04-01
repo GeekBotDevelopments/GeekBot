@@ -25,7 +25,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ./build/lib/GeekBot*.jar
+          path: ${{ github.workspace }}/build/lib/**/*
           if-no-files-found: error
           retention-days: 1
           
