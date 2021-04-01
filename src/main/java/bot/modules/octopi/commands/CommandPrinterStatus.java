@@ -1,4 +1,4 @@
-package bot.modules.commands.octopi;
+package bot.modules.octopi.commands;
 
 public class CommandPrinterStatus //extends Command
 {
