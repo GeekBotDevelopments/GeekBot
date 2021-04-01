@@ -29,3 +29,7 @@ src/main/resources/Config.properties
 target/
 
 
+
+Config/
+
+libs/

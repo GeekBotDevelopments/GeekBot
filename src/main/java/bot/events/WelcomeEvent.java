@@ -1,37 +1,59 @@
 package bot.events;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-public class WelcomeEvent extends ListenerAdapter {
-
-	public WelcomeEvent() {
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		// TODO Auto-generated method stub
-		super.onGuildMemberJoin(event);
-		TextChannel chan = event.getGuild().getSystemChannel();
-		Member member = event.getMember();
-		
-		chan.sendMessage("Welcome **" + member.getEffectiveName() + "** to " + event.getGuild().getName()).submit();
-	}
-
-	@Override
-	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-		super.onGuildMemberRemove(event);
-		TextChannel chan = event.getGuild().getSystemChannel();
-		Member member = event.getMember();
-		
-		chan.sendMessage("member " + member.getEffectiveName() + " has left").submit();
-	}
-	
-	
-
+public class WelcomeEvent
+{
+//    static final Logger logger = LogManager.getLogger();
+//
+//    public WelcomeEvent()
+//    {
+//    }
+//
+//    @Override
+//    public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event)
+//    {
+//        final TextChannel channel = event.getGuild().getSystemChannel();
+//        if (channel != null)
+//        {
+//            final Member member = event.getMember();
+//            final String memberName = member.getEffectiveName();
+//            final String serverName = event.getGuild().getName();
+//
+//            final String output = String.format("Welcome **%s** to %s", memberName, serverName);
+//            channel.sendMessage(output).submit();
+//        }
+//        else
+//        {
+//            sendChannelMissingError(event.getGuild());
+//        }
+//    }
+//
+//    @Override
+//    public void onGuildMemberRemove(@Nonnull GuildMemberRemoveEvent event)
+//    {
+//        //Get channel and member
+//        final TextChannel channel = event.getGuild().getSystemChannel();
+//        if (channel != null)
+//        {
+//            //Get member name
+//            final Member member = event.getMember();
+//            final User user = event.getUser();
+//            final String memberName = member != null ? member.getEffectiveName() : user.getName();
+//
+//            //Output to channel
+//            final String output = String.format("member **%s** has left", memberName);
+//            channel.sendMessage(output).submit();
+//        }
+//        else
+//        {
+//            sendChannelMissingError(event.getGuild());
+//        }
+//    }
+//
+//    //TODO move to error helper class
+//    void sendChannelMissingError(@Nonnull Guild guild)
+//    {
+//        final String serverName = guild.getName();
+//        final String output = String.format("Failed to get system channel for server  %s", serverName);
+//        logger.error(output);
+//    }
 }

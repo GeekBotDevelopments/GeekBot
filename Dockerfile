@@ -1,11 +1,9 @@
-FROM gradle:6.8.3-jdk15
+FROM openjdk:15.0.2-jdk-slim
 
-RUN git clone https://github.com/LegendaryGeek/GeekBot.git \
- && cd GeekBot \
- && gradle build \
- && mkdir /app \
- && cp ./build/libs/*.jar /app/spring-boot-application.jar
+EXPOSE 8080
 
-WORKDIR /app
+RUN mkdir /app
 
-CMD ["java", "-Djava.security.egd=file:/dev/urandom","-jar","/app/spring-boot-application.jar"]
+COPY ./build/libs/*.jar /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]

@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Gradle
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Build for Java Run
+name: Unit test
 
 on:
   push:
@@ -21,12 +21,4 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew distZip
-
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: Package
-        path: |
-            build/libs
-            build/distributions
+      run: ./gradlew test
