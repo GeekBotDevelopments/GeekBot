@@ -27,7 +27,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ github.workspace }}/build/lib/**/*
+          path: ./build/libs/**/*
           if-no-files-found: error
           retention-days: 1
           
