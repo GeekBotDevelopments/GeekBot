@@ -1,6 +1,8 @@
 package bot.modules.octopi;
 
 import bot.modules.configs.MainConfig;
+import bot.modules.rest.RestUtil;
+import com.mashape.unirest.request.GetRequest;
 
 //TODO replace with a config
 public enum PrinterEnum
@@ -19,6 +21,7 @@ public enum PrinterEnum
         this.accessUrl = url;
     }
 
+    //<editor-fold desc="Getters">
     public String getName() {
         return this.name;
     }
@@ -32,4 +35,22 @@ public enum PrinterEnum
     {
         return accessUrl;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Url Helpers">
+    public String createUrl(String subPath) {
+        //url >> http://chiron.local
+        return String.format("%s/%s", getUrl(), subPath);
+    }
+
+    public String createApiUrl(String subPath) {
+        //url >> http://chiron.local
+        return String.format("%s/api/%s", getUrl(), subPath);
+    }
+
+    public GetRequest createApiGetRequest(String subPath) {
+        return (GetRequest) RestUtil.getRequest(createApiUrl(subPath))
+                .queryString("apikey", getKey());
+    }
+    //</editor-fold>
 }

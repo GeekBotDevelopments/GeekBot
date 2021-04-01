@@ -5,6 +5,7 @@ import bot.modules.configs.MainConfig;
 import bot.modules.discord.DiscordModule;
 import bot.modules.minecraft.forge.ForgeModule;
 import bot.modules.octopi.OctopiModule;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -24,6 +25,7 @@ import java.io.IOException;
 public class GeekBot extends SpringBootServletInitializer
 {
     public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
+    public static final Gson GSON = new Gson();
 
     public static ConfigurableApplicationContext springApplicationContext;
 

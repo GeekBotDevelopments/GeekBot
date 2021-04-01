@@ -3,15 +3,17 @@ package bot.modules.octopi.commands;
 import bot.GeekBot;
 import bot.modules.discord.Command;
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.rest.RestUtil;
+import bot.modules.octopi.models.PrinterVersion;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.request.GetRequest;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import org.apache.http.conn.ConnectTimeoutException;
 import reactor.core.publisher.Mono;
 
+import java.net.HttpURLConnection;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ import java.util.Optional;
  * Command to interact with OctoPrint version endpoint
  *
  * @see <a href="https://docs.octoprint.org/en/master/api/version.html">OctoPrint Version API</a>
- *
+ * <p>
  * Created by Robin Seifert on 3/31/2021.
  */
 public class CommandVersion extends Command
@@ -30,6 +32,11 @@ public class CommandVersion extends Command
     public CommandVersion()
     {
         super("version");
+    }
+
+    private GetRequest newVersionAPICall(PrinterEnum printerEnum)
+    {
+        return printerEnum.createApiGetRequest("version");
     }
 
     @Override
@@ -53,54 +60,76 @@ public class CommandVersion extends Command
 
             try
             {
+                //TODO spawn thread to handle waiting on REST endpoint response?
+                final HttpResponse<String> request = newVersionAPICall(printer).asString();
 
-                final String response = RestUtil.getString(printer.getUrl() + "/api/version?apikey=" + printer.getKey());
-                final JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-
-                //Match command
-                switch (subCommand)
+                if (request.getStatus() == HttpURLConnection.HTTP_OK)
                 {
-                    case SUB_COMMAND_SERVER:
-                        return channel.createMessage("Printer `" + printer.getName() + "` is running OctoPrint server version `" + json.get("server").getAsString() + "` ");
-                    case SUB_COMMAND_API:
-                        return channel.createMessage("Printer `" + printer.getName() + "` is running OctoPrint api version `" + json.get("api").getAsString() + "` ");
-                    default:
-                        return channel.createMessage("Unknown command `" + message.getContent() + "`");
+                    final String response = request.getBody();
+                    if (response == null)
+                    {
+                        return channel.createMessage("Connection timed out while connecting to printer `" + printer.getName() + "`");
+                    }
+
+                    final PrinterVersion printerVersion = GeekBot.GSON.fromJson(request.getBody(), PrinterVersion.class);
+
+                    //Match command
+                    switch (subCommand)
+                    {
+                        case SUB_COMMAND_SERVER:
+                            return channel.createMessage("Printer `" + printer.getName() + "` is running OctoPrint server version `" + printerVersion.getServer() + "` ");
+                        case SUB_COMMAND_API:
+                            return channel.createMessage("Printer `" + printer.getName() + "` is running OctoPrint api version `" + printerVersion.getApi() + "` ");
+                        default:
+                            return channel.createMessage("Unknown command `" + message.getContent() + "`");
+                    }
                 }
-            }
-            //TODO handle no connection errors as offline messages
-            catch (ConnectTimeoutException e2) {
-                return channel.createMessage("Connection timed out while connecting to printer `" + printer.getName() + "`");
+                return channel.createMessage(String.format("Version endpoint for printer `%s` responded with status code `%s`", printer.getName(), request.getStatusText()));
             }
             catch (Exception e)
             {
-                GeekBot.MAIN_LOG.error("Failed to get version for printer" + printer, e);
+                GeekBot.MAIN_LOG.error(String.format("Failed to get version for printer `%s`", printer), e);
+                if (e.getCause() instanceof ConnectTimeoutException)
+                {
+                    return channel.createMessage("Connection timed out while connecting to printer `" + printer.getName() + "`");
+                }
                 return channel.createMessage("Unexpected error while running command `" + message.getContent() + "`");
             }
         }
         else if (args.isEmpty())
         {
             return channel.createEmbed(embedCreateSpec -> {
-                Arrays.stream(PrinterEnum.values()).forEach(printer -> {
-                    try
-                    {
-                        final String response = RestUtil.getString(printer.getUrl() + "/api/version?apikey=" + printer.getKey());
-                        if (response != null)
-                        {
-                            final JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-                            embedCreateSpec.addField(printer.getName(), json.get("text").getAsString(), false);
-                        }
-                        else
-                        {
-                            embedCreateSpec.addField(printer.getName(), "unknown", false);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        GeekBot.MAIN_LOG.error("Failed to get version for printer" + printer, e);
-                        embedCreateSpec.addField(printer.getName(), "error", false);
-                    }
-                });
+                Arrays.stream(PrinterEnum.values())
+                        .map(printerEnum -> {
+                            try
+                            {
+                                final HttpResponse<String> request = newVersionAPICall(printerEnum).asString();
+
+                                if (request.getStatus() == HttpURLConnection.HTTP_OK)
+                                {
+                                    final String response = request.getBody();
+                                    if (response == null)
+                                    {
+                                        return new AbstractMap.SimpleEntry(printerEnum.getName(), "nil");
+                                    }
+
+                                    final PrinterVersion printerVersion = GeekBot.GSON.fromJson(request.getBody(), PrinterVersion.class);
+
+                                    return new AbstractMap.SimpleEntry(printerEnum.getName(), printerVersion.getText());
+                                }
+                                return new AbstractMap.SimpleEntry(printerEnum.getName(), request.getStatusText());
+                            }
+                            catch (Exception e)
+                            {
+                                GeekBot.MAIN_LOG.error(String.format("Failed to get version for printer `%s`", printerEnum), e);
+                                if (e.getCause() instanceof ConnectTimeoutException)
+                                {
+                                    return new AbstractMap.SimpleEntry(printerEnum.getName(), "Connection timed out");
+                                }
+                                return new AbstractMap.SimpleEntry(printerEnum.getName(), "Error:" + e.getMessage());
+                            }
+                        })
+                        .forEach(entry -> embedCreateSpec.addField((String) entry.getKey(), (String) entry.getValue(), false));
             });
         }
         return channel.createMessage("Unknown command `" + message.getContent() + "`");

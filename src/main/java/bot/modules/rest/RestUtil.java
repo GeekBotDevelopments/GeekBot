@@ -5,6 +5,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
@@ -26,6 +27,7 @@ public final class RestUtil
                 .header("User-Agent", "Mozilla/5.0 (compatible; GeekBot/1.0; +https://github.com/LegendaryGeek/GeekBot");
     }
 
+    @Nullable
     public static String getString(String url) throws IOException
     {
         try
@@ -37,6 +39,7 @@ public final class RestUtil
                 return httpResponse.getBody();
             }
             //TODO handle other cases
+            return null;
         }
         catch (UnirestException e)
         {
@@ -44,11 +47,7 @@ public final class RestUtil
             {
                 throw (IOException) e.getCause();
             }
-            else
-            {
-                throw new RuntimeException(e.getCause());
-            }
+            throw new RuntimeException(e.getCause());
         }
-        return null;
     }
 }
