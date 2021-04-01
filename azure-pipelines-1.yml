@@ -22,5 +22,7 @@ stages:
     steps:
     - task: Docker@2
       inputs:
+        containerRegistry: |
+          $(dockerHub)
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
