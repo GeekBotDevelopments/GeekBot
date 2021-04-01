@@ -22,8 +22,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         
-      - run: ls -R
-        
       - uses: actions/upload-artifact@v2
         with:
           name: package
