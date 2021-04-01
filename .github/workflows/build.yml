@@ -1,7 +1,11 @@
-name: Build and Push Docker image
+name: Build
+
 on:
   push:
-    branches: [ dev ]
+    branches:
+      - '!releases/**'
+      - '!release'
+    
 jobs:      
   build:
     name: Build artifact with gradle
