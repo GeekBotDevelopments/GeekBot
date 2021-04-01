@@ -39,4 +39,17 @@ public abstract class Command implements BiFunction<Message, ImmutableList<Strin
      * @return weather or not the command was able to successfully execute
      */
     public abstract Mono<Message> handle(final Message message, final MessageChannel channel, final ImmutableList<String> args);
+
+    /**
+     * Full command path required to run this command
+     *
+     * Example: /rootCommand parentCommand thisCommand
+     * @return string path
+     */
+    public String getCommandPath() {
+        if(rootCommand != null) {
+            return String.format("%s %s", rootCommand.getCommandPath(), name);
+        }
+        return name;
+    }
 }
