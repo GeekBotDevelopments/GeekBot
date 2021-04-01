@@ -103,13 +103,13 @@ public class ThreadPrinterStateMonitor extends Thread
 
         //Send message to defined channel
         //final TextChannel channel = GeekBot.getClient().getTextChannelById(OUTPUT_CHANNEL_ID);
-        Channel channel = outputServer.getChannelById(Snowflake.of(this.OUTPUT_CHANNEL_ID)).block();
+        final Channel channel = outputServer.getChannelById(Snowflake.of(this.OUTPUT_CHANNEL_ID)).block();
         if (channel != null)
         {
             /*channel.sendMessage(formattedOutput)
                     .embed(PrinterUtilities.createPrinterOutput(printer).build())
                     .submit();*/
-                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterUtilities.createPrinterOutput(printer).asRequest()).content(CHANNEL_OUTPUT).build();
+                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterUtilities.createPrinterOutput(null, printer).asRequest()).content(CHANNEL_OUTPUT).build();
                    channel.getRestChannel().createMessage(request).block();
         }
         else

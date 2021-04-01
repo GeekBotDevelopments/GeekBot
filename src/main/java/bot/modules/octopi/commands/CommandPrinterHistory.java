@@ -1,4 +1,4 @@
-package bot.modules.commands.octopi;
+package bot.modules.octopi.commands;
 
 import bot.modules.discord.Command;
 import bot.modules.octopi.PrinterEnum;
