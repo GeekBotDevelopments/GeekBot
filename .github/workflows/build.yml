@@ -20,12 +20,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build --stacktrace
+        run: ./gradlew build
         
-      - uses: actions/upload-artifact@v2-preview
+      - uses: actions/upload-artifact@v2
         with:
           name: package
           path: ./build/lib/GeekBot*.jar
+          if-no-files-found: error
+          retention-days: 1
           
   deploy:
     name: Create and push docker image
