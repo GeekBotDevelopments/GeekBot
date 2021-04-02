@@ -1,6 +1,6 @@
 package bot.modules.octopi;
 
-import bot.modules.octopi.models.PrintJobInfo;
+import bot.modules.octopi.models.api.job.PrintJobInfo;
 import bot.modules.rest.RestUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

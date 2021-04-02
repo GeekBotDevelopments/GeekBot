@@ -1,4 +1,4 @@
-package bot.modules.octopi.models;
+package bot.modules.octopi.models.api.job;
 
 public class PrintJobFile
 {
