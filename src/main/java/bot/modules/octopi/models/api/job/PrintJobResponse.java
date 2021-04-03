@@ -3,9 +3,10 @@ package bot.modules.octopi.models.api.job;
 import lombok.Data;
 
 @Data
-public class PrintJobInfo {
+public class PrintJobResponse
+{
 
-	private PrintJob job;
+	private PrintJobInformation job;
 	private PrintJobProgress progress;
 	private String state;
 }

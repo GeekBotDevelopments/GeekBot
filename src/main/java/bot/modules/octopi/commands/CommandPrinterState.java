@@ -77,6 +77,7 @@ public class CommandPrinterState extends Command
                     }
             ).onErrorResume(err -> PrinterCommandHelpers.genericError(channel, err));
         }
+        //TODO if no args are provided output all printers
         return channel.createMessage("Unknown command `" + message.getContent() + "`");
     }
 }

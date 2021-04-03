@@ -92,6 +92,16 @@ public final class PrinterCommandHelpers
         return channel.createMessage(String.format("Unexpected error while running command `%s`, error:", message.getContent()));
     }
 
+    /**
+     * Handles API calls for octoprint API
+     *
+     * @param message         posted by the user
+     * @param channel         the message was posted inside
+     * @param printer         being accessed by the command
+     * @param requestSupplier providing the request to invoke
+     * @param httpOkFunction  to call if the request returns 200-ok
+     * @return message created from the function or any error handling
+     */
     public static Mono<Message> handleApiCall(final Message message, final MessageChannel channel, PrinterEnum printer,
                                               Supplier<HttpRequest> requestSupplier, Function<String, Mono<Message>> httpOkFunction)
     {
@@ -101,7 +111,7 @@ public final class PrinterCommandHelpers
 
             if (request.getStatus() == HttpURLConnection.HTTP_OK)
             {
-                final String response = null; //request.getBody();
+                final String response = request.getBody();
                 if (response == null)
                 {
                     return PrinterCommandHelpers.emptyResponseBodyMessage(channel, printer, requestSupplier.get().getUrl());
@@ -119,6 +129,7 @@ public final class PrinterCommandHelpers
 
     /**
      * Generic endpoint empty response body message to the user
+     *
      * @param channel to output the message inside
      * @param printer being accessed
      * @return message to output
@@ -128,14 +139,22 @@ public final class PrinterCommandHelpers
         //TODO add stronger linting or a pass through of just the API url
         final String lintedEndpoint = endpoint.split("\\?")[0].replaceFirst(printer.getUrl(), "");
         return channel.createMessage(String.format("%s Endpoint `%s` on printer `%s` responded with no body text%n%n" +
-                //TODO convert info into a URL link to wiki page, url should say `help` and add a command to get endpoint(3d printer) owner
-                ":pushpin: **Info:** Most commands require data contained in the body text to work... this could be a bug or broken endpoint. Check with the endpoint owner before reporting issues to the developer! %nBot Issues:<%s>",
+                        //TODO convert info into a URL link to wiki page, url should say `help` and add a command to get endpoint(3d printer) owner
+                        ":pushpin: **Info:** Most commands require data contained in the body text to work... this could be a bug or broken endpoint. Check with the endpoint owner before reporting issues to the developer! %nBot Issues:<%s>",
                 ChatOutputConfig.ERROR_PREFIX,
                 lintedEndpoint, printer.getName(),
                 GeekBot.ISSUES_REPORTING_URL));
     }
 
-    public static Mono<Message> genericError(final MessageChannel channel, final Throwable throwable) {
+    /**
+     * Generic error output to channel
+     *
+     * @param channel   to output the error message
+     * @param throwable error thrown
+     * @return message to generate
+     */
+    public static Mono<Message> genericError(final MessageChannel channel, final Throwable throwable)
+    {
         return channel.createMessage(String.format("%s %s", ChatOutputConfig.ERROR_PREFIX, throwable.getMessage()));
     }
 }
