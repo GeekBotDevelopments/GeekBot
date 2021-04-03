@@ -17,18 +17,9 @@ public class EventTwitchLive {
         this.args = args;
     }
 
-    //@MessageMapping("/twitch")
+    @MessageMapping("/twitch")
     public void TwitchLive(TwitchStreamChange data) {
-        this.run();
-    }
-
-    @Async
-    // @Override
-    public void run() {
-        // super.run();
-        // SpringApplication.run(EventTwitchLive.class,
-        // this.args).setParent(GeekBot.geekbotContext);
-        // log.info("Started Twitch Notification Thread");
+        log.info("game id: {}, stream title: {}",data.getData()[0].getGame_id(), data.getData()[0].getTitle());
     }
 
 }
