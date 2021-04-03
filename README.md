@@ -7,6 +7,9 @@
 ![Build and Push Docker image](https://github.com/LegendaryGeek/GeekBot/workflows/Build%20and%20Push%20Docker%20image/badge.svg?branch=release)
 [ ![discord-shield][] ][discord-invite]
 
+## Information and Greetings
+Hello, and thank you for noticing this repository. this is geekbot. for now, just a discord bot, but i wish to eventually build up geekbot 
+to an open source home assistant similar to alexa or google home. 
 
 ## How to run locally
 
