@@ -1,8 +1,7 @@
 package bot.modules.octopi.commands;
 
 import bot.modules.discord.Command;
-import bot.modules.octopi.OctopiModule;
-import bot.modules.octopi.PrinterUtilities;
+import bot.modules.octopi.PrinterJobOutputGen;
 import com.google.common.collect.ImmutableList;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
@@ -20,9 +19,9 @@ public class CommandPrinterJob extends Command
     {
         if (!args.isEmpty())
         {
-            return OctopiModule.printerCommand(message, channel, args, 0,
+            return PrinterCommandHelpers.printerCommand(message, channel, args, 0,
                     printer -> channel
-                    .createEmbed(spec -> PrinterUtilities.createPrinterOutput(spec, printer))
+                    .createEmbed(spec -> PrinterJobOutputGen.createPrinterOutput(spec, printer))
                     .onErrorResume(err -> channel.createMessage("Error: " + err.getMessage())));
         }
         return channel.createMessage("Unknown command `" + message.getContent() + "`");

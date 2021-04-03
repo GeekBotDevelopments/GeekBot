@@ -9,13 +9,14 @@ import discord4j.core.spec.EmbedCreateSpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PrinterUtilities
+@Deprecated
+public class PrinterJobOutputGen
 {
 
     static Gson gson = new Gson();
     private static final Logger log = LogManager.getLogger();
 
-    private PrinterUtilities()
+    private PrinterJobOutputGen()
     {
     }
 

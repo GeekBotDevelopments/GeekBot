@@ -1,7 +1,7 @@
 package bot.modules.octopi.events;
 
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.PrinterUtilities;
+import bot.modules.octopi.PrinterJobOutputGen;
 import bot.modules.rest.RestUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -109,7 +109,7 @@ public class ThreadPrinterStateMonitor extends Thread
             /*channel.sendMessage(formattedOutput)
                     .embed(PrinterUtilities.createPrinterOutput(printer).build())
                     .submit();*/
-                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterUtilities.createPrinterOutput(null, printer).asRequest()).content(CHANNEL_OUTPUT).build();
+                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterJobOutputGen.createPrinterOutput(null, printer).asRequest()).content(CHANNEL_OUTPUT).build();
                    channel.getRestChannel().createMessage(request).block();
         }
         else
