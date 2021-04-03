@@ -6,8 +6,8 @@ import bot.modules.discord.DiscordModule;
 import bot.modules.minecraft.forge.ForgeModule;
 import bot.modules.octopi.OctopiModule;
 import bot.modules.twitch.TwitchModule;
-
 import com.google.gson.Gson;
+import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -19,39 +19,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @SpringBootApplication
 @RestController
 @EnableAsync
-public class GeekBot extends SpringBootServletInitializer
-{
-    public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
-    public static final Gson GSON = new Gson();
-    
+public class GeekBot extends SpringBootServletInitializer {
 
-    public static ConfigurableApplicationContext springApplicationContext;
+  public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
+  public static final Gson GSON = new Gson();
 
-    public static void main(String[] args) throws IOException
-    {
-        springApplicationContext = SpringApplication.run(GeekBot.class, args);
-        TwitchModule twitch = new TwitchModule();
-        
-        MainConfig.load();
-        CommandsModule.load();
-        //StarboundModule.load();
-        //VoiceModule.load();
-        OctopiModule.load();
-        ForgeModule.load();
-        twitch.twitchLogin();
+  public static ConfigurableApplicationContext springApplicationContext;
 
-        //Load last as this blocks the thread in a wait
-        DiscordModule.load();
-    }
+  public static void main(String[] args) throws IOException {
+    springApplicationContext = SpringApplication.run(GeekBot.class, args);
 
-    @GetMapping("/hello") //TODO move to it's own controller class
-    public String hello(@RequestParam(value = "name", defaultValue = "World") String name)
-    {
-        return String.format("Hello %s!", name);
-    }
+    MainConfig.load();
+    CommandsModule.load();
+    //StarboundModule.load();
+    //VoiceModule.load();
+    OctopiModule.load();
+    ForgeModule.load();
+    TwitchModule.load();
+
+    //Load last as this blocks the thread in a wait
+    DiscordModule.load();
+  }
+
+  @GetMapping("/hello") //TODO move to it's own controller class
+  public String hello(
+    @RequestParam(value = "name", defaultValue = "World") String name
+  ) {
+    return String.format("Hello %s!", name);
+  }
 }
