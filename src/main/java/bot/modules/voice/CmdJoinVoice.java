@@ -10,7 +10,6 @@ import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.VoiceChannel;
-import discord4j.voice.AudioReceiver;
 import discord4j.voice.VoiceConnection;
 import reactor.core.publisher.Mono;
 
