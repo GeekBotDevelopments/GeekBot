@@ -40,6 +40,9 @@ dependencies {
 	//discord
 	implementation 'com.discord4j:discord4j-core:3.1.3'
 
+	//twitch
+	implementation group: 'com.github.twitch4j', name: 'twitch4j', version: '1.2.1'
+
 	//General libs
 	implementation 'org.apache.commons:commons-io:1.3.2'
 	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
