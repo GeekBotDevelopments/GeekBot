@@ -36,6 +36,7 @@ public class MainConfig
     private static String DATABASE_PASS;
     private static String ENDER_KEY;
     private static String ENDER_URL;
+    private static String TWITCH_ID;
 
     private static String BOT_PREFIX;
 
@@ -66,26 +67,34 @@ public class MainConfig
             prop.load(input);
 
             //Read values
-            BOT_PREFIX = (prop.getProperty("bot.prefix"));
+            BOT_PREFIX =     (prop.getProperty("bot.prefix"));
             GOOGLE_API_KEY = (prop.getProperty("key.google"));
-            CHIRON_KEY = (prop.getProperty("id.discord"));
+            CHIRON_KEY =     (prop.getProperty("id.discord"));
             DISCORD_SECRET = (prop.getProperty("secret.discord"));
-            DISCORD_TOKEN = (prop.getProperty("token.discord"));
-            YOUTUBE_ID = (prop.getProperty("id.youtube"));
-            OWNER_ID = (prop.getProperty("id.owner"));
-            LABRINTH_ID = (prop.getProperty("id.labrinth"));
-            LABUPDATE = (prop.getProperty("id.labupdate"));
-            CHIRON_KEY = (prop.getProperty("key.chiron"));
-            CHIRON_URL = (prop.getProperty("url.chiron"));
-            MINDUSTRY_URL = (prop.getProperty("url.mindustry"));
-            DATABASE_URL = (prop.getProperty("url.database"));
-            DATABASE_PASS = (prop.getProperty("password.database"));
-            DATABASE_USER = (prop.getProperty("username.database"));
-            ENDER_KEY = (prop.getProperty("key.ender"));
-            ENDER_URL = (prop.getProperty("url.ender"));
+            DISCORD_TOKEN =  (prop.getProperty("token.discord"));
+            YOUTUBE_ID =     (prop.getProperty("id.youtube"));
+            OWNER_ID =       (prop.getProperty("id.owner"));
+            LABRINTH_ID =    (prop.getProperty("id.labrinth"));
+            LABUPDATE =      (prop.getProperty("id.labupdate"));
+            CHIRON_KEY =     (prop.getProperty("key.chiron"));
+            CHIRON_URL =     (prop.getProperty("url.chiron"));
+            MINDUSTRY_URL =  (prop.getProperty("url.mindustry"));
+            DATABASE_URL =   (prop.getProperty("url.database"));
+            DATABASE_PASS =  (prop.getProperty("password.database"));
+            DATABASE_USER =  (prop.getProperty("username.database"));
+            ENDER_KEY =      (prop.getProperty("key.ender"));
+            ENDER_URL =      (prop.getProperty("url.ender"));
+            TWITCH_ID =      (prop.getProperty("id.twitch"));
 
             LOGGER.info("Keys loaded");
         }
+    }
+
+    /**
+     * @return the tWITCH_ID
+     */
+    public static String getTWITCH_ID() {
+        return TWITCH_ID;
     }
 
     /**
@@ -206,4 +215,6 @@ public class MainConfig
     public static String getBOT_PREFIX() {
         return BOT_PREFIX;
     }
+
+    
 }
