@@ -5,6 +5,8 @@ import bot.modules.configs.MainConfig;
 import bot.modules.discord.DiscordModule;
 import bot.modules.minecraft.forge.ForgeModule;
 import bot.modules.octopi.OctopiModule;
+import bot.modules.twitch.TwitchModule;
+
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,19 +28,22 @@ public class GeekBot extends SpringBootServletInitializer
 {
     public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
     public static final Gson GSON = new Gson();
+    
 
     public static ConfigurableApplicationContext springApplicationContext;
 
     public static void main(String[] args) throws IOException
     {
         springApplicationContext = SpringApplication.run(GeekBot.class, args);
-
+        TwitchModule twitch = new TwitchModule();
+        
         MainConfig.load();
         CommandsModule.load();
         //StarboundModule.load();
         //VoiceModule.load();
         OctopiModule.load();
         ForgeModule.load();
+        twitch.twitchLogin();
 
         //Load last as this blocks the thread in a wait
         DiscordModule.load();
