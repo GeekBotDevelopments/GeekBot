@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 @Deprecated
 public class PrinterJobOutputGen
 {
-
     static Gson gson = new Gson();
     private static final Logger log = LogManager.getLogger();
 

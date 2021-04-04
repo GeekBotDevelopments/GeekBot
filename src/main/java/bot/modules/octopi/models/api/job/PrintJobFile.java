@@ -13,5 +13,5 @@ public class PrintJobFile
 	private String name;
 	private String origin;
 	private String path;
-	private int size;
+	private Integer size;
 }
