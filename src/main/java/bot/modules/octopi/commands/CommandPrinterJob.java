@@ -4,6 +4,7 @@ import bot.GeekBot;
 import bot.helpers.TimeDisplayHelpers;
 import bot.modules.discord.Command;
 import bot.modules.octopi.PrinterEnum;
+import bot.modules.octopi.models.api.job.PrintJobProgress;
 import bot.modules.octopi.models.api.job.PrintJobResponse;
 import com.google.common.collect.ImmutableList;
 import com.mashape.unirest.http.HttpResponse;
@@ -12,6 +13,7 @@ import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +47,9 @@ public class CommandPrinterJob extends Command
                             (response) -> {
                                 final PrintJobResponse jobState = GeekBot.GSON.fromJson(response, PrintJobResponse.class);
                                 final String state = jobState.getState();
-                                if ("offline".equalsIgnoreCase(state))
+
+                                //Offline (Error: No more candidates to test, and no working port/baudrate combination detected.)
+                                if (state.toLowerCase().startsWith("offline"))
                                 {
                                     return channel.createMessage(String.format("Printer `%s` is currently offline", printer.getName()));
                                 }
@@ -68,11 +72,11 @@ public class CommandPrinterJob extends Command
                                                 + "%n estimated time remaining `%s`",
                                         printer.getName(), state.toLowerCase(), jobState.getJob().getFile().getPath(),
                                         jobState.getProgress().getCompletion(),
-                                        TimeDisplayHelpers.convertSecondsToDisplay(jobState.getProgress().getPrintTimeLeft())
+                                        TimeDisplayHelpers.convertSecondsToDisplay(Optional.ofNullable(jobState.getProgress()).orElseGet(PrintJobProgress::new).getPrintTimeLeft())
                                 ));
                             }
                     )
-            ).onErrorResume(err -> PrinterCommandHelpers.genericError(channel, err));
+            );
         }
         else if (args.isEmpty())
         {
@@ -83,6 +87,7 @@ public class CommandPrinterJob extends Command
                     final PrintJobResponse jobState = GeekBot.GSON.fromJson(response.getBody(), PrintJobResponse.class);
                     final String state = jobState.getState();
 
+                    //Offline (Error: No more candidates to test, and no working port/baudrate combination detected.)
                     if (state.toLowerCase().startsWith("offline"))
                     {
                         return String.format("`%s`: Offline", printer.getName());

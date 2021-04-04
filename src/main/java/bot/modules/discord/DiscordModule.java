@@ -94,7 +94,12 @@ public final class DiscordModule
                     if (commandMap.containsKey(rootCommand))
                     {
                         //Let command handle call
-                        return commandMap.get(rootCommand).apply(message, removeFirstArg(args));
+                        return commandMap.get(rootCommand).apply(message, removeFirstArg(args))
+                                .onErrorResume(err -> {
+                                    GeekBot.MAIN_LOG.error("Failed to process command `" + messageContents + "`", err);
+                                    //TODO display full error message in chat, though lint to avoid leaking secrets
+                                    return message.getChannel().flatMap(channel -> channel.createMessage("Error processing command"));
+                                });
                     }
 
                     //TODO check for more complex commands that may contain english phrases

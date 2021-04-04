@@ -10,6 +10,6 @@ public class PrintJobResponse
 {
 	private PrintJobInformation job;
 	private PrintJobProgress progress;
-	/** “Operational”, “Printing”, “Pausing”, “Paused”, “Cancelling”, “Error” or “Offline”. */ //TODO convert to ENUM
+	/** Currently this is the 'text' string value from the state */
 	private String state;
 }
