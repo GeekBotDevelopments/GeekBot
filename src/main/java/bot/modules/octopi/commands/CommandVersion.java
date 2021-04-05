@@ -2,7 +2,6 @@ package bot.modules.octopi.commands;
 
 import bot.GeekBot;
 import bot.modules.discord.Command;
-import bot.modules.octopi.OctopiModule;
 import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.models.api.PrinterVersion;
 import com.google.common.collect.ImmutableList;
@@ -48,7 +47,7 @@ public class CommandVersion extends Command
             final String subCommand = args.size() == 1 ? SUB_COMMAND_SERVER : args.get(0);
             final String printerString = args.size() == 1 ? args.get(0) : args.get(1);
 
-            final Optional<PrinterEnum> printerOptional = OctopiModule.findPrinter(printerString);
+            final Optional<PrinterEnum> printerOptional = PrinterCommandHelpers.findPrinter(printerString);
             if (!printerOptional.isPresent())
             {
                 return channel.createMessage("No printer found by name `" + printerString + "` while running command `" + message.getContent() + "`");

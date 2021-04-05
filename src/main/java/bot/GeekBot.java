@@ -24,6 +24,8 @@ import java.io.IOException;
 @EnableAsync
 public class GeekBot extends SpringBootServletInitializer
 {
+    public static final String ISSUES_REPORTING_URL = "https://github.com/GeekBotDevelopments/GeekBot/issues";
+
     public static final Logger MAIN_LOG = LogManager.getLogger(GeekBot.class);
     public static final Gson GSON = new Gson();
 

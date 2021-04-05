@@ -1,14 +1,12 @@
 package bot.modules.octopi.events;
 
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.PrinterUtilities;
 import bot.modules.rest.RestUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.Channel;
-import discord4j.discordjson.json.MessageCreateRequest;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,8 +107,8 @@ public class ThreadPrinterStateMonitor extends Thread
             /*channel.sendMessage(formattedOutput)
                     .embed(PrinterUtilities.createPrinterOutput(printer).build())
                     .submit();*/
-                    MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterUtilities.createPrinterOutput(null, printer).asRequest()).content(CHANNEL_OUTPUT).build();
-                   channel.getRestChannel().createMessage(request).block();
+                    //MessageCreateRequest request = MessageCreateRequest.builder().embed(PrinterJobOutputGen.createPrinterOutput(null, printer).asRequest()).content(CHANNEL_OUTPUT).build();
+                   //channel.getRestChannel().createMessage(request).block();
         }
         else
         {
