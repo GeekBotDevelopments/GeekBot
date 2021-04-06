@@ -4,11 +4,11 @@ import bot.GeekBot;
 import bot.helpers.TimeDisplayHelpers;
 import bot.modules.discord.Command;
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.models.api.job.PrintJobProgress;
-import bot.modules.octopi.models.api.job.PrintJobResponse;
+import bot.modules.octopi.api.OctoprintEndpoints;
+import bot.modules.octopi.api.models.api.job.PrinterJobProgress;
+import bot.modules.octopi.api.models.api.job.PrinterJobResponse;
 import com.google.common.collect.ImmutableList;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.request.GetRequest;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
@@ -19,18 +19,11 @@ import java.util.stream.Stream;
 
 public class CommandPrinterJob extends Command
 {
-    private static final String URL_JOB_API = "job";
-
     private static final int PRINTER_INDEX = 0;
 
     public CommandPrinterJob()
     {
         super("job");
-    }
-
-    private GetRequest newJobAPICall(PrinterEnum printerEnum)
-    {
-        return printerEnum.createApiGetRequest(URL_JOB_API);
     }
 
     @Override
@@ -42,10 +35,10 @@ public class CommandPrinterJob extends Command
             return PrinterCommandHelpers.printerCommand(message, channel, args, PRINTER_INDEX,
                     printer -> PrinterCommandHelpers.handleApiCall(message, channel, printer,
                             //API call
-                            () -> newJobAPICall(printer),
+                            () -> OctoprintEndpoints.newJobCall(printer.getPrinter()),
                             //API handler
                             (response) -> {
-                                final PrintJobResponse jobState = GeekBot.GSON.fromJson(response, PrintJobResponse.class);
+                                final PrinterJobResponse jobState = GeekBot.GSON.fromJson(response, PrinterJobResponse.class);
                                 final String state = jobState.getState();
 
                                 //Offline (Error: No more candidates to test, and no working port/baudrate combination detected.)
@@ -72,7 +65,7 @@ public class CommandPrinterJob extends Command
                                                 + "%n estimated time remaining `%s`",
                                         printer.getName(), state.toLowerCase(), jobState.getJob().getFile().getPath(),
                                         jobState.getProgress().getCompletion(),
-                                        TimeDisplayHelpers.convertSecondsToDisplay(Optional.ofNullable(jobState.getProgress()).orElseGet(PrintJobProgress::new).getPrintTimeLeft())
+                                        TimeDisplayHelpers.convertSecondsToDisplay(Optional.ofNullable(jobState.getProgress()).orElseGet(PrinterJobProgress::new).getPrintTimeLeft())
                                 ));
                             }
                     )
@@ -83,8 +76,8 @@ public class CommandPrinterJob extends Command
             return channel.createMessage(Stream.of(PrinterEnum.values()).map(printer -> {
                 try
                 {
-                    HttpResponse<String> response = newJobAPICall(printer).asString();
-                    final PrintJobResponse jobState = GeekBot.GSON.fromJson(response.getBody(), PrintJobResponse.class);
+                    HttpResponse<String> response = OctoprintEndpoints.newJobCall(printer.getPrinter()).asString();
+                    final PrinterJobResponse jobState = GeekBot.GSON.fromJson(response.getBody(), PrinterJobResponse.class);
                     final String state = jobState.getState();
 
                     //Offline (Error: No more candidates to test, and no working port/baudrate combination detected.)

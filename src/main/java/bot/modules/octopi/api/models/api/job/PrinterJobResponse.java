@@ -1,4 +1,4 @@
-package bot.modules.octopi.models.api.job;
+package bot.modules.octopi.api.models.api.job;
 
 import lombok.Data;
 
@@ -6,10 +6,10 @@ import lombok.Data;
  *  https://docs.octoprint.org/en/master/api/job.html#data-model
  */
 @Data
-public class PrintJobResponse
+public class PrinterJobResponse
 {
-	private PrintJobInformation job;
-	private PrintJobProgress progress;
+	private PrinterJobInformation job;
+	private PrinterJobProgress progress;
 	/** Currently this is the 'text' string value from the state */
 	private String state;
 }

@@ -1,4 +1,4 @@
-package bot.modules.octopi.models.api.job;
+package bot.modules.octopi.api.models.api.job;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * https://docs.octoprint.org/en/master/api/datamodel.html#progress-information
  */
 @Data
-public class PrintJobProgress
+public class PrinterJobProgress
 {
 	private Float completion;
 	private Integer filepos;

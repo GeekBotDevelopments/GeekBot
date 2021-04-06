@@ -1,4 +1,4 @@
-package bot.modules.octopi.models.api;
+package bot.modules.octopi.api.models.api;
 
 import lombok.Data;
 

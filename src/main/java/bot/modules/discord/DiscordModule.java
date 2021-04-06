@@ -2,7 +2,7 @@ package bot.modules.discord;
 
 import bot.GeekBot;
 import bot.modules.configs.MainConfig;
-import bot.modules.octopi.events.ThreadPrinterStateMonitor;
+import bot.modules.octopi.watcher.ThreadPrinterStateMonitor;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import discord4j.common.util.Snowflake;

@@ -1,39 +1,41 @@
 package bot.modules.octopi;
 
 import bot.modules.configs.MainConfig;
+import bot.modules.octopi.api.data.OctoPrinter;
 import bot.modules.rest.RestUtil;
 import com.mashape.unirest.request.GetRequest;
 
 //TODO replace with a config
+@Deprecated
 public enum PrinterEnum
 {
     ENDER("ender5", MainConfig.getENDER_KEY(), MainConfig.getENDER_URL()),
     CHIRION("chiron", MainConfig.getCHIRON_KEY(), MainConfig.getCHIRON_URL());
 
-    private final String name;
-    private final String apiKey;
-    private final String accessUrl;
+    private final OctoPrinter printer;
 
     PrinterEnum(String name, String apiKey, String url)
     {
-        this.name = name;
-        this.apiKey = apiKey;
-        this.accessUrl = url;
+        this.printer = new OctoPrinter(name, apiKey, url);
     }
 
     //<editor-fold desc="Getters">
     public String getName() {
-        return this.name;
+        return printer.getName();
     }
 
     public String getKey()
     {
-        return apiKey;
+        return printer.getApiKey();
     }
 
     public String getUrl()
     {
-        return accessUrl;
+        return printer.getAccessUrl();
+    }
+
+    public OctoPrinter getPrinter() {
+        return printer;
     }
     //</editor-fold>
 

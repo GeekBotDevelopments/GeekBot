@@ -3,10 +3,10 @@ package bot.modules.octopi.commands;
 import bot.GeekBot;
 import bot.modules.discord.Command;
 import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.models.api.PrinterVersion;
+import bot.modules.octopi.api.OctoprintEndpoints;
+import bot.modules.octopi.api.models.api.PrinterVersion;
 import com.google.common.collect.ImmutableList;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.request.GetRequest;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -34,11 +34,6 @@ public class CommandVersion extends Command
         super("version");
     }
 
-    private GetRequest newVersionAPICall(PrinterEnum printerEnum)
-    {
-        return printerEnum.createApiGetRequest("version");
-    }
-
     @Override
     public Mono<Message> handle(Message message, MessageChannel channel, ImmutableList<String> args)
     {
@@ -58,7 +53,7 @@ public class CommandVersion extends Command
             try
             {
                 //TODO spawn thread to handle waiting on REST endpoint response?
-                final HttpResponse<String> request = newVersionAPICall(printer).asString();
+                final HttpResponse<String> request = OctoprintEndpoints.newVersionAPICall(printer.getPrinter()).asString();
 
                 if (request.getStatus() == HttpURLConnection.HTTP_OK)
                 {
@@ -100,7 +95,7 @@ public class CommandVersion extends Command
                         .map(printerEnum -> {
                             try
                             {
-                                final HttpResponse<String> request = newVersionAPICall(printerEnum).asString();
+                                final HttpResponse<String> request = OctoprintEndpoints.newVersionAPICall(printerEnum.getPrinter()).asString();
 
                                 if (request.getStatus() == HttpURLConnection.HTTP_OK)
                                 {

@@ -1,4 +1,4 @@
-package bot.modules.octopi.models.api.job;
+package bot.modules.octopi.api.models.api.job;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * Documentation is outdated for Octoprint, each filment response returns a tool object
  */
 @Data
-public class PrintJobTool
+public class PrinterJobTool
 {
     private Float length;
 	private Float volume;

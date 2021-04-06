@@ -5,7 +5,7 @@ import bot.modules.discord.DiscordModule;
 import bot.modules.octopi.commands.CommandPrinterJob;
 import bot.modules.octopi.commands.CommandPrinterState;
 import bot.modules.octopi.commands.CommandVersion;
-import bot.modules.octopi.events.ThreadPrinterStateMonitor;
+import bot.modules.octopi.watcher.ThreadPrinterStateMonitor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

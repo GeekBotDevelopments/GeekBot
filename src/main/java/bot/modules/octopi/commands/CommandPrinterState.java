@@ -2,11 +2,10 @@ package bot.modules.octopi.commands;
 
 import bot.GeekBot;
 import bot.modules.discord.Command;
-import bot.modules.octopi.PrinterEnum;
-import bot.modules.octopi.models.api.state.PrinterStateResponse;
-import bot.modules.octopi.models.api.state.TemperatureStateValue;
+import bot.modules.octopi.api.OctoprintEndpoints;
+import bot.modules.octopi.api.models.api.state.PrinterStateResponse;
+import bot.modules.octopi.api.models.api.state.TemperatureStateValue;
 import com.google.common.collect.ImmutableList;
-import com.mashape.unirest.request.GetRequest;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 public class CommandPrinterState extends Command
 {
-    private static final String URL_PRINTER_API = "printer";
     private static final String URL_QUERY_HISTORY = "history";
     private static final String URL_QUERY_LIMIT = "limit";
 
@@ -29,11 +27,6 @@ public class CommandPrinterState extends Command
     public CommandPrinterState()
     {
         super("state");
-    }
-
-    private GetRequest newPrinterAPICall(PrinterEnum printerEnum)
-    {
-        return printerEnum.createApiGetRequest(URL_PRINTER_API);
     }
 
     @Override
@@ -54,7 +47,7 @@ public class CommandPrinterState extends Command
 
                         return PrinterCommandHelpers.handleApiCall(message, channel, printer,
                                 //API call
-                                () -> newPrinterAPICall(printer).queryString(parameters),
+                                () -> OctoprintEndpoints.newPrinterCall(printer.getPrinter()).queryString(parameters),
                                 //API handler
                                 (response) -> {
                                     final PrinterStateResponse printerState = GeekBot.GSON.fromJson(response, PrinterStateResponse.class);
