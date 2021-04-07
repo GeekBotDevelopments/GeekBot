@@ -21,7 +21,7 @@ public final class OctoPrinter
     private final String accessUrl;
 
     /** Previous state of field {@link #stateResponse} using data {@link PrinterStateResponse#getState()}  */
-    private PrinterStateData previousState = new PrinterStateData();
+    private PrinterStateData previousState;
 
     public OctoPrinter(final String name, final String apiKey, final String accessUrl)
     {

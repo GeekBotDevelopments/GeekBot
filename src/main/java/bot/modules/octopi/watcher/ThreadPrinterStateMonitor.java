@@ -51,11 +51,28 @@ public class ThreadPrinterStateMonitor extends Thread
     {
         logger.info("Printer state monitor thread started");
 
+        //Sleep until discord module is loaded
+        while(outputServer == null) {
+            //Busy-wait
+            try
+            {
+                sleep(100);
+            }
+            catch (InterruptedException e)
+            {
+                logger.catching(e);
+            }
+        }
+
+        logger.info("Printer state monitor thread started");
+
         //Run until killed, will sleep between runs
         while (running)
         {
             //Loop all printers
-            Stream.of(PrinterEnum.values()).map(PrinterEnum::getPrinter).forEach(this::checkPrinter);
+            Stream.of(PrinterEnum.values())
+                    .map(PrinterEnum::getPrinter)
+                    .forEach(this::checkPrinter);
 
             //Busy-wait
             try
@@ -73,8 +90,6 @@ public class ThreadPrinterStateMonitor extends Thread
 
     private void checkPrinter(final OctoPrinter printer)
     {
-
-
         //Store previous state
         printer.setPreviousState(printer.getStateResponse()
                 .get().orElseGet(PrinterStateResponse::new)
@@ -84,19 +99,31 @@ public class ThreadPrinterStateMonitor extends Thread
         //Update endpoint data
         printer.refreshEndpointData();
 
-        final String newState = Optional.ofNullable(
-                printer.getStateResponse().get().orElseGet(PrinterStateResponse::new)
-                        .getState()).orElseGet(PrinterStateData::new) //TODO improve to not generate 2 waste objects
-                .getText();
-        final String lastState = printer.getPreviousState().getText();
+        final String newState = getState(printer);
+        final String lastState = printer.getPreviousState() != null ? printer.getPreviousState().getText() : null;
+
+        GeekBot.MAIN_LOG.info("{} {}", newState, lastState);
 
         if (newState != null && lastState == null)
         {
+            GeekBot.MAIN_LOG.info("Printer is online");
             outputServer.getChannelById(Snowflake.of(OUTPUT_CHANNEL_ID))
                     .map(Channel::getRestChannel)
                     .map(restChannel -> restChannel.createMessage(String.format("OctoServer for printer `%s` is now online", printer.getName())))
                     .doOnError(GeekBot.MAIN_LOG::error)
                     .subscribe();
         }
+    }
+
+    private String getState(OctoPrinter printer) {
+        final Optional<PrinterStateResponse> response = printer.getStateResponse().get();
+
+        if(response.isPresent()) {
+            final PrinterStateData data = response.get().getState();
+            if(data != null) {
+                return data.getText();
+            }
+        }
+        return null;
     }
 }
