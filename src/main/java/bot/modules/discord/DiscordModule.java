@@ -51,6 +51,7 @@ public final class DiscordModule
         client.getEventDispatcher().on(MessageCreateEvent.class).as(MessageEventHandler::handle).subscribe();
         client.getEventDispatcher().on(MemberJoinEvent.class).subscribe(MemberJoinEventHandler::handle);
         client.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(MemberLeaveEventHandler::handle);
+        client.getEventDispatcher().on(MessageOutputEvent.class).subscribe(MessageOutputEventHandler::handle);
     }
 
     public static Map<String, Command> getCommandMap()

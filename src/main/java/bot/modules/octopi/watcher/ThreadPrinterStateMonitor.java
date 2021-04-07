@@ -1,13 +1,14 @@
 package bot.modules.octopi.watcher;
 
 import bot.GeekBot;
+import bot.modules.configs.MainConfig;
+import bot.modules.discord.DiscordModule;
+import bot.modules.discord.events.MessageOutputEvent;
 import bot.modules.octopi.PrinterEnum;
 import bot.modules.octopi.api.data.OctoPrinter;
 import bot.modules.octopi.api.models.api.state.PrinterStateData;
 import bot.modules.octopi.api.models.api.state.PrinterStateResponse;
-import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
-import discord4j.core.object.entity.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -102,16 +103,15 @@ public class ThreadPrinterStateMonitor extends Thread
         final String newState = getState(printer);
         final String lastState = printer.getPreviousState() != null ? printer.getPreviousState().getText() : null;
 
-        GeekBot.MAIN_LOG.info("{} {}", newState, lastState);
-
         if (newState != null && lastState == null)
         {
-            GeekBot.MAIN_LOG.info("Printer is online");
-            outputServer.getChannelById(Snowflake.of(OUTPUT_CHANNEL_ID))
-                    .map(Channel::getRestChannel)
-                    .map(restChannel -> restChannel.createMessage(String.format("OctoServer for printer `%s` is now online", printer.getName())))
-                    .doOnError(GeekBot.MAIN_LOG::error)
-                    .subscribe();
+            final String message = String.format("OctoServer for printer `%s` is now online", printer.getName());
+            GeekBot.MAIN_LOG.info(message);
+            DiscordModule.discordClient.getEventDispatcher().publish(new MessageOutputEvent(
+                    Long.parseLong(MainConfig.getLABRINTH_ID()), //TODO store as long in config
+                    OUTPUT_CHANNEL_ID,
+                    message
+            ));
         }
     }
 
