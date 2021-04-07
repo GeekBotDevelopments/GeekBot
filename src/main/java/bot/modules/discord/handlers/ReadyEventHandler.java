@@ -1,4 +1,4 @@
-package bot.modules.events;
+package bot.modules.discord.handlers;
 
 import bot.GeekBot;
 import bot.modules.configs.MainConfig;

@@ -2,10 +2,12 @@ package bot.modules.discord;
 
 import bot.GeekBot;
 import bot.modules.configs.MainConfig;
-import bot.modules.events.MemberJoinEventHandler;
-import bot.modules.events.MemberLeaveEventHandler;
-import bot.modules.events.MessageEventHandler;
-import bot.modules.events.ReadyEventHandler;
+import bot.modules.discord.events.MessageOutputEvent;
+import bot.modules.discord.handlers.MemberJoinEventHandler;
+import bot.modules.discord.handlers.MemberLeaveEventHandler;
+import bot.modules.discord.handlers.MessageEventHandler;
+import bot.modules.discord.handlers.MessageOutputEventHandler;
+import bot.modules.discord.handlers.ReadyEventHandler;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import discord4j.core.DiscordClientBuilder;
@@ -18,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +40,12 @@ public final class DiscordModule
     public static void load()
     {
         final String discordToken = MainConfig.getDISCORD_TOKEN();
-        discordClient = DiscordClientBuilder.create(discordToken).build().login().map(client -> {
-            setupEventHandlers(client);
-            return client;
-        }).block();
+        discordClient = DiscordClientBuilder.create(discordToken).build().login().block();
+
+        setupEventHandlers(discordClient);
     }
 
-    private static void setupEventHandlers(GatewayDiscordClient client) {
+    private static void setupEventHandlers(@Nonnull GatewayDiscordClient client) {
         //Setup event handlers
         client.getEventDispatcher().on(ReadyEvent.class).subscribe(ReadyEventHandler::handle);
         client.getEventDispatcher().on(MessageCreateEvent.class).as(MessageEventHandler::handle).subscribe();

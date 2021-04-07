@@ -1,4 +1,4 @@
-package bot.modules.events;
+package bot.modules.discord.handlers;
 
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.object.entity.Guild;
