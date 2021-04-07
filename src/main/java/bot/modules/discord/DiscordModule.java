@@ -28,43 +28,53 @@ import java.util.Map;
  * Created by Robin Seifert on 3/16/2021.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DiscordModule {
+public final class DiscordModule
+{
 
-  private static final CaseInsensitiveMap<String, Command> commandMap = new CaseInsensitiveMap<>();
-  public static GatewayDiscordClient client;
+    private static final CaseInsensitiveMap<String, Command> commandMap = new CaseInsensitiveMap<>();
+    public static GatewayDiscordClient discordClient;
 
-  public static void load() {
-    final String discordToken = MainConfig.getDISCORD_TOKEN();
-
-    client = DiscordClientBuilder.create(discordToken).build().login().block();
-
-    //Setup event handlers
-    client.getEventDispatcher().on(ReadyEvent.class).subscribe(ReadyEventHandler::handle);
-    client.getEventDispatcher().on(MessageCreateEvent.class).as(MessageEventHandler::handle).subscribe();
-    client.getEventDispatcher().on(MemberJoinEvent.class).subscribe(MemberJoinEventHandler::handle);
-    client.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(MemberLeaveEventHandler::handle);
-  }
-
-  public static Map<String, Command> getCommandMap() {
-      return commandMap;
-  }
-
-  public static void register(Command command) {
-    GeekBot.MAIN_LOG.info("Registering command: {}", command.name);
-    commandMap.put(command.name, command);
-  }
-
-  public static ImmutableList<String> removeFirstArg(List<String> args) {
-    if (args.size() <= 1) {
-      return ImmutableList.of();
+    public static void load()
+    {
+        final String discordToken = MainConfig.getDISCORD_TOKEN();
+        discordClient = DiscordClientBuilder.create(discordToken).build().login().map(client -> {
+            setupEventHandlers(client);
+            return client;
+        }).block();
     }
-    return ImmutableList.copyOf(
-      Collections2.filter(
-        args,
-        s -> {
-          return s != args.get(0); //NOSONAR
+
+    private static void setupEventHandlers(GatewayDiscordClient client) {
+        //Setup event handlers
+        client.getEventDispatcher().on(ReadyEvent.class).subscribe(ReadyEventHandler::handle);
+        client.getEventDispatcher().on(MessageCreateEvent.class).as(MessageEventHandler::handle).subscribe();
+        client.getEventDispatcher().on(MemberJoinEvent.class).subscribe(MemberJoinEventHandler::handle);
+        client.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(MemberLeaveEventHandler::handle);
+    }
+
+    public static Map<String, Command> getCommandMap()
+    {
+        return commandMap;
+    }
+
+    public static void register(Command command)
+    {
+        GeekBot.MAIN_LOG.info("Registering command: {}", command.name);
+        commandMap.put(command.name, command);
+    }
+
+    public static ImmutableList<String> removeFirstArg(List<String> args)
+    {
+        if (args.size() <= 1)
+        {
+            return ImmutableList.of();
         }
-      )
-    );
-  }
+        return ImmutableList.copyOf(
+                Collections2.filter(
+                        args,
+                        s -> {
+                            return s != args.get(0); //NOSONAR
+                        }
+                )
+        );
+    }
 }

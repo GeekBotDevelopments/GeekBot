@@ -23,7 +23,7 @@ public class CmdStopBot extends Command
         message.addReaction(ReactionEmoji.of(null, "\u2705", false).asUnicodeEmoji().get()).block();
 
         //Close discord client
-        DiscordModule.client.logout().block();
+        DiscordModule.discordClient.logout().block();
 
         //Close spring client
         GeekBot.springApplicationContext.close();
