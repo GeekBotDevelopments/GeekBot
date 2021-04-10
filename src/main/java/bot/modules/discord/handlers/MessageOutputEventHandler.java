@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MessageOutputEventHandler
 {
-    public static void handle(MessageOutputEvent event) {
+    public static void handle(MessageOutputEvent event)
+    {
         event.getClient()
                 .getGuildById(Snowflake.of(event.guildID))
                 .flatMap(guild -> guild.getChannelById(Snowflake.of(event.channelID)))
@@ -23,6 +24,18 @@ public final class MessageOutputEventHandler
                 .subscribe(mono -> {
                     MessageData messageData = mono.block();
                     GeekBot.MAIN_LOG.info(messageData);
-                },GeekBot.MAIN_LOG::error ,() -> GeekBot.MAIN_LOG.info("Sent message: " + event.output));
+                }, GeekBot.MAIN_LOG::error, () -> logMessage(event));
+    }
+
+    private static void logMessage(MessageOutputEvent event)
+    {
+        GeekBot.MAIN_LOG.info(
+                String.format(
+                        "Sent message to server[%s] & channel[%s] containing: %s",
+                        event.guildID,
+                        event.channelID,
+                        event.output
+                )
+        );
     }
 }
