@@ -4,7 +4,6 @@ import bot.GeekBot;
 import bot.modules.discord.events.MessageOutputEvent;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.channel.Channel;
-import discord4j.discordjson.json.MessageData;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -21,10 +20,7 @@ public final class MessageOutputEventHandler
                 .flatMap(guild -> guild.getChannelById(Snowflake.of(event.channelID)))
                 .map(Channel::getRestChannel)
                 .map(channel -> channel.createMessage(event.output))
-                .subscribe(mono -> {
-                    MessageData messageData = mono.block();
-                    GeekBot.MAIN_LOG.info(messageData);
-                }, GeekBot.MAIN_LOG::error, () -> logMessage(event));
+                .subscribe(null, GeekBot.MAIN_LOG::error, () -> logMessage(event));
     }
 
     private static void logMessage(MessageOutputEvent event)
