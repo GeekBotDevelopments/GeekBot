@@ -6,6 +6,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.channel.Channel;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import reactor.core.publisher.Mono;
 
 /**
  * Created by Robin Seifert on 4/6/2021.
@@ -20,7 +21,7 @@ public final class MessageOutputEventHandler
                 .flatMap(guild -> guild.getChannelById(Snowflake.of(event.channelID)))
                 .map(Channel::getRestChannel)
                 .map(channel -> channel.createMessage(event.output))
-                .subscribe(null, GeekBot.MAIN_LOG::error, () -> logMessage(event));
+                .subscribe(Mono::block, GeekBot.MAIN_LOG::error, () -> logMessage(event));
     }
 
     private static void logMessage(MessageOutputEvent event)
