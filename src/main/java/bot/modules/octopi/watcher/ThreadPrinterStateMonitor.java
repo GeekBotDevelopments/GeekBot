@@ -1,6 +1,5 @@
 package bot.modules.octopi.watcher;
 
-import bot.GeekBot;
 import bot.modules.configs.MainConfig;
 import bot.modules.discord.DiscordModule;
 import bot.modules.discord.events.MessageOutputEvent;
@@ -53,7 +52,8 @@ public class ThreadPrinterStateMonitor extends Thread
         logger.info("Printer state monitor thread started");
 
         //Sleep until discord module is loaded
-        while(outputServer == null) {
+        while (outputServer == null)
+        {
             //Busy-wait
             try
             {
@@ -103,10 +103,33 @@ public class ThreadPrinterStateMonitor extends Thread
         final String newState = getState(printer);
         final String lastState = printer.getPreviousState() != null ? printer.getPreviousState().getText() : null;
 
+        String message = null;
+
         if (newState != null && lastState == null)
         {
-            final String message = String.format("OctoServer for printer `%s` is now online", printer.getName());
-            GeekBot.MAIN_LOG.info(message);
+            message = String.format("Connected to OctoServer for printer `%s`", printer.getName());
+
+        }
+        //TODO check if we lost connection with the printer or server
+        else if (newState == null && lastState != null)
+        {
+            message = String.format("Lost contact with OctoServer for printer `%s`", printer.getName());
+        }
+        //Not printing -> printing
+        //  TODO output what it is printing
+        //  TODO check if we are preheating vs actually printing
+        else if ("printing".equalsIgnoreCase(newState) && !"printing".equalsIgnoreCase(lastState))
+        {
+            message = String.format("Printer `%s` has started printing", printer.getName());
+        }
+        //Printing -> not printing TODO check for why it is done printing
+        else if (!"printing".equalsIgnoreCase(newState) && "printing".equalsIgnoreCase(lastState))
+        {
+            message = String.format("Printer `%s` is no longer printing", printer.getName());
+        }
+
+        if (message != null)
+        {
             DiscordModule.discordClient.getEventDispatcher().publish(new MessageOutputEvent(
                     Long.parseLong(MainConfig.getLABRINTH_ID()), //TODO store as long in config
                     OUTPUT_CHANNEL_ID,
@@ -115,12 +138,15 @@ public class ThreadPrinterStateMonitor extends Thread
         }
     }
 
-    private String getState(OctoPrinter printer) {
+    private String getState(OctoPrinter printer)
+    {
         final Optional<PrinterStateResponse> response = printer.getStateResponse().get();
 
-        if(response.isPresent()) {
+        if (response.isPresent())
+        {
             final PrinterStateData data = response.get().getState();
-            if(data != null) {
+            if (data != null)
+            {
                 return data.getText();
             }
         }
