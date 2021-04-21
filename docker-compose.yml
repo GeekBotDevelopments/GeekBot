@@ -4,8 +4,7 @@ services:
   geekbot:
     image: geekbot
     build: .
+    environment:
+      - main_config=/app/configs/main.properties
     volumes:
-      - configs:/var/lib/mysql/data
-
-volumes:
-  configs:
+        - "./Config/Config.properties:/app/configs/main.properties"
